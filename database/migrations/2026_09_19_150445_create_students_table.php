@@ -11,22 +11,16 @@ return new class extends Migration
     {
         Schema::create('students', function (Blueprint $table) {
             $table->id();
-
-            $table->string('student_id')->unique();
-
+            $table->string('lrn')->unique();
             $table->string('first_name');
             $table->string('last_name');
             $table->string('middle_initial')->nullable();
-
-            $table->string('lrn')->unique();
-
             $table->string('gender')->nullable();
             $table->string('parents_name')->nullable();
             $table->string('grade_level');
             $table->string('section');
             $table->string('adviser')->nullable();
             $table->string('status')->default('Active');
-
             $table->timestamps();
         });
 }

@@ -13,7 +13,7 @@
     </a>
     <a class="bg-white w-100 nav-link-custom d-flex align-items-center gap-2 text-decoration-none" href="#">
         <img src="/icons/national-icon.png" width="18" height="18" alt="Students">
-        <span class="fw-semibold ">National Employees</span>
+        <span class="fw-semibold ">Employees</span>
     </a>
     <a class="bg-white w-100 nav-link-custom d-flex align-items-center gap-2 text-decoration-none" href="#">
         <img src="/icons/briefcase-icon.png" width="18" height="18" alt="Students">
