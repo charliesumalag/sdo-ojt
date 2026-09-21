@@ -652,80 +652,53 @@ function loadStudents() {
  */
 function showImportResult(response) {
 
-    $('#modalImported').text(
-        response.imported
-    );
+    // Update summary
+    $('#modalImported').text(response.imported);
+    $('#modalSkipped').text(response.skipped);
+    $('#importResultMessage').text(response.message);
 
-
-    $('#modalSkipped').text(
-        response.skipped
-    );
-
-
-    $('#importResultMessage').text(
-        response.message
-    );
-
-
+    // Clear previous skipped rows
     $('#skippedRowsTable').empty();
 
+    // Check if there are skipped rows
+    if (response.skipped_rows && response.skipped_rows.length > 0) {
 
-    if (
-        response.skipped_rows &&
-        response.skipped_rows.length > 0
-    ) {
+        $('#skippedRowsContainer').removeClass('d-none');
 
-        $('#skippedRowsContainer')
-            .removeClass('d-none');
+        $('#skippedRowsCount').text(response.skipped_rows.length);
 
-
-        $('#skippedRowsCount').text(
-            response.skipped_rows.length
-        );
-
-
-        response.skipped_rows.forEach(function (row) {
+        response.skipped_rows.forEach(function(row) {
 
             $('#skippedRowsTable').append(`
-
                 <tr>
-
                     <td class="fw-semibold">
                         ${row.excel_row}
                     </td>
 
                     <td>
-                        ${row.reason}
+                        <span class="text-danger">
+                            ${row.reason}
+                        </span>
                     </td>
-
                 </tr>
-
             `);
 
         });
 
     } else {
 
-        $('#skippedRowsContainer')
-            .addClass('d-none');
+        $('#skippedRowsContainer').addClass('d-none');
 
     }
 
-
     // Show Bootstrap modal
-    const modalElement =
-        document.getElementById(
-            'importResultModal'
-        );
+    const modalElement = document.getElementById('importResultModal');
 
-
-    const modal =
-        new bootstrap.Modal(modalElement);
-
+    const modal = new bootstrap.Modal(modalElement);
 
     modal.show();
-
 }
+
 
 </script>
 

@@ -17,36 +17,102 @@ class StudentsImport implements ToModel, WithHeadingRow
 
     public function model(array $row)
     {
-        // Get values from Excel
+        /*
+        |--------------------------------------------------------------------------
+        | Get values from Excel
+        |--------------------------------------------------------------------------
+        */
+
         $studentId = trim((string) ($row['student_id'] ?? ''));
+        $firstName = trim((string) ($row['first_name'] ?? ''));
+        $lastName = trim((string) ($row['last_name'] ?? ''));
+        $middleInitial = trim((string) ($row['middle_initial'] ?? ''));
         $lrn = trim((string) ($row['lrn'] ?? ''));
+        $gender = trim((string) ($row['gender'] ?? ''));
+        $parentsName = trim((string) ($row['parents_name'] ?? ''));
+        $gradeLevel = trim((string) ($row['grade_level'] ?? ''));
+        $section = trim((string) ($row['section'] ?? ''));
+        $adviser = trim((string) ($row['adviser'] ?? ''));
+        $status = trim((string) ($row['status'] ?? ''));
 
-        // Skip if student_id is missing
+        /*
+        |--------------------------------------------------------------------------
+        | Check for empty required fields
+        |--------------------------------------------------------------------------
+        */
+
+        $missingFields = [];
+
         if ($studentId === '') {
-            $this->skipped++;
-
-            $this->skippedRows[] = [
-                'excel_row' => $this->getRowNumber(),
-                'reason' => 'Missing student_id',
-            ];
-
-            return null;
+            $missingFields[] = 'student_id';
         }
 
-        // Skip if LRN is missing
+        if ($firstName === '') {
+            $missingFields[] = 'first_name';
+        }
+
+        if ($lastName === '') {
+            $missingFields[] = 'last_name';
+        }
+
+        if ($middleInitial === '') {
+            $missingFields[] = 'middle_initial';
+        }
+
         if ($lrn === '') {
+            $missingFields[] = 'lrn';
+        }
+
+        if ($gender === '') {
+            $missingFields[] = 'gender';
+        }
+
+        if ($parentsName === '') {
+            $missingFields[] = 'parents_name';
+        }
+
+        if ($gradeLevel === '') {
+            $missingFields[] = 'grade_level';
+        }
+
+        if ($section === '') {
+            $missingFields[] = 'section';
+        }
+
+        if ($adviser === '') {
+            $missingFields[] = 'adviser';
+        }
+
+        if ($status === '') {
+            $missingFields[] = 'status';
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | Skip row if ANY required field is empty
+        |--------------------------------------------------------------------------
+        */
+
+        if (!empty($missingFields)) {
+
             $this->skipped++;
 
             $this->skippedRows[] = [
                 'excel_row' => $this->getRowNumber(),
-                'reason' => 'Missing LRN',
+                'reason' => 'Missing: ' . implode(', ', $missingFields),
             ];
 
             return null;
         }
 
-        // Check duplicate student_id
+        /*
+        |--------------------------------------------------------------------------
+        | Check duplicate Student ID
+        |--------------------------------------------------------------------------
+        */
+
         if (Students::where('student_id', $studentId)->exists()) {
+
             $this->skipped++;
 
             $this->skippedRows[] = [
@@ -57,8 +123,14 @@ class StudentsImport implements ToModel, WithHeadingRow
             return null;
         }
 
-        // Check duplicate LRN
+        /*
+        |--------------------------------------------------------------------------
+        | Check duplicate LRN
+        |--------------------------------------------------------------------------
+        */
+
         if (Students::where('lrn', $lrn)->exists()) {
+
             $this->skipped++;
 
             $this->skippedRows[] = [
@@ -69,21 +141,26 @@ class StudentsImport implements ToModel, WithHeadingRow
             return null;
         }
 
-        // Import student
+        /*
+        |--------------------------------------------------------------------------
+        | Create Student
+        |--------------------------------------------------------------------------
+        */
+
         $this->imported++;
 
         return new Students([
             'student_id' => $studentId,
-            'first_name' => $row['first_name'] ?? null,
-            'last_name' => $row['last_name'] ?? null,
-            'middle_initial' => $row['middle_initial'] ?? null,
+            'first_name' => $firstName,
+            'last_name' => $lastName,
+            'middle_initial' => $middleInitial,
             'lrn' => $lrn,
-            'gender' => $row['gender'] ?? null,
-            'parents_name' => $row['parents_name'] ?? null,
-            'grade_level' => $row['grade_level'] ?? null,
-            'section' => $row['section'] ?? null,
-            'adviser' => $row['adviser'] ?? null,
-            'status' => $row['status'] ?? 'Active',
+            'gender' => $gender,
+            'parents_name' => $parentsName,
+            'grade_level' => $gradeLevel,
+            'section' => $section,
+            'adviser' => $adviser,
+            'status' => $status,
         ]);
     }
 }
