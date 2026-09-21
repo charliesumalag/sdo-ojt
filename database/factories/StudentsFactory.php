@@ -18,13 +18,17 @@ class StudentsFactory extends Factory
     public function definition(): array
     {
         return [
-            'student_id' => fake()->unique()->numerify('2026-####'),
-            'first_name' => fake()->firstName(),
-            'last_name' => fake()->lastName(),
-            'middle_initial' => fake()->randomLetter(),
-            'grade_level' => fake()->randomElement(['7', '8', '9', '10', '11', '12',]),
-            'section' => fake()->randomElement(['A', 'B', 'C', 'D',]),
-            'adviser' => fake()->name(),
+            'student_id' => $this->faker->unique()->numerify('STU-#####'),
+            'first_name' => $this->faker->firstName(),
+            'last_name' => $this->faker->lastName(),
+            'middle_initial' => $this->faker->randomLetter(),
+            'lrn' => $this->faker->unique()->numerify('############'),
+            'gender' => $this->faker->randomElement(['Male','Female',]),
+            'parents_name' => $this->faker->name(),
+            'grade_level' => $this->faker->randomElement(['7','8','9','10','11','12',]),
+            'section' => $this->faker->randomElement(['A','B','C','D',]),
+            'adviser' => $this->faker->name(),
+            'status' => $this->faker->randomElement(['Not Printed','Printed',]),
         ];
     }
 }
