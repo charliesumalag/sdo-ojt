@@ -13,7 +13,6 @@
             <input type="text" class="form-control" placeholder="Search ...">
         </div>
     </div>
-
     <div class="bg-white border rounded mt-4 p-3">
         <div class="row g-3">
             <div class="col-md-3">
@@ -63,7 +62,10 @@
                 <span class="badge rounded-pill text-primary bg-primary-subtle">5 Records Match</span>
             </div>
             <div class="d-flex gap-2">
-                <button class="btn btn-outline-secondary">Import File</button>
+                <form id="importForm" enctype="multipart/form-data">
+                    <input type="file" name="file" id="file" hidden accept=".xlsx,.xls,.csv">
+                    <button type="button" class="btn btn-outline-secondary" id="importButton">Import</button>
+                </form>
                 <button class="btn btn-primary">Generate QR Labels (5)</button>
             </div>
         </div>
@@ -80,37 +82,46 @@
                         <th class="small">Actions</th>
                     </tr>
                 </thead>
-
-                <tbody>
-                    <tr>
-                        <td>LRN-102948</td>
-                        <td class="fw-semibold">Santos, Maria Clara L.</td>
-                        <td>Rizal High School</td>
-                        <td>Grade 10 -<br>Section A</td>
-                        <td><span class="badge text-success bg-success-subtle px-4">Active</span></td>
-                        <td>
-                            <a href="#" class="text-primary text-decoration-none">Edit</a>
-                            <span class="text-secondary mx-2">|</span>
-                            <a href="#" class="text-primary text-decoration-none">QR Label</a>
-                        </td>
-                    </tr>
-
-                    <tr>
-                        <td>LRN-104829</td>
-                        <td class="fw-semibold">Cruz, Juan Dela A.</td>
-                        <td>Rizal High School</td>
-                        <td>Grade 10 -<br>Section A</td>
-                        <td><span class="badge text-success bg-success-subtle px-4">Active</span></td>
-                        <td>
-                            <a href="#" class="text-primary text-decoration-none">Edit</a>
-                            <span class="text-secondary mx-2">|</span>
-                            <a href="#" class="text-primary text-decoration-none">QR Label</a>
-                        </td>
-                    </tr>  
+                <tbody id="studentTable">
+                    <!-- AJAX + jQuery inserts rows here -->
                 </tbody>
             </table>
         </div>
     </div>
 </div>
+
+
+
+<script>
+    $(document).ready(function() {
+        $('#importButton').click(function() {
+            $('#file').click();
+        });
+    });
+
+    $.ajax({
+        url: '/studentslist',
+        method: 'GET',
+        success: function(students) {
+            console.log(students)
+            students.forEach(function(student) {
+                $('#studentTable').append(`
+                        <tr>
+                            <td>${student.student_id}</td>
+                            <td class="fw-semibold">${student.last_name},${student.first_name}${student.middle_initial}.</td>
+                            <td>Rizal High School</td>
+                            <td>${student.grade_level}-${student.section}</td>
+                            <td><span class="badge text-success bg-success-subtle px-4">Active</span></td>
+                            <td><a href="#"class="text-primary text-decoration-none">Edit</a><span class="text-secondary mx-2">|</span>
+                                <a href="#"class="text-primary text-decoration-none">QR Label</a>
+                            </td>
+                        </tr>
+                    `);
+            });
+        }
+    });
+</script>
+
+
 
 @endsection
