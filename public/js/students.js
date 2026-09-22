@@ -12,6 +12,11 @@ $(document).ready(function () {
     loadStudents();
 
 
+
+    $('#clearFilters').click(function () {
+        resetFilters();
+        loadStudents();
+    });
     // Open file picker
     $('#importButton').click(function () {
 
@@ -159,51 +164,33 @@ function loadStudents() {
     console.log('Section:', $('#sectionFilter').val());
     console.log('School Year:', $('#schoolYearFilter').val());
 
-
     $.ajax({
-
         url: '/studentslist',
-
         method: 'GET',
-
         data: {
-
             search: $('#search').val(),
-
             gender: $('#genderFilter').val(),
-
             grade_level: $('#gradeFilter').val(),
-
             school: $('#schoolFilter').val(),
-
             section: $('#sectionFilter').val(),
-
             school_year: $('#schoolYearFilter').val()
-
         },
 
         success: function (students) {
-
             console.log('Students from database:', students);
-
             console.log('Number of students:', students.length);
-
-
             // Clear current table
             $('#studentTable').empty();
-
 
             // Update record count
             $('#recordCount').text(
                 students.length + ' Records Match'
             );
 
-
             // Update Generate QR count
             $('#generateCount').text(
                 students.length
             );
-
 
             // Add students to table
             students.forEach(function (student) {
@@ -216,60 +203,15 @@ function loadStudents() {
 
 
                 const row = `
-
                     <tr>
-
-                        <td>
-                            ${student.lrn ?? ''}
+                        <td>${student.lrn ?? ''}</td>
+                        <td class="fw-semibold">${student.last_name ?? ''},${student.first_name ?? ''}${student.middle_initial ? ' ' + student.middle_initial + '.' : ''}
                         </td>
-
-                        <td class="fw-semibold">
-
-                            ${student.last_name ?? ''},
-
-                            ${student.first_name ?? ''}
-
-                            ${
-                                student.middle_initial
-                                    ? ' ' + student.middle_initial + '.'
-                                    : ''
-                            }
-
-                        </td>
-
-                        <td>
-                            ${student.school ?? ''}
-                        </td>
-
-                        <td>
-                            ${student.grade_level ?? ''}
-                            -
-                            ${student.section ?? ''}
-                        </td>
-
-                        <td>
-
-                            <span class="badge text-success bg-success-subtle px-4">
-
-                                ${student.status ?? 'Active'}
-
-                            </span>
-
-                        </td>
-
-                        <td>
-
-                            <a
-                                href="/students/${student.lrn}"
-                                class="text-primary text-decoration-none"
-                            >
-                                Edit
-                            </a>
-
-                        </td>
-
+                        <td>${student.school ?? ''}</td>
+                        <td>${student.grade_level ?? ''}-${student.section ?? ''}</td>
+                         <td>${student.gender ?? ''}</td>
+                        <td>${student.school_year ?? ''}</td>
                     </tr>
-
                 `;
 
 
@@ -321,11 +263,11 @@ function loadFilters() {
 
             // Reset dynamic dropdowns
             $('#schoolFilter').html(
-                '<option value="">All Schools</option>'
+                '<option value="">All</option>'
             );
 
             $('#sectionFilter').html(
-                '<option value="">Select Section</option>'
+                '<option value="">All</option>'
             );
 
             $('#schoolYearFilter').html(

@@ -15,7 +15,7 @@
             <div class="col-md-2">
                 <label for="schoolFilter" class="form-label">School</label>
                 <select id="schoolFilter" class="form-select">
-                    <option value="">All Schools</option>
+                    <option value=""></option>
                 </select>
             </div>
             {{-- year level --}}
@@ -35,14 +35,14 @@
             <div class="col-md-2">
                 <label for="sectionFilter" class="form-label">Section</label>
                 <select id="sectionFilter" class="form-select">
-                    <option value="">Select Section</option>
+                    <option value="">All Section</option>
                 </select>
             </div>
             {{-- gender --}}
             <div class="col-md-2">
                 <label for="genderFilter" class="form-label">Gender</label>
                 <select id="genderFilter" class="form-select">
-                    <option value="">Select Gender</option>
+                    <option value="">All</option>
                     <option value="Male">Male</option>
                     <option value="Female">Female</option>
                 </select>
@@ -54,13 +54,9 @@
                     <option value="">All</option>
                 </select>
             </div>
-            {{-- status --}}
-            <div class="col-md-2">
-                <label class="form-label fw-semibold small">Status</label>
-                <select class="form-select">
-                    <option>Not Printed</option>
-                    <option>Printed</option>
-                </select>
+           <div class="col-md-2 d-flex align-items-end">
+                <button type="button" id="clearFilters" class="btn btn-outline-secondary w-100">
+                    <i class="bi bi-x-lg me-1"></i>Clear</button>
             </div>
         </div>
     </div>
@@ -93,8 +89,8 @@
                         <th class="small">Student Name</th>
                         <th class="small">School</th>
                         <th class="small">Grade & Sec</th>
-                        <th class="small">Status</th>
-                        <th class="small">Actions</th>
+                        <th class="small">Gender</th>
+                        <th class="small">School Year</th>
                     </tr>
                 </thead>
                 <tbody id="studentTable">
