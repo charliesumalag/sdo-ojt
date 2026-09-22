@@ -12,9 +12,41 @@ class StudentController extends Controller
     /**
      * Get all students.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $students = Students::all();
+        $query = Students::query();
+
+        if ($request->search) {
+            $query->where(function ($q) use ($request) {
+                $q->where('lrn', 'like', '%' . $request->search . '%')
+                    ->orWhere('first_name', 'like', '%' . $request->search . '%')
+                    ->orWhere('last_name', 'like', '%' . $request->search . '%');
+            });
+        }
+
+        if ($request->gender) {
+            $query->where('gender', $request->gender);
+        }
+
+        if ($request->grade_level) {
+            $query->where('grade_level', $request->grade_level);
+        }
+
+        if ($request->school) {
+            $query->where('school', $request->school);
+        }
+
+        if ($request->section) {
+            $query->where('section', $request->section);
+        }
+
+        if ($request->school_year) {
+            $query->where('school_year', $request->school_year);
+        }
+
+        $students = $query
+            ->orderBy('last_name')
+            ->get();
 
         return response()->json($students);
     }
@@ -66,6 +98,32 @@ class StudentController extends Controller
             'imported' => $import->imported,
             'skipped' => $import->skipped,
             'skipped_rows' => $import->skippedRows,
+        ]);
+    }
+
+
+    public function studentFilters()
+    {
+        return response()->json([
+
+            'schools' => Students::whereNotNull('school')
+                ->where('school', '!=', '')
+                ->distinct()
+                ->orderBy('school')
+                ->pluck('school'),
+
+            'sections' => Students::whereNotNull('section')
+                ->where('section', '!=', '')
+                ->distinct()
+                ->orderBy('section')
+                ->pluck('section'),
+
+            'school_years' => Students::whereNotNull('school_year')
+                ->where('school_year', '!=', '')
+                ->distinct()
+                ->orderBy('school_year', 'desc')
+                ->pluck('school_year'),
+
         ]);
     }
 }

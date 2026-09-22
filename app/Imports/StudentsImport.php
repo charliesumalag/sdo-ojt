@@ -22,11 +22,11 @@ class StudentsImport implements ToModel, WithHeadingRow
         $lastName = trim((string) ($row['last_name'] ?? ''));
         $middleInitial = trim((string) ($row['middle_initial'] ?? ''));
         $gender = trim((string) ($row['gender'] ?? ''));
+        $school = trim((string) ($row['school'] ?? ''));
         $parentsName = trim((string) ($row['parents_name'] ?? ''));
         $gradeLevel = trim((string) ($row['grade_level'] ?? ''));
         $section = trim((string) ($row['section'] ?? ''));
-        $adviser = trim((string) ($row['adviser'] ?? ''));
-        $status = trim((string) ($row['status'] ?? ''));
+        $schoolYear = trim((string) ($row['school_year'] ?? ''));
 
         $missingFields = [];
 
@@ -49,6 +49,10 @@ class StudentsImport implements ToModel, WithHeadingRow
         if ($gender === '') {
             $missingFields[] = 'gender';
         }
+        if ($school === '') {
+            $missingFields[] = 'school';
+        }
+
 
         if ($parentsName === '') {
             $missingFields[] = 'parents_name';
@@ -62,13 +66,10 @@ class StudentsImport implements ToModel, WithHeadingRow
             $missingFields[] = 'section';
         }
 
-        if ($adviser === '') {
-            $missingFields[] = 'adviser';
+        if ($schoolYear === '') {
+            $missingFields[] = 'school_year';
         }
 
-        if ($status === '') {
-            $missingFields[] = 'status';
-        }
 
         /*
         |--------------------------------------------------------------------------
@@ -120,11 +121,11 @@ class StudentsImport implements ToModel, WithHeadingRow
             'last_name' => $lastName,
             'middle_initial' => $middleInitial,
             'gender' => $gender,
+            'school' => $school,
             'parents_name' => $parentsName,
             'grade_level' => $gradeLevel,
             'section' => $section,
-            'adviser' => $adviser,
-            'status' => $status,
+            'school_year' => $schoolYear,
         ]);
     }
 }

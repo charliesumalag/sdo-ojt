@@ -22,3 +22,6 @@ Route::get('/studentslist', [StudentController::class, 'index']);
 // ->name('student.show');
 
 Route::post('/students/import', [StudentController::class, 'import']);
+
+// filter
+Route::get('/student-filters', [StudentController::class, 'studentFilters']);

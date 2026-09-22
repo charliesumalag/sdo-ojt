@@ -17,10 +17,11 @@ class Students extends Model
         'last_name',
         'middle_initial',
         'gender',
+        'school',
         'parents_name',
         'grade_level',
         'section',
-        'adviser',
+        'school_year',
         'status',
     ];
 }

@@ -6,7 +6,7 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
-    {
+{
     public function up(): void
     {
         Schema::create('students', function (Blueprint $table) {
@@ -16,14 +16,15 @@ return new class extends Migration
             $table->string('last_name');
             $table->string('middle_initial')->nullable();
             $table->string('gender')->nullable();
+            $table->string('school')->nullable();
             $table->string('parents_name')->nullable();
             $table->string('grade_level');
             $table->string('section');
-            $table->string('adviser')->nullable();
+            $table->string('school_year')->nullable();
             $table->string('status')->default('Active');
             $table->timestamps();
         });
-}
+    }
 
     public function down(): void
     {

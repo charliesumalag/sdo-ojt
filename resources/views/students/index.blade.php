@@ -11,50 +11,50 @@
     <!-- Filters -->
     <div class="bg-white border rounded mt-4 p-3">
         <div class="row">
-            {{-- school dropdown --}}
-            <div class="col-md-2"> 
-                <label class="form-label fw-semibold small">School</label> 
-                <div class="dropdown"> 
-                    <button class="form-select text-start" type="button" id="schoolDropdown" data-bs-toggle="dropdown" aria-expanded="false"> All Schools </button>
-                    <div class="dropdown-menu p-2 w-100" style="max-height: 250px; overflow-y: auto;"> 
-                        <input type="text" class="form-control form-control-sm mb-2" id="schoolSearch" placeholder="Search school..."> 
-                        <div id="schoolList"> 
-                            <button type="button" class="dropdown-item school-option" data-value=""> All Schools </button> 
-                            <button type="button" class="dropdown-item school-option" data-value="Rizal High School"> Rizal High School </button> 
-                            <button type="button" class="dropdown-item school-option" data-value="Marikina High School"> Marikina High School </button> 
-                            <button type="button" class="dropdown-item school-option" data-value="Concepcion Integrated School">Concepcion Integrated School </button> 
-                            <button type="button" class="dropdown-item school-option" data-value="Fortune High School">Fortune High School</button> 
-                        </div> 
-                    </div> 
-                </div> 
-            </div>
+            {{-- station dropdown --}}
             <div class="col-md-2">
-                <label class="form-label fw-semibold small">Year Level</label>
-                <select class="form-select">
-                    <option>Grade 10</option>
+                <label for="schoolFilter" class="form-label">School</label>
+                <select id="schoolFilter" class="form-select">
+                    <option value="">All Schools</option>
                 </select>
             </div>
+            {{-- year level --}}
             <div class="col-md-2">
-                <label class="form-label fw-semibold small">Section</label>
-                <select class="form-select">
-                    <option>Section A</option>
+                <label for="gradeFilter" class="form-label">Grade Level</label>
+                <select id="gradeFilter" class="form-select">
+                    <option value="">All</option>
+                    <option value="7">Grade 7</option>
+                    <option value="8">Grade 8</option>
+                    <option value="9">Grade 9</option>
+                    <option value="10">Grade 10</option>
+                    <option value="11">Grade 11</option>
+                    <option value="12">Grade 12</option>
                 </select>
             </div>
+            {{-- section --}}
             <div class="col-md-2">
-                <label class="form-label fw-semibold small">Gender</label>
-                <select class="form-select">
-                    <option>Male</option>
-                    <option>Female</option>
+                <label for="sectionFilter" class="form-label">Section</label>
+                <select id="sectionFilter" class="form-select">
+                    <option value="">Select Section</option>
                 </select>
             </div>
+            {{-- gender --}}
             <div class="col-md-2">
-                <label class="form-label fw-semibold small">School Year</label>
-                <select class="form-select">
-                    <option>2023-2024</option>
-                    <option>2024-2025</option>
-                    <option>2025-2026</option>
+                <label for="genderFilter" class="form-label">Gender</label>
+                <select id="genderFilter" class="form-select">
+                    <option value="">Select Gender</option>
+                    <option value="Male">Male</option>
+                    <option value="Female">Female</option>
                 </select>
             </div>
+            {{-- school year --}}
+           <div class="col-md-2">
+                <label for="schoolYearFilter" class="form-label">School Year</label>
+                <select id="schoolYearFilter" class="form-select">
+                    <option value="">All</option>
+                </select>
+            </div>
+            {{-- status --}}
             <div class="col-md-2">
                 <label class="form-label fw-semibold small">Status</label>
                 <select class="form-select">
@@ -77,7 +77,7 @@
             </div>
             <div class="d-flex gap-2">
                 <form id="importForm" enctype="multipart/form-data">
-                    <input type="file" name="file" id="file" hidden ">
+                    <input type="file" name="file" id="file" hidden>
                     <button type="button" class="btn btn-outline-secondary" id="importButton">Import</button>
                 </form>
                 <button class="btn btn-primary">Generate QR(<span id="generateCount"></span>)</button>
