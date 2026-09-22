@@ -11,25 +11,51 @@
     <!-- Filters -->
     <div class="bg-white border rounded mt-4 p-3">
         <div class="row">
-            <div class="col-md-3">
-                <label class="form-label fw-semibold small">School</label>
-                <select class="form-select">
-                    <option>Rizal High School</option>
-                </select>
+            {{-- school dropdown --}}
+            <div class="col-md-2"> 
+                <label class="form-label fw-semibold small">School</label> 
+                <div class="dropdown"> 
+                    <button class="form-select text-start" type="button" id="schoolDropdown" data-bs-toggle="dropdown" aria-expanded="false"> All Schools </button>
+                    <div class="dropdown-menu p-2 w-100" style="max-height: 250px; overflow-y: auto;"> 
+                        <input type="text" class="form-control form-control-sm mb-2" id="schoolSearch" placeholder="Search school..."> 
+                        <div id="schoolList"> 
+                            <button type="button" class="dropdown-item school-option" data-value=""> All Schools </button> 
+                            <button type="button" class="dropdown-item school-option" data-value="Rizal High School"> Rizal High School </button> 
+                            <button type="button" class="dropdown-item school-option" data-value="Marikina High School"> Marikina High School </button> 
+                            <button type="button" class="dropdown-item school-option" data-value="Concepcion Integrated School">Concepcion Integrated School </button> 
+                            <button type="button" class="dropdown-item school-option" data-value="Fortune High School">Fortune High School</button> 
+                        </div> 
+                    </div> 
+                </div> 
             </div>
-            <div class="col-md-3">
+            <div class="col-md-2">
                 <label class="form-label fw-semibold small">Year Level</label>
                 <select class="form-select">
                     <option>Grade 10</option>
                 </select>
             </div>
-            <div class="col-md-3">
+            <div class="col-md-2">
                 <label class="form-label fw-semibold small">Section</label>
                 <select class="form-select">
                     <option>Section A</option>
                 </select>
             </div>
-            <div class="col-md-3">
+            <div class="col-md-2">
+                <label class="form-label fw-semibold small">Gender</label>
+                <select class="form-select">
+                    <option>Male</option>
+                    <option>Female</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label class="form-label fw-semibold small">School Year</label>
+                <select class="form-select">
+                    <option>2023-2024</option>
+                    <option>2024-2025</option>
+                    <option>2025-2026</option>
+                </select>
+            </div>
+            <div class="col-md-2">
                 <label class="form-label fw-semibold small">Status</label>
                 <select class="form-select">
                     <option>Not Printed</option>
