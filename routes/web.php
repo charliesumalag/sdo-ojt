@@ -1,24 +1,24 @@
 
 <?php
 
-    use Illuminate\Support\Facades\Route;
-    use App\Http\Controllers\StudentController;
+use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\StudentController;
 
-    Route::get('/', function () {
-        return view('welcome');
-    });
+Route::get('/', function () {
+    return view('welcome');
+});
 
-    Route::get('/students', function () {
-        return view('students.index');
-    })->name('students');
+Route::get('/students', function () {
+    return view('students.index');
+})->name('students');
 
-    Route::get('/connection', function () {
+Route::get('/connection', function () {
     return view('databasecon');
-    });
+});
 
-    Route::get('/studentslist', [StudentController::class, 'index']);
+Route::get('/studentslist', [StudentController::class, 'index']);
 
-    Route::get('/students/{student_id}', [StudentController::class, 'show'])
-    ->name('student.show');
+// Route::get('/students/{student_id}', [StudentController::class, 'show'])
+// ->name('student.show');
 
-    Route::post('/students/import', [StudentController::class, 'import']);
+Route::post('/students/import', [StudentController::class, 'import']);

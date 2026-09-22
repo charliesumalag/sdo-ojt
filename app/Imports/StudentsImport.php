@@ -17,17 +17,10 @@ class StudentsImport implements ToModel, WithHeadingRow
 
     public function model(array $row)
     {
-        /*
-        |--------------------------------------------------------------------------
-        | Get values from Excel
-        |--------------------------------------------------------------------------
-        */
-
-        $studentId = trim((string) ($row['student_id'] ?? ''));
+        $lrn = trim((string) ($row['lrn'] ?? ''));
         $firstName = trim((string) ($row['first_name'] ?? ''));
         $lastName = trim((string) ($row['last_name'] ?? ''));
         $middleInitial = trim((string) ($row['middle_initial'] ?? ''));
-        $lrn = trim((string) ($row['lrn'] ?? ''));
         $gender = trim((string) ($row['gender'] ?? ''));
         $parentsName = trim((string) ($row['parents_name'] ?? ''));
         $gradeLevel = trim((string) ($row['grade_level'] ?? ''));
@@ -35,17 +28,7 @@ class StudentsImport implements ToModel, WithHeadingRow
         $adviser = trim((string) ($row['adviser'] ?? ''));
         $status = trim((string) ($row['status'] ?? ''));
 
-        /*
-        |--------------------------------------------------------------------------
-        | Check for empty required fields
-        |--------------------------------------------------------------------------
-        */
-
         $missingFields = [];
-
-        if ($studentId === '') {
-            $missingFields[] = 'student_id';
-        }
 
         if ($firstName === '') {
             $missingFields[] = 'first_name';
@@ -107,24 +90,6 @@ class StudentsImport implements ToModel, WithHeadingRow
 
         /*
         |--------------------------------------------------------------------------
-        | Check duplicate Student ID
-        |--------------------------------------------------------------------------
-        */
-
-        if (Students::where('student_id', $studentId)->exists()) {
-
-            $this->skipped++;
-
-            $this->skippedRows[] = [
-                'excel_row' => $this->getRowNumber(),
-                'reason' => 'Duplicate student_id: ' . $studentId,
-            ];
-
-            return null;
-        }
-
-        /*
-        |--------------------------------------------------------------------------
         | Check duplicate LRN
         |--------------------------------------------------------------------------
         */
@@ -150,11 +115,10 @@ class StudentsImport implements ToModel, WithHeadingRow
         $this->imported++;
 
         return new Students([
-            'student_id' => $studentId,
+            'lrn' => $lrn,
             'first_name' => $firstName,
             'last_name' => $lastName,
             'middle_initial' => $middleInitial,
-            'lrn' => $lrn,
             'gender' => $gender,
             'parents_name' => $parentsName,
             'grade_level' => $gradeLevel,

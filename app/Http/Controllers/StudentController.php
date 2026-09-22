@@ -22,9 +22,9 @@ class StudentController extends Controller
     /**
      * Get a single student.
      */
-    public function show($student_id)
+    public function show($lrn)
     {
-        $student = Students::where('student_id', $student_id)->first();
+        $student = Students::where('lrn', $lrn)->first();
 
         if (!$student) {
             return response()->json([
@@ -48,32 +48,24 @@ class StudentController extends Controller
             'file' => [
                 'required',
                 'file',
-                'mimes:xlsx,xls,csv',
                 'max:10240',
+                'extensions:csv,xlsx,xls',
             ],
         ]);
 
-        try {
-            $import = new StudentsImport();
+        $import = new StudentsImport();
 
-            Excel::import(
-                $import,
-                $request->file('file')
-            );
+        Excel::import(
+            $import,
+            $request->file('file')
+        );
 
-            return response()->json([
-                'success' => true,
-                'message' => 'Import completed.',
-                'imported' => $import->imported,
-                'skipped' => $import->skipped,
-                'skipped_rows' => $import->skippedRows,
-            ]);
-        } catch (\Throwable $e) {
-
-            return response()->json([
-                'success' => false,
-                'message' => $e->getMessage(),
-            ], 500);
-        }
+        return response()->json([
+            'success' => true,
+            'message' => 'Import completed.',
+            'imported' => $import->imported,
+            'skipped' => $import->skipped,
+            'skipped_rows' => $import->skippedRows,
+        ]);
     }
 }
