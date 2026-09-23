@@ -10,7 +10,7 @@ $(document).ready(function () {
 
     // Load all students
     loadStudents();
-    
+
     //serach students
     $('#search').on('input', function () {
         loadStudents(1);
@@ -85,7 +85,7 @@ $(document).ready(function () {
         loadStudents();
     });
 
-   
+
 
 
 
@@ -100,12 +100,16 @@ $(document).ready(function () {
             section: $('#sectionFilter').val(),
             school_year: $('#schoolYearFilter').val()
         };
-        // console.log('QR filters:', filters);
+            console.log('QR filters:', filters);
 
         $.ajax({
             url: '/students/generate-qr',
-            method: 'GET',
+            method: 'POST',
             data: filters,
+            headers: {
+                'X-CSRF-TOKEN':
+                    $('meta[name="csrf-token"]').attr('content')
+            },
             success: function (response) {
                 // console.log('QR response:', response);
                 const urls = response.students.map(function (student) {
@@ -203,7 +207,7 @@ function loadStudents(page = 1) {
 
                 response.data.forEach(function (student) {
                 // console.log('Rendering:',student.first_name,student.last_name);
-            
+
                     const row = `
                         <tr class="">
                             <td class="fw-semibold">${student.lrn ?? ''}</td>
@@ -218,7 +222,7 @@ function loadStudents(page = 1) {
                     $('#studentTable').append(row);
                 });
             }
-            
+
             // Render pagination
             if (response.total === 0) {
                 $('#pagination').empty();
@@ -319,7 +323,7 @@ function showImportResult(response) {
     if (response.skipped_rows && response.skipped_rows.length > 0) {
         $('#skippedRowsContainer').removeClass('d-none');
         $('#skippedRowsCount').text(response.skipped_rows.length);
-        
+
         response.skipped_rows.forEach(function (row) {
             $('#skippedRowsTable').append(`
                 <tr>

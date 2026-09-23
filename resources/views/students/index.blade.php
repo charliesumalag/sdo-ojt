@@ -11,13 +11,13 @@
         <div class="d-flex gap-2">
             <div class="input-group" style="width: 280px;">
                 <input type="text" id="search" class="form-control text-gray-300" placeholder="Search student records...">
-            </div> 
+            </div>
             <form id="importForm" enctype="multipart/form-data">
                 <input type="file" name="file" id="file" hidden>
                 <button type="button" class="btn btn-outline-secondary px-4 " id="importButton">Import Excel File</button>
             </form>
         </div>
-        
+
     </div>
     <div id="notification" class="alert d-none" role="alert"></div>
     <!-- Filters -->
@@ -84,7 +84,7 @@
                 </span>
             </div>
             <div class="d-flex gap-2">
-                
+
                 <button type="button" id="generateQrButton" class="btn btn-primary">Generate QR(<span id="generateCount"></span>)</button>
             </div>
         </div>
@@ -107,7 +107,7 @@
                 </tbody>
             </table>
         </div>
-        
+
         <div id="pagination" class="d-flex gap-1 justify-content-end mt-3"></div>
     </div>
     <div id="noStudentsMessage" class="text-center text-secondary py-5 d-none">No records found.</div>
