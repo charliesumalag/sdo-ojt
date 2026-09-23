@@ -10,8 +10,12 @@ $(document).ready(function () {
 
     // Load all students
     loadStudents();
-
-
+    
+    //serach students
+    $('#search').on('input', function () {
+        loadStudents(1);
+    });
+    //end of search student
 
     $('#clearFilters').click(function () {
         resetFilters();
@@ -81,6 +85,8 @@ $(document).ready(function () {
         loadStudents();
     });
 
+   
+
 
 
     // start of generate qr
@@ -116,7 +122,7 @@ $(document).ready(function () {
 
 // reset filters
 function resetFilters() {
-
+    $('#search').val('');
     $('#schoolFilter').val('');
     $('#gradeFilter').val('');
     $('#sectionFilter').val('');

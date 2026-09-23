@@ -8,10 +8,16 @@
             <h1 class="fs-3 fw-semibold text-dark">Student Records</h1>
             <p class="small text-secondary">View students and import new student records.</p>
         </div>
-        <form id="importForm" enctype="multipart/form-data">
-            <input type="file" name="file" id="file" hidden>
-            <button type="button" class="btn btn-outline-secondary" id="importButton">Import</button>
-        </form>
+        <div class="d-flex gap-2">
+            <div class="input-group" style="width: 280px;">
+                <input type="text" id="search" class="form-control text-gray-300" placeholder="Search student records...">
+            </div> 
+            <form id="importForm" enctype="multipart/form-data">
+                <input type="file" name="file" id="file" hidden>
+                <button type="button" class="btn btn-outline-secondary px-4 " id="importButton">Import Excel File</button>
+            </form>
+        </div>
+        
     </div>
     <div id="notification" class="alert d-none" role="alert"></div>
     <!-- Filters -->
@@ -71,7 +77,7 @@
     <div class="bg-white border rounded mt-4 p-4" id="studentTableContainer">
         <div class="d-flex justify-content-between align-items-center mb-3">
             <div class="d-flex align-items-center gap-2">
-                <h2 class="fs-5 fw-semibold mb-0">Filtered Class Records</h2>
+                <h2 class="fs-5 fw-semibold mb-0">Student List</h2>
                 <span
                     id="recordCount"
                     class="badge rounded-pill text-primary bg-primary-subtle">

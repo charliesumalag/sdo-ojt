@@ -17,10 +17,21 @@ class StudentController extends Controller
         $query = Students::query();
 
         if ($request->search) {
-            $query->where(function ($q) use ($request) {
-                $q->where('lrn', 'like', '%' . $request->search . '%')
-                    ->orWhere('first_name', 'like', '%' . $request->search . '%')
-                    ->orWhere('last_name', 'like', '%' . $request->search . '%');
+
+            $search = $request->search;
+
+            $query->where(function ($q) use ($search) {
+
+                $q->where('lrn', 'like', '%' . $search . '%')
+                    ->orWhere('first_name', 'like', '%' . $search . '%')
+                    ->orWhere('last_name', 'like', '%' . $search . '%')
+                    ->orWhere('middle_initial', 'like', '%' . $search . '%')
+                    ->orWhere('gender', $search)
+                    ->orWhere('school', 'like', '%' . $search . '%')
+                    ->orWhere('parents_name', 'like', '%' . $search . '%')
+                    ->orWhere('grade_level', 'like', '%' . $search . '%')
+                    ->orWhere('section', 'like', '%' . $search . '%')
+                    ->orWhere('school_year', 'like', '%' . $search . '%');
             });
         }
 
@@ -144,10 +155,18 @@ class StudentController extends Controller
         $query = Students::query();
 
         if ($request->search) {
-            $query->where(function ($q) use ($request) {
-                $q->where('lrn', 'like', '%' . $request->search . '%')
-                    ->orWhere('first_name', 'like', '%' . $request->search . '%')
-                    ->orWhere('last_name', 'like', '%' . $request->search . '%');
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('lrn', 'like', '%' . $search . '%')
+                    ->orWhere('first_name', 'like', '%' . $search . '%')
+                    ->orWhere('last_name', 'like', '%' . $search . '%')
+                    ->orWhere('middle_initial', 'like', '%' . $search . '%')
+                    ->orWhere('gender', $search)
+                    ->orWhere('school', 'like', '%' . $search . '%')
+                    ->orWhere('parents_name', 'like', '%' . $search . '%')
+                    ->orWhere('grade_level', 'like', '%' . $search . '%')
+                    ->orWhere('section', 'like', '%' . $search . '%')
+                    ->orWhere('school_year', 'like', '%' . $search . '%');
             });
         }
 
