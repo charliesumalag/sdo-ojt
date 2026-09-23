@@ -3,9 +3,15 @@
 @section('content')
 
 <div class="p-4">
-    <div class="d-flex flex-column  border-bottom pb-2">
-        <h1 class="fs-3 fw-semibold text-dark">Student Records</h1>
-        <p class="small text-secondary">View students and import new student records.</p>
+    <div class="d-flex justify-content-between align-items-center  border-bottom pb-2">
+        <div>
+            <h1 class="fs-3 fw-semibold text-dark">Student Records</h1>
+            <p class="small text-secondary">View students and import new student records.</p>
+        </div>
+        <form id="importForm" enctype="multipart/form-data">
+            <input type="file" name="file" id="file" hidden>
+            <button type="button" class="btn btn-outline-secondary" id="importButton">Import</button>
+        </form>
     </div>
     <div id="notification" class="alert d-none" role="alert"></div>
     <!-- Filters -->
@@ -62,7 +68,7 @@
     </div>
 
     <!-- Student Records -->
-    <div class="bg-white border rounded mt-4 p-4">
+    <div class="bg-white border rounded mt-4 p-4" id="studentTableContainer">
         <div class="d-flex justify-content-between align-items-center mb-3">
             <div class="d-flex align-items-center gap-2">
                 <h2 class="fs-5 fw-semibold mb-0">Filtered Class Records</h2>
@@ -72,16 +78,13 @@
                 </span>
             </div>
             <div class="d-flex gap-2">
-                <form id="importForm" enctype="multipart/form-data">
-                    <input type="file" name="file" id="file" hidden>
-                    <button type="button" class="btn btn-outline-secondary" id="importButton">Import</button>
-                </form>
+                
                 <button type="button" id="generateQrButton" class="btn btn-primary">Generate QR(<span id="generateCount"></span>)</button>
             </div>
         </div>
 
         <!-- Student Table -->
-        <div class="table-responsive border rounded">
+        <div  class="table-responsive border rounded">
             <table class="table table-hover mb-0">
                 <thead class="table-light">
                     <tr>
@@ -98,8 +101,10 @@
                 </tbody>
             </table>
         </div>
+        
         <div id="pagination" class="d-flex gap-1 justify-content-end mt-3"></div>
     </div>
+    <div id="noStudentsMessage" class="text-center text-secondary py-5 d-none">No records found.</div>
 </div>
 
 

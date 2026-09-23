@@ -168,25 +168,45 @@ function loadStudents(page = 1) {
             );
 
             // Add students to table
-            response.data.forEach(function (student) {
+            if(response.data.length === 0){
+                // Hide table
+                $('#studentTableContainer').addClass('d-none');
+
+                // Show empty message
+                $('#noStudentsMessage').removeClass('d-none');
+
+                // Hide pagination
+                $('#pagination').empty();
+            }else{
+                 $('#studentTableContainer').removeClass('d-none');
+
+                // Hide empty message
+                $('#noStudentsMessage').addClass('d-none');
+
+                response.data.forEach(function (student) {
                 console.log('Rendering:',student.first_name,student.last_name);
+                    const row = `
+                        <tr>
+                            <td>${student.lrn ?? ''}</td>
+                            <td class="fw-semibold">${student.last_name ?? ''},${student.first_name ?? ''}${student.middle_initial ? ' ' + student.middle_initial + '.' : ''}
+                            </td>
+                            <td>${student.school ?? ''}</td>
+                            <td>${student.grade_level ?? ''}-${student.section ?? ''}</td>
+                            <td>${student.gender ?? ''}</td>
+                            <td>${student.school_year ?? ''}</td>
+                        </tr>
+                    `;
+                    $('#studentTable').append(row);
+                });
+            }
+            
+            // Render pagination
+            if (response.total === 0) {
+                $('#pagination').empty();
+            } else {
+                renderPagination(response);
+            }
 
-                const row = `
-                    <tr>
-                        <td>${student.lrn ?? ''}</td>
-                        <td class="fw-semibold">${student.last_name ?? ''},${student.first_name ?? ''}${student.middle_initial ? ' ' + student.middle_initial + '.' : ''}
-                        </td>
-                        <td>${student.school ?? ''}</td>
-                        <td>${student.grade_level ?? ''}-${student.section ?? ''}</td>
-                         <td>${student.gender ?? ''}</td>
-                        <td>${student.school_year ?? ''}</td>
-                    </tr>
-                `;
-
-                $('#studentTable').append(row);
-            });
-
-            renderPagination(response);
             console.log('Final table:',$('#studentTable').html());
         },
 
@@ -214,7 +234,7 @@ function renderPagination(response) {
     }
     // Page numbers
     for (let page = 1;page <= response.last_page;page++) {
-        $('#pagination').append(`<button class="btn btn-sm ${page === response.current_page ? 'btn-primary' : 'btn-outline-secondary' } page-button" data-page="${page}">${page}</button>`);
+        $('#pagination').append(`<button class="btn btn-sm  ${page === response.current_page ? 'btn-primary' : 'btn-outline-secondary' } px-3 page-button" data-page="${page}">${page}</button>`);
     }
 
     // Next button
