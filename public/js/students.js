@@ -1,4 +1,4 @@
-console.log('STUDENTS JS IS LOADED');
+// console.log('STUDENTS JS IS LOADED');
 
 $(document).ready(function () {
 
@@ -33,7 +33,7 @@ $(document).ready(function () {
             return;
         }
 
-        console.log('Selected file:', file.name);
+        // console.log('Selected file:', file.name);
         const formData = new FormData();
         formData.append('file', file);
 
@@ -49,7 +49,7 @@ $(document).ready(function () {
                     $('meta[name="csrf-token"]').attr('content')
             },
             success: function (response) {
-                console.log('Import successful:', response);
+                // console.log('Import successful:', response);
                 // Show import result
                 showImportResult(response);
                 // Reload students
@@ -91,7 +91,7 @@ $(document).ready(function () {
 
     // start of generate qr
     $('#generateQrButton').click(function () {
-        console.log('Generate QR clicked');
+        // console.log('Generate QR clicked');
         const filters = {
             search: $('#search').val(),
             gender: $('#genderFilter').val(),
@@ -100,16 +100,28 @@ $(document).ready(function () {
             section: $('#sectionFilter').val(),
             school_year: $('#schoolYearFilter').val()
         };
-        console.log('QR filters:', filters);
+        // console.log('QR filters:', filters);
 
         $.ajax({
             url: '/students/generate-qr',
             method: 'GET',
             data: filters,
             success: function (response) {
-                console.log('QR response:', response);
-                const qrData = {lrns: response.lrns};
-                console.log('QR data object:', qrData);
+                // console.log('QR response:', response);
+                const urls = response.students.map(function (student) {
+                    const url = student.url;
+                    const code = student.code;
+                    return {
+                        url: url,
+                        code: code,
+                    };
+                });
+                console.log('data need for qr', urls);
+            // console.log('Number of codes:', codes.length);
+                // const qrData = {
+                //     code: response.code
+                // };
+                // console.log('QR data object:', qrData.code);
             },
             error: function (xhr) {
                 console.error('Failed to get LRNs:',xhr.responseText);
@@ -133,13 +145,13 @@ function resetFilters() {
 
 //start of the function load stduents
 function loadStudents(page = 1) {
-    console.log('loadStudents() is running');
-    console.log('Search:', $('#search').val());
-    console.log('Gender:', $('#genderFilter').val());
-    console.log('Grade:', $('#gradeFilter').val());
-    console.log('School:', $('#schoolFilter').val());
-    console.log('Section:', $('#sectionFilter').val());
-    console.log('School Year:', $('#schoolYearFilter').val());
+    // console.log('loadStudents() is running');
+    // console.log('Search:', $('#search').val());
+    // console.log('Gender:', $('#genderFilter').val());
+    // console.log('Grade:', $('#gradeFilter').val());
+    // console.log('School:', $('#schoolFilter').val());
+    // console.log('Section:', $('#sectionFilter').val());
+    // console.log('School Year:', $('#schoolYearFilter').val());
 
     $.ajax({
         url: '/studentslist',
@@ -155,11 +167,11 @@ function loadStudents(page = 1) {
         },
 
         success: function (response) {
-            console.log('Full response from database:', response);
-            console.log('Students:', response.data);
-            console.log('Current page:', response.current_page);
-            console.log('Last page:', response.last_page);
-            console.log('Total students:', response.total);
+            // console.log('Full response from database:', response);
+            // console.log('Students:', response.data);
+            // console.log('Current page:', response.current_page);
+            // console.log('Last page:', response.last_page);
+            // console.log('Total students:', response.total);
             // Clear current table
             $('#studentTable').empty();
 
@@ -190,11 +202,12 @@ function loadStudents(page = 1) {
                 $('#noStudentsMessage').addClass('d-none');
 
                 response.data.forEach(function (student) {
-                console.log('Rendering:',student.first_name,student.last_name);
+                // console.log('Rendering:',student.first_name,student.last_name);
+            
                     const row = `
-                        <tr>
-                            <td>${student.lrn ?? ''}</td>
-                            <td class="fw-semibold">${student.last_name ?? ''},${student.first_name ?? ''}${student.middle_initial ? ' ' + student.middle_initial + '.' : ''}
+                        <tr class="">
+                            <td class="fw-semibold">${student.lrn ?? ''}</td>
+                            <td >${student.last_name ?? ''},${student.first_name ?? ''}${student.middle_initial ? ' ' + student.middle_initial + '.' : ''}
                             </td>
                             <td>${student.school ?? ''}</td>
                             <td>${student.grade_level ?? ''}-${student.section ?? ''}</td>
@@ -213,7 +226,7 @@ function loadStudents(page = 1) {
                 renderPagination(response);
             }
 
-            console.log('Final table:',$('#studentTable').html());
+            // console.log('Final table:',$('#studentTable').html());
         },
 
         error: function (xhr) {
@@ -226,7 +239,7 @@ function loadStudents(page = 1) {
 //pagination onclick start
 $(document).on('click', '.page-button', function () {
     const page = $(this).data('page');
-    console.log('Loading page:', page);
+    // console.log('Loading page:', page);
     loadStudents(page);
 });
 
@@ -240,7 +253,7 @@ function renderPagination(response) {
     }
     // Page numbers
     for (let page = 1;page <= response.last_page;page++) {
-        $('#pagination').append(`<button class="btn btn-sm  ${page === response.current_page ? 'btn-primary' : 'btn-outline-secondary' } px-3 page-button" data-page="${page}">${page}</button>`);
+        $('#pagination').append(`<button class="btn btn-sm  ${page === response.current_page ? 'btn-primary' : 'btn-outline-secondary' } px-3 p-2 page-button" data-page="${page}">${page}</button>`);
     }
 
     // Next button
@@ -259,7 +272,7 @@ function loadFilters() {
         url: '/student-filters',
         method: 'GET',
         success: function (filters) {
-            console.log('Filters:', filters);
+            // console.log('Filters:', filters);
 
             // Reset dynamic dropdowns
             $('#schoolFilter').html('<option value="">All</option>');

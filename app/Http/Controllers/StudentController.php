@@ -156,6 +156,7 @@ class StudentController extends Controller
 
         if ($request->search) {
             $search = $request->search;
+
             $query->where(function ($q) use ($search) {
                 $q->where('lrn', 'like', '%' . $search . '%')
                     ->orWhere('first_name', 'like', '%' . $search . '%')
@@ -190,12 +191,20 @@ class StudentController extends Controller
             $query->where('school_year', $request->school_year);
         }
 
-        $lrns = $query
-            ->pluck('lrn');
+        $students = $query->get();
+
+        $qrData = $students->map(function ($student) {
+
+            return [
+                'code' => $student->code,
+                'url' => route('students.show', $student->code),
+            ];
+        });
 
         return response()->json([
             'success' => true,
-            'lrns' => $lrns
+            'count' => $qrData->count(),
+            'students' => $qrData
         ]);
     }
 }

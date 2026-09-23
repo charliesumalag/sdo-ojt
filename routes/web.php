@@ -26,3 +26,7 @@ Route::get('/student-filters', [StudentController::class, 'studentFilters']);
 
 
 Route::get('/students/generate-qr', [StudentController::class, 'generateQr']);
+
+
+Route::get('/students/{code}', [StudentController::class, 'show'])
+    ->name('students.show');

@@ -120,12 +120,13 @@ class StudentsImport implements ToModel, WithHeadingRow, WithEvents
             ];
             return null;
         }
+        $code = $school . '-' . $gradeLevel . '-' . $section . '-' . $lrn;
 
-        if (Students::where('lrn', $lrn)->exists()) {
+        if (Students::where('code', $code)->exists()) {
             $this->skipped++;
             $this->skippedRows[] = [
                 'excel_row' => $this->getRowNumber(),
-                'reason' => 'Duplicate LRN: ' . $lrn,
+                'reason' => 'Duplicate Code: ' . $code,
             ];
             return null;
         }
@@ -143,6 +144,7 @@ class StudentsImport implements ToModel, WithHeadingRow, WithEvents
             'grade_level' => $gradeLevel,
             'section' => $section,
             'school_year' => $schoolYear,
+            'code' => $code,
         ]);
     }
 }

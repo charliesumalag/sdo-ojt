@@ -21,7 +21,7 @@ return new class extends Migration
             $table->string('grade_level');
             $table->string('section');
             $table->string('school_year')->nullable();
-            $table->string('status')->default('Not Printed');
+            $table->string('code')->unique();
             $table->timestamps();
         });
     }

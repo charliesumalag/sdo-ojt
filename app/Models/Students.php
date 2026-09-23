@@ -22,6 +22,6 @@ class Students extends Model
         'grade_level',
         'section',
         'school_year',
-        'status',
+        'code',
     ];
 }
