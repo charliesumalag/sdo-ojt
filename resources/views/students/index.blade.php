@@ -76,7 +76,7 @@
                     <input type="file" name="file" id="file" hidden>
                     <button type="button" class="btn btn-outline-secondary" id="importButton">Import</button>
                 </form>
-                <button class="btn btn-primary">Generate QR(<span id="generateCount"></span>)</button>
+                <button type="button" id="generateQrButton" class="btn btn-primary">Generate QR(<span id="generateCount"></span>)</button>
             </div>
         </div>
 
@@ -98,6 +98,7 @@
                 </tbody>
             </table>
         </div>
+        <div id="pagination" class="d-flex gap-1 justify-content-end mt-3"></div>
     </div>
 </div>
 

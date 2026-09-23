@@ -18,10 +18,11 @@ Route::get('/connection', function () {
 
 Route::get('/studentslist', [StudentController::class, 'index']);
 
-// Route::get('/students/{student_id}', [StudentController::class, 'show'])
-// ->name('student.show');
 
 Route::post('/students/import', [StudentController::class, 'import']);
 
 // filter
 Route::get('/student-filters', [StudentController::class, 'studentFilters']);
+
+
+Route::get('/students/generate-qr', [StudentController::class, 'generateQr']);

@@ -6,8 +6,12 @@ use App\Models\Students;
 use Maatwebsite\Excel\Concerns\ToModel;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Maatwebsite\Excel\Concerns\RemembersRowNumber;
+use Maatwebsite\Excel\Concerns\WithEvents;
+use Maatwebsite\Excel\Events\BeforeSheet;
 
-class StudentsImport implements ToModel, WithHeadingRow
+
+
+class StudentsImport implements ToModel, WithHeadingRow, WithEvents
 {
     use RemembersRowNumber;
 
@@ -15,8 +19,44 @@ class StudentsImport implements ToModel, WithHeadingRow
     public $skipped = 0;
     public $skippedRows = [];
 
+    // check all header fields/cell format if its correct
+    public function registerEvents(): array
+    {
+        return [
+            BeforeSheet::class => function (BeforeSheet $event) {
+                $rows = $event->getSheet()
+                    ->getDelegate()
+                    ->toArray();
+
+                $headers = $rows[0] ?? [];
+                $expectedHeaders = ['lrn', 'first_name', 'last_name', 'middle_initial', 'gender', 'school', 'parents_name', 'grade_level', 'section', 'school_year',];
+
+                $actualHeaders = array_map(function ($header) {
+                    return strtolower(
+                        str_replace(' ', '_', trim((string) $header))
+                    );
+                }, $headers);
+
+                $missingHeaders = array_diff(
+                    $expectedHeaders,
+                    $actualHeaders
+                );
+
+                if (!empty($missingHeaders)) {
+                    throw new \Exception(
+                        'Invalid Excel format. Missing columns: '
+                            . implode(', ', $missingHeaders)
+                    );
+                }
+            },
+        ];
+    }
+
+
+    // reading rows
     public function model(array $row)
     {
+
         $lrn = trim((string) ($row['lrn'] ?? ''));
         $firstName = trim((string) ($row['first_name'] ?? ''));
         $lastName = trim((string) ($row['last_name'] ?? ''));
@@ -71,47 +111,24 @@ class StudentsImport implements ToModel, WithHeadingRow
         }
 
 
-        /*
-        |--------------------------------------------------------------------------
-        | Skip row if ANY required field is empty
-        |--------------------------------------------------------------------------
-        */
 
         if (!empty($missingFields)) {
-
             $this->skipped++;
-
             $this->skippedRows[] = [
                 'excel_row' => $this->getRowNumber(),
                 'reason' => 'Missing: ' . implode(', ', $missingFields),
             ];
-
             return null;
         }
 
-        /*
-        |--------------------------------------------------------------------------
-        | Check duplicate LRN
-        |--------------------------------------------------------------------------
-        */
-
         if (Students::where('lrn', $lrn)->exists()) {
-
             $this->skipped++;
-
             $this->skippedRows[] = [
                 'excel_row' => $this->getRowNumber(),
                 'reason' => 'Duplicate LRN: ' . $lrn,
             ];
-
             return null;
         }
-
-        /*
-        |--------------------------------------------------------------------------
-        | Create Student
-        |--------------------------------------------------------------------------
-        */
 
         $this->imported++;
 

@@ -46,7 +46,7 @@ class StudentController extends Controller
 
         $students = $query
             ->orderBy('last_name')
-            ->get();
+            ->paginate(40);
 
         return response()->json($students);
     }
@@ -87,10 +87,19 @@ class StudentController extends Controller
 
         $import = new StudentsImport();
 
-        Excel::import(
-            $import,
-            $request->file('file')
-        );
+        try {
+
+            Excel::import(
+                $import,
+                $request->file('file')
+            );
+        } catch (\Exception $e) {
+
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage(),
+            ], 422);
+        }
 
         return response()->json([
             'success' => true,
@@ -124,6 +133,50 @@ class StudentController extends Controller
                 ->orderBy('school_year', 'desc')
                 ->pluck('school_year'),
 
+        ]);
+    }
+
+
+
+
+    public function generateQr(Request $request)
+    {
+        $query = Students::query();
+
+        if ($request->search) {
+            $query->where(function ($q) use ($request) {
+                $q->where('lrn', 'like', '%' . $request->search . '%')
+                    ->orWhere('first_name', 'like', '%' . $request->search . '%')
+                    ->orWhere('last_name', 'like', '%' . $request->search . '%');
+            });
+        }
+
+        if ($request->gender) {
+            $query->where('gender', $request->gender);
+        }
+
+        if ($request->grade_level) {
+            $query->where('grade_level', $request->grade_level);
+        }
+
+        if ($request->school) {
+            $query->where('school', $request->school);
+        }
+
+        if ($request->section) {
+            $query->where('section', $request->section);
+        }
+
+        if ($request->school_year) {
+            $query->where('school_year', $request->school_year);
+        }
+
+        $lrns = $query
+            ->pluck('lrn');
+
+        return response()->json([
+            'success' => true,
+            'lrns' => $lrns
         ]);
     }
 }
