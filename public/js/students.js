@@ -91,47 +91,56 @@ $(document).ready(function () {
 
     // start of generate qr
     $('#generateQrButton').click(function () {
-        // console.log('Generate QR clicked');
-        const filters = {
-            search: $('#search').val(),
-            gender: $('#genderFilter').val(),
-            grade_level: $('#gradeFilter').val(),
-            school: $('#schoolFilter').val(),
-            section: $('#sectionFilter').val(),
-            school_year: $('#schoolYearFilter').val()
-        };
-            console.log('QR filters:', filters);
 
-        $.ajax({
-            url: '/students/generate-qr',
-            method: 'POST',
-            data: filters,
-            headers: {
-                'X-CSRF-TOKEN':
-                    $('meta[name="csrf-token"]').attr('content')
-            },
-            success: function (response) {
-                // console.log('QR response:', response);
-                const urls = response.students.map(function (student) {
-                    const url = student.url;
-                    const code = student.code;
-                    return {
-                        url: url,
-                        code: code,
-                    };
-                });
-                console.log('data need for qr', urls);
-            // console.log('Number of codes:', codes.length);
-                // const qrData = {
-                //     code: response.code
-                // };
-                // console.log('QR data object:', qrData.code);
-            },
-            error: function (xhr) {
-                console.error('Failed to get LRNs:',xhr.responseText);
-            }
-        });
+    const filters = {
+        search: $('#search').val(),
+        gender: $('#genderFilter').val(),
+        grade_level: $('#gradeFilter').val(),
+        school: $('#schoolFilter').val(),
+        section: $('#sectionFilter').val(),
+        school_year: $('#schoolYearFilter').val()
+    };
+
+    console.log('Print filters:', filters);
+
+    // Create a form
+    const form = $('<form>', {
+        method: 'POST',
+        action: '/students/print',
+        target: '_blank'
     });
+
+    // CSRF token
+    form.append(
+        $('<input>', {
+            type: 'hidden',
+            name: '_token',
+            value: $('meta[name="csrf-token"]').attr('content')
+        })
+    );
+
+    // Add filters to form
+    $.each(filters, function (key, value) {
+
+        form.append(
+            $('<input>', {
+                type: 'hidden',
+                name: key,
+                value: value
+            })
+        );
+
+    });
+
+    // Add form to page
+    $('body').append(form);
+
+    // Submit
+    form.submit();
+
+    // Remove form after submitting
+    form.remove();
+});
     //end of generate qr
 //end of .ready
 });

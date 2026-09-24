@@ -25,7 +25,7 @@ Route::post('/students/import', [StudentController::class, 'import']);
 Route::get('/student-filters', [StudentController::class, 'studentFilters']);
 
 
-Route::get('/students/generate-qr', [StudentController::class, 'generateQr']);
+Route::post('/students/generate-qr', [StudentController::class, 'generateQr']);
 
 
 
@@ -34,3 +34,7 @@ Route::get('/students/{code}', [StudentController::class, 'show'])
 
 Route::get('/students/print-qr', [StudentController::class, 'printQr'])
     ->name('students.printQr');
+
+
+Route::post('/students/print', [StudentController::class, 'printQr'])
+    ->name('students.print');

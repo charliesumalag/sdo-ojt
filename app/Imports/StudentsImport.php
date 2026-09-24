@@ -120,7 +120,9 @@ class StudentsImport implements ToModel, WithHeadingRow, WithEvents
             ];
             return null;
         }
-        $code = $school . '-' . $gradeLevel . '-' . $section . '-' . $lrn;
+        $sectionInitial = substr($section, 0, 1);
+
+        $code = $school . '-' . $gradeLevel . '-' . $sectionInitial . '-' . $lrn;
 
         if (Students::where('code', $code)->exists()) {
             $this->skipped++;
