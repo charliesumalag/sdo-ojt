@@ -92,55 +92,60 @@ $(document).ready(function () {
     // start of generate qr
     $('#generateQrButton').click(function () {
 
-    const filters = {
-        search: $('#search').val(),
-        gender: $('#genderFilter').val(),
-        grade_level: $('#gradeFilter').val(),
-        school: $('#schoolFilter').val(),
-        section: $('#sectionFilter').val(),
-        school_year: $('#schoolYearFilter').val()
-    };
+        const filters = {
+            search: $('#search').val(),
+            gender: $('#genderFilter').val(),
+            grade_level: $('#gradeFilter').val(),
+            school: $('#schoolFilter').val(),
+            section: $('#sectionFilter').val(),
+            school_year: $('#schoolYearFilter').val()
+        };
 
-    console.log('Print filters:', filters);
+        console.log('Print filters:', filters);
 
-    // Create a form
-    const form = $('<form>', {
-        method: 'POST',
-        action: '/students/print',
-        target: '_blank'
-    });
+        showLoading('Generating QR codes...');
+        // Create a form
+        const form = $('<form>', {
+            method: 'POST',
+            action: '/students/print',
+            target: '_blank'
+        });
 
-    // CSRF token
-    form.append(
-        $('<input>', {
-            type: 'hidden',
-            name: '_token',
-            value: $('meta[name="csrf-token"]').attr('content')
-        })
-    );
-
-    // Add filters to form
-    $.each(filters, function (key, value) {
-
+        // CSRF token
         form.append(
             $('<input>', {
                 type: 'hidden',
-                name: key,
-                value: value
+                name: '_token',
+                value: $('meta[name="csrf-token"]').attr('content')
             })
         );
 
+        // Add filters to form
+        $.each(filters, function (key, value) {
+
+            form.append(
+                $('<input>', {
+                    type: 'hidden',
+                    name: key,
+                    value: value
+                })
+            );
+
+        });
+
+        // Add form to page
+        $('body').append(form);
+
+        // Submit
+        form.submit();
+
+        // Remove form after submitting
+        form.remove();
+
+        setTimeout(function () {
+            hideLoading();
+        }, 1000);
     });
-
-    // Add form to page
-    $('body').append(form);
-
-    // Submit
-    form.submit();
-
-    // Remove form after submitting
-    form.remove();
-});
     //end of generate qr
 //end of .ready
 });
@@ -166,6 +171,7 @@ function loadStudents(page = 1) {
     // console.log('Section:', $('#sectionFilter').val());
     // console.log('School Year:', $('#schoolYearFilter').val());
 
+    showLoading('Fetching students...');
     $.ajax({
         url: '/studentslist',
         method: 'GET',
@@ -244,6 +250,9 @@ function loadStudents(page = 1) {
 
         error: function (xhr) {
             console.error('Failed to load students:',xhr.responseText);
+        },
+        complete: function() {
+            hideLoading();
         }
     });
 }
@@ -364,3 +373,13 @@ function showNotification(message, type) {
     //end of timeout
 }
 //end of show notifaction function
+
+
+function showLoading(message = 'Loading...') {
+    $('.loading-text').text(message);
+    $('#loadingOverlay').css('display', 'flex');
+}
+
+function hideLoading() {
+    $('#loadingOverlay').hide();
+}

@@ -2,6 +2,7 @@
 <html>
 <head>
     <title>Student QR Codes</title>
+    <link rel="stylesheet" href="{{ asset('css/styles.css') }}">
     @php use SimpleSoftwareIO\QrCode\Facades\QrCode; @endphp
     <style>
         @page {
@@ -116,10 +117,66 @@
                 print-color-adjust: exact;
             }
         }
+        .loading-overlay {
+    position: fixed;
+    inset: 0;
+    background: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 99999;
+}
+
+.loading-box {
+    text-align: center;
+}
+
+.spinner {
+    width: 40px;
+    height: 40px;
+
+    border: 4px solid #dee2e6;
+    border-top: 4px solid #0d6efd;
+
+    border-radius: 50%;
+
+    animation: spin 0.8s linear infinite;
+
+    margin: 0 auto;
+}
+
+.loading-text {
+    margin-top: 15px;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.loading-subtext {
+    margin-top: 5px;
+    font-size: 14px;
+    color: #6c757d;
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
     </style>
 </head>
 
 <body>
+    <div id="loadingOverlay" class="loading-overlay">
+        <div class="loading-box">
+            <div class="spinner"></div>
+            <div class="loading-text">Generating QR codes...</div>
+            <div class="loading-subtext">Please wait while the QR codes are being prepared.</div>
+        </div>
+    </div>
     <div>
         <div class="btn-container">
             <button class="print-button" onclick="window.print()">Print QR Codes</button>
@@ -138,9 +195,23 @@
         @endforeach
     </div>
     <script>
-    document.querySelectorAll('.qr-code-container svg').forEach(function (svg) {
-        svg.setAttribute('preserveAspectRatio', 'none');
-    });
-</script>
+        document.querySelectorAll('.qr-code-container svg').forEach(function (svg) {
+            svg.setAttribute('preserveAspectRatio', 'none');
+        });
+    </script>
+    <script>
+
+        document.querySelectorAll('.qr-code-container svg').forEach(function (svg) {
+            svg.setAttribute('preserveAspectRatio', 'none');
+        });
+
+        // QR page has finished loading
+        window.addEventListener('load', function () {
+
+            document.getElementById('loadingOverlay').style.display = 'none';
+
+        });
+
+    </script>
 </body>
 </html>

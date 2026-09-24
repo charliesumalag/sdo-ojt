@@ -2,6 +2,13 @@
 
 @section('content')
 
+<div id="loadingOverlay" class="loading-overlay">
+    <div class="loading-box">
+        <div class="spinner"></div>
+        <div class="loading-text">Loading...</div>
+        <div class="loading-subtext">Please wait</div>
+    </div>
+</div>
 <div class="p-4">
     <div class="d-flex justify-content-between align-items-center  border-bottom pb-2">
         <div>
