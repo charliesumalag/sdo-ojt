@@ -148,76 +148,6 @@ class StudentController extends Controller
         ]);
     }
 
-
-
-
-    public function generateQr(Request $request)
-    {
-        $query = Students::query();
-
-        if ($request->search) {
-            $search = $request->search;
-
-            $query->where(function ($q) use ($search) {
-                $q->where('lrn', 'like', '%' . $search . '%')
-                    ->orWhere('first_name', 'like', '%' . $search . '%')
-                    ->orWhere('last_name', 'like', '%' . $search . '%')
-                    ->orWhere('middle_initial', 'like', '%' . $search . '%')
-                    ->orWhere('gender', $search)
-                    ->orWhere('school', 'like', '%' . $search . '%')
-                    ->orWhere('parents_name', 'like', '%' . $search . '%')
-                    ->orWhere('grade_level', 'like', '%' . $search . '%')
-                    ->orWhere('section', 'like', '%' . $search . '%')
-                    ->orWhere('school_year', 'like', '%' . $search . '%');
-            });
-        }
-
-        if ($request->gender) {
-            $query->where('gender', $request->gender);
-        }
-
-        if ($request->grade_level) {
-            $query->where('grade_level', $request->grade_level);
-        }
-
-        if ($request->school) {
-            $query->where('school', $request->school);
-        }
-
-        if ($request->section) {
-            $query->where('section', $request->section);
-        }
-
-        if ($request->school_year) {
-            $query->where('school_year', $request->school_year);
-        }
-
-        $students = $query->get();
-
-        $qrData = $students->map(function ($student) {
-
-            $url = route('students.show', $student->code);
-
-            $qr = (string) QrCode::size(150)
-                ->margin(1)
-                ->generate($url);
-
-            return [
-                'code' => $student->code,
-                'url' => $url,
-                'qr' => $qr,
-            ];
-        });
-
-        $printView = view('students.print', compact('qrData'))->render();
-
-        return response()->json([
-            'success' => true,
-            'students' => $qrData,
-            'html' => $printView,
-        ]);
-    }
-
     public function printQr(Request $request)
     {
         $query = Students::query();
@@ -265,5 +195,15 @@ class StudentController extends Controller
 
         // Send QR data to print view
         return view('students.print', compact('qrData'));
+    }
+
+    public function home()
+    {
+        return view('students.index');
+    }
+    public function studentList()
+    { {
+            return view('students.index');
+        }
     }
 }
