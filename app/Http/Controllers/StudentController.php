@@ -179,11 +179,13 @@ class StudentController extends Controller
 
     public function studentSection(Request $request)
     {
-        $grades = Students::where('grade_level', $request->grade_level)
+        $sections = Students::where('school', $request->school)
+            ->where('grade_level', $request->grade_level)
             ->select('section')
             ->distinct()
             ->orderBy('section')
             ->pluck('section');
-        return response()->json($grades);
+
+        return response()->json($sections);
     }
 }
