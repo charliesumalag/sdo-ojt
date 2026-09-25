@@ -93,3 +93,18 @@ aside {
         transform: rotate(360deg);
     }
 }
+
+/* Normal screen */
+#printArea {
+    display: none;
+}
+
+#printFrame {
+    position: fixed;
+    top: -10000px;
+    left: -10000px;
+    width: 8.5in;
+    height: 11in;
+    border: none;
+    opacity: 0;
+}

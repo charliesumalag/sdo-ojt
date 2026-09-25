@@ -123,5 +123,7 @@
 
 {{-- partial import modal --}}
 @include('partials.imported-modal')
+<div id="printArea"></div>
+<iframe id="printFrame"></iframe>
 <script src="{{asset('js/students.js') }}"></script>
 @endsection

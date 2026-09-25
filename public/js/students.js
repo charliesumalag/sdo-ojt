@@ -80,145 +80,65 @@ $(document).ready(function () {
     });
 
     // start of generate qr
-    $('#generateQrButton').click(function () {
-        const filters = {
-            search: $('#search').val(),
-            gender: $('#genderFilter').val(),
-            grade_level: $('#gradeFilter').val(),
-            school: $('#schoolFilter').val(),
-            section: $('#sectionFilter').val(),
-            school_year: $('#schoolYearFilter').val()
-        };
-        console.log('Print filters:', filters);
+// start of generate qr
 
-        // Open the new tab immediately
-        const printWindow = window.open('', 'qrPrintWindow');
+$('#generateQrButton').click(function () {
 
-        // Check if browser blocked the popup
-        if (!printWindow) {
-            alert('Please allow pop-ups for this website.');
-            return;
+    const filters = {
+        search: $('#search').val(),
+        gender: $('#genderFilter').val(),
+        grade_level: $('#gradeFilter').val(),
+        school: $('#schoolFilter').val(),
+        section: $('#sectionFilter').val(),
+        school_year: $('#schoolYearFilter').val()
+    };
+
+    // Build query string
+    const params = new URLSearchParams();
+
+    Object.keys(filters).forEach(function (key) {
+
+        if (filters[key]) {
+            params.append(key, filters[key]);
         }
 
-    // Show loading screen immediately in the new tab
-    printWindow.document.write(`
-        <!DOCTYPE html>
-        <html>
-        <head>
-            <title>Generating QR Codes...</title>
-            <style>
-                * {
-                    box-sizing: border-box;
-                }
-                body {
-                    margin: 0;
-                    font-family: Arial, sans-serif;
-                    background: #f8f9fa;
-                }
-                .loading-overlay {
-                    position: fixed;
-                    inset: 0;
-                    background: white;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    z-index: 99999;
-                }
-
-                .loading-box {
-                    text-align: center;
-                }
-
-                .spinner {
-                    width: 45px;
-                    height: 45px;
-                    border: 4px solid #dee2e6;
-                    border-top: 4px solid #0d6efd;
-                    border-radius: 50%;
-                    animation: spin 0.8s linear infinite;
-                    margin: 0 auto;
-                }
-
-                .loading-text {
-                    margin-top: 18px;
-                    font-size: 18px;
-                    font-weight: 600;
-                    color: #212529;
-                }
-
-                .loading-subtext {
-                    margin-top: 6px;
-                    font-size: 14px;
-                    color: #6c757d;
-                }
-                @keyframes spin {
-                    from {
-                        transform: rotate(0deg);
-                    }
-                    to {
-                        transform: rotate(360deg);
-                    }
-                }
-            </style>
-        </head>
-
-        <body>
-            <div class="loading-overlay">
-                <div class="loading-box">
-                    <div class="spinner"></div>
-                    <div class="loading-text">
-                        Generating QR Codes...
-                    </div>
-
-                    <div class="loading-subtext">
-                        Please wait. This may take a while.
-                    </div>
-                </div>
-            </div>
-        </body>
-        </html>
-    `);
-
-    printWindow.document.close();
-
-
-    // Create POST form
-    const form = $('<form>', {
-        method: 'POST',
-        action: '/students/print',
-        target: 'qrPrintWindow'
     });
 
-    // CSRF token
-    form.append($('<input>', {
-        type: 'hidden',
-        name: '_token',
-        value: $('meta[name="csrf-token"]').attr('content')
-    }));
+    // Print URL
+    const printUrl = '/students/print?' + params.toString();
 
-    // Add filters
-    $.each(filters, function (key, value) {
-        form.append($('<input>', {
-            type: 'hidden',
-            name: key,
-            value: value
-        }));
+    // Get iframe
+    const printFrame = document.getElementById('printFrame');
+
+    // Show loading
+    showLoading('Generating QR Codes...');
+
+    // Remove previous load event
+    $('#printFrame').off('load');
+
+    // When print page finishes loading
+    $('#printFrame').one('load', function () {
+
+        // Give the browser a moment to finish rendering
+        setTimeout(function () {
+
+            hideLoading();
+
+            printFrame.contentWindow.focus();
+
+            printFrame.contentWindow.print();
+
+        }, 300);
 
     });
 
-    $('body').append(form);
-
-
-    // Give browser a moment to render the spinner
-    setTimeout(function () {
-
-        form.submit();
-
-        form.remove();
-
-    }, 100);
+    // Load print page inside hidden iframe
+    printFrame.src = printUrl;
 
 });
+
+// end of generate qr
+
     //end of generate qr
 //end of .ready
 });
