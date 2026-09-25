@@ -75,42 +75,30 @@ $(document).ready(function () {
     //end of file selection
     });
     // Reload students when a filter changes
-    $(
-        '#genderFilter, ' +
-        '#gradeFilter, ' +
-        '#schoolFilter, ' +
-        '#sectionFilter, ' +
-        '#schoolYearFilter'
-    ).change(function () {
+    $('#genderFilter, ' + '#gradeFilter, ' + '#schoolFilter, ' + '#sectionFilter, ' + '#schoolYearFilter').change(function (){
         loadStudents();
     });
 
-
-
-
-
     // start of generate qr
     $('#generateQrButton').click(function () {
+        const filters = {
+            search: $('#search').val(),
+            gender: $('#genderFilter').val(),
+            grade_level: $('#gradeFilter').val(),
+            school: $('#schoolFilter').val(),
+            section: $('#sectionFilter').val(),
+            school_year: $('#schoolYearFilter').val()
+        };
+        console.log('Print filters:', filters);
 
-    const filters = {
-        search: $('#search').val(),
-        gender: $('#genderFilter').val(),
-        grade_level: $('#gradeFilter').val(),
-        school: $('#schoolFilter').val(),
-        section: $('#sectionFilter').val(),
-        school_year: $('#schoolYearFilter').val()
-    };
+        // Open the new tab immediately
+        const printWindow = window.open('', 'qrPrintWindow');
 
-    console.log('Print filters:', filters);
-
-    // Open the new tab immediately
-    const printWindow = window.open('', 'qrPrintWindow');
-
-    // Check if browser blocked the popup
-    if (!printWindow) {
-        alert('Please allow pop-ups for this website.');
-        return;
-    }
+        // Check if browser blocked the popup
+        if (!printWindow) {
+            alert('Please allow pop-ups for this website.');
+            return;
+        }
 
     // Show loading screen immediately in the new tab
     printWindow.document.write(`
@@ -118,27 +106,22 @@ $(document).ready(function () {
         <html>
         <head>
             <title>Generating QR Codes...</title>
-
             <style>
                 * {
                     box-sizing: border-box;
                 }
-
                 body {
                     margin: 0;
                     font-family: Arial, sans-serif;
                     background: #f8f9fa;
                 }
-
                 .loading-overlay {
                     position: fixed;
                     inset: 0;
                     background: white;
-
                     display: flex;
                     align-items: center;
                     justify-content: center;
-
                     z-index: 99999;
                 }
 
@@ -149,14 +132,10 @@ $(document).ready(function () {
                 .spinner {
                     width: 45px;
                     height: 45px;
-
                     border: 4px solid #dee2e6;
                     border-top: 4px solid #0d6efd;
-
                     border-radius: 50%;
-
                     animation: spin 0.8s linear infinite;
-
                     margin: 0 auto;
                 }
 
@@ -172,12 +151,10 @@ $(document).ready(function () {
                     font-size: 14px;
                     color: #6c757d;
                 }
-
                 @keyframes spin {
                     from {
                         transform: rotate(0deg);
                     }
-
                     to {
                         transform: rotate(360deg);
                     }
@@ -186,13 +163,9 @@ $(document).ready(function () {
         </head>
 
         <body>
-
             <div class="loading-overlay">
-
                 <div class="loading-box">
-
                     <div class="spinner"></div>
-
                     <div class="loading-text">
                         Generating QR Codes...
                     </div>
@@ -200,11 +173,8 @@ $(document).ready(function () {
                     <div class="loading-subtext">
                         Please wait. This may take a while.
                     </div>
-
                 </div>
-
             </div>
-
         </body>
         </html>
     `);
@@ -228,7 +198,6 @@ $(document).ready(function () {
 
     // Add filters
     $.each(filters, function (key, value) {
-
         form.append($('<input>', {
             type: 'hidden',
             name: key,
@@ -267,15 +236,6 @@ function resetFilters() {
 
 //start of the function load stduents
 function loadStudents(page = 1) {
-    // console.log('loadStudents() is running');
-    // console.log('Search:', $('#search').val());
-    // console.log('Gender:', $('#genderFilter').val());
-    // console.log('Grade:', $('#gradeFilter').val());
-    // console.log('School:', $('#schoolFilter').val());
-    // console.log('Section:', $('#sectionFilter').val());
-    // console.log('School Year:', $('#schoolYearFilter').val());
-
-    showLoading('Fetching students...');
     $.ajax({
         url: '/studentslist',
         method: 'GET',
@@ -288,14 +248,10 @@ function loadStudents(page = 1) {
             section: $('#sectionFilter').val(),
             school_year: $('#schoolYearFilter').val()
         },
-
+        beforeSend: function () {
+            showLoading('Loading students...');
+        },
         success: function (response) {
-            // console.log('Full response from database:', response);
-            // console.log('Students:', response.data);
-            // console.log('Current page:', response.current_page);
-            // console.log('Last page:', response.last_page);
-            // console.log('Total students:', response.total);
-            // Clear current table
             $('#studentTable').empty();
 
             // Update record count
@@ -355,7 +311,7 @@ function loadStudents(page = 1) {
         error: function (xhr) {
             console.error('Failed to load students:',xhr.responseText);
         },
-        complete: function() {
+        complete: function () {
             hideLoading();
         }
     });
