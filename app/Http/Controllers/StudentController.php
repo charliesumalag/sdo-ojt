@@ -39,7 +39,7 @@ class StudentController extends Controller
 
         $students = $query
             ->orderBy('last_name')
-            ->paginate(40);
+            ->paginate(17);
 
         return response()->json($students);
     }
@@ -100,11 +100,11 @@ class StudentController extends Controller
                 ->distinct()
                 ->orderBy('section')
                 ->pluck('section'),
-            'school_years' => Students::whereNotNull('school_year')
-                ->where('school_year', '!=', '')
+            'grade_level' => Students::whereNotNull('grade_level')
+                ->where('grade_level', '!=', '')
                 ->distinct()
-                ->orderBy('school_year', 'desc')
-                ->pluck('school_year'),
+                ->orderBy('grade_level', 'desc')
+                ->pluck('grade_level'),
         ]);
     }
 
@@ -133,7 +133,10 @@ class StudentController extends Controller
         }
 
         // Get all matching students
-        $students = $query->orderBy('last_name')->get();
+        $students = $query
+            ->select('code', 'last_name')
+            ->orderBy('last_name')
+            ->get();
 
         // Generate QR data
         $qrData = $students->map(function ($student) {
@@ -160,5 +163,27 @@ class StudentController extends Controller
     { {
             return view('students.index');
         }
+    }
+
+
+    public function studentGrades(Request $request)
+    {
+        $grades = Students::where('school', $request->school)
+            ->select('grade_level')
+            ->distinct()
+            ->orderBy('grade_level')
+            ->pluck('grade_level');
+        return response()->json($grades);
+    }
+
+
+    public function studentSection(Request $request)
+    {
+        $grades = Students::where('grade_level', $request->grade_level)
+            ->select('section')
+            ->distinct()
+            ->orderBy('section')
+            ->pluck('section');
+        return response()->json($grades);
     }
 }
