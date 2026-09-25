@@ -27,7 +27,7 @@ aside {
 }
 .nav-link-custom {
     width: 100%;
-    padding: 10px 12px;
+    padding: 8px 12px;
     font-size: 14px;
     border-radius: 6px;
     border: 1px solid #DEE2E6;
@@ -108,4 +108,36 @@ aside {
     height: 11in;
     border: none;
     opacity: 0;
+}
+
+.btn-primary {
+    background-color: #2980B9;
+    border-color: #2980B9;
+}
+
+.btn-primary:hover {
+    background-color: #2471A3;
+    border-color: #2471A3;
+}
+
+.btn-primary:active,
+.btn-primary:focus {
+    background-color: #2471A3;
+    border-color: #2471A3;
+}
+.primary-bg-color{
+    background-color: #2980B9;
+
+}
+.primary-text-color{
+    color: #2980B9;
+}
+
+#schoolFilter {
+    border-color: #DEE2E6;
+}
+
+#schoolFilter:focus {
+    border-color: #2980B9;
+    box-shadow: 0 0 0 0.25rem rgba(41, 128, 185, 0.15);
 }
