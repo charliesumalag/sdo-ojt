@@ -78,10 +78,6 @@ class StudentsImport implements ToModel, WithHeadingRow, WithEvents
             $missingFields[] = 'last_name';
         }
 
-        if ($middleInitial === '') {
-            $missingFields[] = 'middle_initial';
-        }
-
         if ($lrn === '') {
             $missingFields[] = 'lrn';
         }
@@ -91,11 +87,6 @@ class StudentsImport implements ToModel, WithHeadingRow, WithEvents
         }
         if ($school === '') {
             $missingFields[] = 'school';
-        }
-
-
-        if ($parentsName === '') {
-            $missingFields[] = 'parents_name';
         }
 
         if ($gradeLevel === '') {
@@ -120,6 +111,7 @@ class StudentsImport implements ToModel, WithHeadingRow, WithEvents
             ];
             return null;
         }
+        //kuhain ang first letter ng middle inital
         $sectionInitial = substr($section, 0, 1);
 
         $code = $school . '-' . $gradeLevel . '-' . $sectionInitial . '-' . $lrn;
@@ -128,7 +120,7 @@ class StudentsImport implements ToModel, WithHeadingRow, WithEvents
             $this->skipped++;
             $this->skippedRows[] = [
                 'excel_row' => $this->getRowNumber(),
-                'reason' => 'Duplicate Code: ' . $code,
+                'reason' => 'Duplicate Student Record: ' . $code,
             ];
             return null;
         }

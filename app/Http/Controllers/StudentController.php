@@ -10,33 +10,25 @@ use Maatwebsite\Excel\Facades\Excel;
 
 class StudentController extends Controller
 {
-    /**
-     * Get all students.
-     */
+
     public function index(Request $request)
     {
         $query = Students::query();
-
         if ($request->gender) {
             $query->where('gender', $request->gender);
         }
-
         if ($request->grade_level) {
             $query->where('grade_level', $request->grade_level);
         }
-
         if ($request->school) {
             $query->where('school', $request->school);
         }
-
         if ($request->section) {
             $query->where('section', $request->section);
         }
-
         if ($request->school_year) {
             $query->where('school_year', $request->school_year);
         }
-
         $students = $query
             ->orderBy('last_name')
             ->paginate(25);
@@ -44,13 +36,10 @@ class StudentController extends Controller
         return response()->json($students);
     }
 
-    /**
-     * Get a single student.
-     */
+
     public function show($code)
     {
         $student = Students::where('code', $code)->first();
-
         if (!$student) {
             abort(404, 'Student not found.');
         }
