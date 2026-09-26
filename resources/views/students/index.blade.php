@@ -1,7 +1,6 @@
 @extends('layouts.app')
 
 @section('content')
-
 <div id="loadingOverlay" class="loading-overlay">
     <div class="loading-box">
         <div class="spinner"></div>
@@ -90,7 +89,6 @@
     </div>
     <div id="noStudentsMessage" class="text-center text-secondary py-4 d-none">No records found.</div>
 </div>
-
 
 {{-- partial import modal --}}
 @include('partials.imported-modal')

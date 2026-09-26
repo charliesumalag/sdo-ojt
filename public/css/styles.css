@@ -25,14 +25,12 @@ aside {
     min-width: 200px;
 }
 
-/* md */
 @media (min-width: 768px) {
     aside {
         width: 220px;
     }
 }
 
-/* lg */
 @media (min-width: 992px) {
     aside {
         width: 260px;
@@ -46,7 +44,6 @@ aside {
     }
 }
 
-/* xxl */
 @media (min-width: 1400px) {
     aside {
         width: 330px;

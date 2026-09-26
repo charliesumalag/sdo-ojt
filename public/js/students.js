@@ -179,7 +179,6 @@ $(document).ready(function () {
 //end ng document.ready
 
 //helper/functions
-
 function resetFilters() {
     $('#search').val('');
     $('#schoolFilter').val('');
