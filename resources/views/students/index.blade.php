@@ -14,13 +14,13 @@
         <div>
             <div class="d-flex align-items-center gap-2 ">
                 <h1 class="fs-3 fw-semibold text-dark mb-0 p-0 m-0">Student Records</h1>
-                <span id="studentRecordsHeading"></span>
+                <span id="studentRecordsHeading" class="text-secondary"></span>
             </div>
             <p class="small text-secondary">View students and import new student records.</p>
         </div>
         <div class="d-flex gap-2">
             <form id="importForm" enctype="multipart/form-data">
-                <input type="file" name="file" id="file" accept=".xlsx,.xls" hidden>
+                <input type="file" name="file" id="file" accept=".xlsx,.xls,.csv" hidden>
                 <button type="button" class="btn btn-outline-secondary px-4 " id="importButton">Import Excel File</button>
             </form>
         </div>
@@ -31,21 +31,21 @@
     <div class="bg-white border rounded mt-4 p-3">
         <div class="row">
             {{-- station dropdown --}}
-            <div class="col-md-2 position-relative">
+            <div class="col-md-3 position-relative">
                 <select id="schoolFilter" class="form-select">    
                 </select>
             </div>
             {{-- year level --}}
-            <div class="col-md-2">  
+            <div class="col-md-3">  
                 <select id="gradeFilter" class="form-select">
                 </select>
             </div>
             {{-- section --}}
-            <div class="col-md-2">
+            <div class="col-md-3">
                 <select id="sectionFilter" class="form-select">
                 </select>
             </div>
-           <div class="col-md-2 d-flex align-items-end">
+           <div class="col-md-3 d-flex align-items-end">
                 <button type="button" id="clearFilters" class="btn btn-outline-secondary w-100">
                     <i class="bi bi-x-lg me-1"></i>Clear</button>
             </div>
@@ -69,8 +69,8 @@
         </div>
 
         <!-- Student Table -->
-        <div class="table-responsive rounded">
-            <table class="table-hover mb-0 table table-striped">
+        <div class="table-responsive rounded ">
+            <table class="table-hover mb-0 table table-striped text-secondary">
                 <thead class="table-light">
                     <tr>
                         <th class="small">Learner Ref Number<br>(LRN)</th>

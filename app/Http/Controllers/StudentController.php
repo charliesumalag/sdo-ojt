@@ -39,7 +39,7 @@ class StudentController extends Controller
 
         $students = $query
             ->orderBy('last_name')
-            ->paginate(17);
+            ->paginate(25);
 
         return response()->json($students);
     }
@@ -52,16 +52,10 @@ class StudentController extends Controller
         $student = Students::where('code', $code)->first();
 
         if (!$student) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Student not found',
-            ], 404);
+            abort(404, 'Student not found.');
         }
 
-        return response()->json([
-            'success' => true,
-            'student' => $student,
-        ]);
+        return view('students.showscan', compact('student'));
     }
 
     public function import(Request $request)

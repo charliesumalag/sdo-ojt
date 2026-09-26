@@ -21,10 +21,38 @@ header p {
 }
 
 aside {
-    width: 25%;
-    max-width: 320px;
-    min-width: 240px;
+    max-width: 350px;
+    min-width: 200px;
 }
+
+/* md */
+@media (min-width: 768px) {
+    aside {
+        width: 220px;
+    }
+}
+
+/* lg */
+@media (min-width: 992px) {
+    aside {
+        width: 260px;
+    }
+}
+
+/* xl */
+@media (min-width: 1200px) {
+    aside {
+        width: 290px;
+    }
+}
+
+/* xxl */
+@media (min-width: 1400px) {
+    aside {
+        width: 330px;
+    }
+}
+
 .nav-link-custom {
     width: 100%;
     padding: 8px 12px;
@@ -118,7 +146,7 @@ aside {
 .btn-primary:hover {
     background-color: #2471A3;
     border-color: #2471A3;
-}
+}f
 
 .btn-primary:active,
 .btn-primary:focus {
@@ -140,4 +168,7 @@ aside {
 #schoolFilter:focus {
     border-color: #2980B9;
     box-shadow: 0 0 0 0.25rem rgba(41, 128, 185, 0.15);
+}
+#studentTable td {
+    color: #444;
 }
