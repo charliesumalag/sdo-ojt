@@ -22,7 +22,7 @@
                         </div>
                         <div class="mb-3">
                             <div class="small text-secondary">Student Name</div>
-                            <div class="fw-semibold">{{ $student->first_name }}{{ $student->middle_initial }}.{{ $student->last_name }}</div>
+                            <div class="fw-semibold">{{ $student->first_name }} {{ $student->middle_initial }}. {{ $student->last_name }}</div>
                         </div>
                         <hr>
                         <div class="row">
