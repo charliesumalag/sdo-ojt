@@ -13,3 +13,5 @@ Route::get('/students/print', [StudentController::class, 'printQr'])->name('stud
 Route::get('/student-grades', [StudentController::class, 'studentGrades']);
 Route::get('/student-section', [StudentController::class, 'studentSection']);
 Route::get('/status', [StudentController::class, 'status']);
+Route::post('/students/print-confirmed', [StudentController::class, 'printConfirmed'])
+    ->name('students.print-confirmed');

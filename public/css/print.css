@@ -1,66 +1,114 @@
 @page {
-            size: auto;
-            margin: 10mm;
-        }
+    size: 8.5in 11in;
+    margin: 0;
+}
 
-        * {
-            box-sizing: border-box;
-        }
+* {
+    box-sizing: border-box;
+}
 
-        body {
-            margin: 0;
-            font-family: Arial, sans-serif;
-        }
+html,body {
+    margin: 0;
+    padding: 0;
+    width: 8.5in;
+}
 
-        .print-page {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            grid-template-rows: repeat(4, 1fr);
-            gap: 5mm;
-            width: 100%;
-            page-break-after: always;
-        }
+body {
+    font-family: Arial, sans-serif;
+}
 
-        .student-card {
-            border: 1px solid #000;
-            display: flex;
-            align-items: center;
-            padding: 5mm;
-            min-height: 45mm;
-        }
+.print-page {
+    width: 8.5in;
+    height: 11in;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(2, 3.8in);
+    grid-template-rows: repeat(4, 2.6in);
+    gap: 5px;
+    justify-content: center;
+    align-content: center;
+    page-break-after: always;
+    break-after: page;
+}
 
-        .student-info {
-            flex: 1;
-            padding-right: 5mm;
-        }
+.print-page:last-child {
+    page-break-after: auto;
+    break-after: auto;
+}
 
-        .student-name {
-            font-size: 18px;
-            font-weight: bold;
-            margin-bottom: 5px;
-        }
 
-        .student-number {
-            font-size: 14px;
-            margin-bottom: 5px;
-        }
+.qr-card {
+    display: flex;
+    /*border: 1px solid red;*/
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    page-break-inside: avoid;
+    break-inside: avoid;
+    background-image: url('/images/qr-background.png');
+    background-size: 100% 100%;
+    background-position: center;
+    background-repeat: no-repeat;
+    position: relative;
+}
 
-        .student-grade {
-            font-size: 13px;
-        }
+.qr-code-container {
+    width: 50px;
+    height: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0.25px;
+    border-radius: 2px;
+    background: white;
+    position: absolute;
+    bottom: 18px;
+    left: 12px;
+}
 
-        .qr {
-            width: 30mm;
-            height: 30mm;
-        }
+.qr-card svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+}
 
-        .qr img {
-            width: 100%;
-            height: 100%;
-        }
+.codes-container{
+    /* border: 1px solid red; */
+    width: 140px;
+    height: 28px;
+    position: absolute;
+    bottom: 18px;
+    left: 58px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
 
-        @media print {
-            .print-page {
-                page-break-after: always;
-            }
-        }
+.code {
+    font-size: 10px;
+    font-weight: bold;
+}
+
+@media print {
+
+    * {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+
+    html,body {
+        margin: 0;
+        padding: 0;
+    }
+
+    .print-page {
+        page-break-after: always;
+        break-after: page;
+    }
+
+    .print-page:last-child {
+        page-break-after: auto;
+        break-after: auto;
+    }
+}

@@ -20,48 +20,60 @@
         <div class="d-flex gap-2">
             <form id="importForm" enctype="multipart/form-data">
                 <input type="file" name="file" id="file" accept=".xlsx,.xls,.csv" hidden>
-                <button type="button" class="btn btn-secondary px-4 " id="importButton">Import Excel File</button>
+                <button type="button" class="btn btn-primary   px-4 " id="importButton">Import Excel File</button>
             </form>
         </div>
 
     </div>
     <div id="notification" class="alert d-none" role="alert"></div>
     <!-- Filters -->
-    <div class="bg-white border rounded mt-4 p-3">
-        <div class="row">
-            {{-- station dropdown --}}
-            <div class="col-md-2 position-relative">
-                <select id="schoolFilter" class="form-select">    
-                </select>
-            </div>
-            {{-- year level --}}
-            <div class="col-md-2">  
-                <select id="gradeFilter" class="form-select">
-                </select>
-            </div>
-            {{-- section --}}
-            <div class="col-md-2">
-                <select id="sectionFilter" class="form-select">
-                </select>
-            </div>
-            <div class="col-md-2">
-               <select id="statusFilter" class="form-select" disabled>
-                
+    <!-- Filters -->
+<div class="filter-container">
+
+    <div class="filter-group">
+
+        {{-- station --}}
+        <div class="filter-item">
+            <select id="schoolFilter" class="filter-select">
             </select>
-            </div>
-           <div class="col-md-3 d-flex align-items-end">
-                <button type="button" id="clearFilters" class="btn btn-outline-secondary">
-                    <i class="bi bi-x-lg me-1"></i>Clear
-                </button>
-            </div>
         </div>
+
+        {{-- year level --}}
+        <div class="filter-item">
+            <select id="gradeFilter" class="filter-select">
+            </select>
+        </div>
+
+        {{-- section --}}
+        <div class="filter-item">
+            <select id="sectionFilter" class="filter-select">
+            </select>
+        </div>
+
+        {{-- status --}}
+        <div class="filter-item">
+            <select id="statusFilter" class="filter-select" disabled>
+                <option value="Not Printed">Not Printed</option>
+                <option value="Printed">Printed</option>
+            </select>
+        </div>
+
     </div>
+
+    {{-- Clear --}}
+    <button type="button" id="clearFilters" class="clear-filter-btn">
+        <i class="bi bi-x-lg clear-icon"></i>
+        <span>Clear</span>
+    </button>
+
+</div>
+
 
     <!-- Student Records -->
     <div class="border p-4 rounded mt-4" id="studentTableContainer">
         <div class="d-flex border-bottom justify-content-between align-items-center pb-3">
             <div class="d-flex align-items-center gap-2 ">
-                <h2  class="fs-5 fw-semibold mb-0">Student List</h2>
+                <h2  class="fs-6 fw-semibold mb-0">Student List</h2>
                 <span
                     id="recordCount"
                     class="badge rounded-pill text-primary bg-primary-subtle">
@@ -78,11 +90,11 @@
             <table class="table-hover mb-0 table table-striped text-secondary">
                 <thead class="table-light">
                     <tr>
-                        <th class="small">Learner Ref Number<br>(LRN)</th>
-                        <th class="small">Student Name</th>
-                        <th class="small">Grade & Sec</th>
-                        <th class="small">Gender</th>
-                        <th class="small">Status</th>
+                        <th class="">Learner Ref Number<br>(LRN)</th>
+                        <th class="">Student Name</th>
+                        <th class="">Grade & Sec</th>
+                        <th class="">Gender</th>
+                        <th class="">Status</th>
                     </tr>
                 </thead>
                 <tbody id="studentTable">
@@ -98,7 +110,9 @@
 
 {{-- partial import modal --}}
 @include('partials.imported-modal')
+@include('partials.print-confirmation')
 <div id="printArea"></div>
 <iframe id="printFrame"></iframe>
+@include('partials.print-confirmation')
 <script src="{{asset('js/students.js') }}"></script>
 @endsection

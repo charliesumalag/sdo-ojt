@@ -133,7 +133,7 @@ class StudentController extends Controller
                 "LRN: {$student->lrn}\n" .
                 "Name: {$student->first_name} " .
                 ($student->middle_initial
-                    ? "{$student->middle_initial} "
+                    ? "{$student->middle_initial}. "
                     : "") .
                 "{$student->last_name}\n" .
                 "School: {$student->school}\n" .
@@ -201,5 +201,24 @@ class StudentController extends Controller
             ->pluck('status');
 
         return response()->json($status);
+    }
+    public function printConfirmed(Request $request){
+
+         $request->validate([
+        'codes' => ['required', 'array'],
+        'codes.*' => ['required', 'string'],
+        ]);
+
+        $updated = Students::whereIn('code', $request->codes)
+            ->where('status', 'Not Printed')
+            ->update([
+                'status' => 'Printed'
+            ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Print status updated successfully.',
+            'updated' => $updated
+        ]);
     }
 }

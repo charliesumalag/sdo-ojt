@@ -60,7 +60,7 @@ aside {
     display: flex;
     align-items: center;
     gap: 8px;
-    
+
 
     text-decoration: none;
     color: #212529;
@@ -143,7 +143,7 @@ aside {
 .btn-primary:hover {
     background-color: #2471A3;
     border-color: #2471A3;
-}f
+}
 
 .btn-primary:active,
 .btn-primary:focus {
@@ -168,4 +168,126 @@ aside {
 }
 #studentTable td {
     color: #444;
+}
+
+.filter-container {
+    background-color: #fff;
+    border: 1px solid #dee2e6;
+    border-radius: 6px;
+    margin-top: 1.5rem;
+    padding: 1rem;
+
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 20px;
+}
+
+/* Filter group */
+.filter-group {
+    display: flex;
+    align-items: flex-end;
+    gap: 12px;
+
+    /* Allow filters to use available space */
+    flex-wrap: wrap;
+}
+
+/* Individual filter */
+.filter-item {
+    flex: 0 1 auto;
+}
+
+/* Select */
+.filter-select {
+    height: 38px;
+    min-width: 130px;
+
+    padding: 0 36px 0 12px;
+
+    border: 1px solid #dee2e6;
+    border-radius: 6px;
+
+    background-color: #fff;
+    color: #212529;
+
+    font-family: inherit;
+    font-size: 14px;
+
+    cursor: pointer;
+}
+
+/* Focus */
+.filter-select:focus {
+    outline: none;
+    border-color: #2980b9;
+    box-shadow: 0 0 0 3px rgba(41, 128, 185, 0.12);
+}
+
+/* Disabled */
+.filter-select:disabled {
+    background-color: #e9ecef;
+    cursor: not-allowed;
+}
+
+/* Clear button */
+.clear-filter-btn {
+    flex-shrink: 0;
+
+    height: 32px;
+    padding: 0 12px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 5px;
+
+    border: 1px solid red;
+    border-radius: 6px;
+
+    background-color: transparent;
+    color: #666;
+
+    font-family: inherit;
+    font-size: 13px;
+
+    cursor: pointer;
+}
+
+.clear-filter-btn .clear-icon {
+    color: red;
+}
+
+.clear-filter-btn:hover {
+    background-color: red;
+    border-color: red;
+    color: #fff;
+}
+
+.clear-filter-btn:hover .clear-icon {
+    color: #fff;
+}
+
+#generateQrButton, #pagination, #noStudentsMessage{
+    font-size: 14px;
+}
+
+
+#studentTableContainer table {
+    font-size: 14px;
+}
+
+#studentTableContainer th {
+    font-size: 13px;
+    font-weight: 600;
+}
+
+#studentTableContainer td {
+    font-size: 14px;
+    color: #444;
+}
+#importButton{
+    color:white;
+    font-size: 14px;
 }

@@ -2,150 +2,39 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-
+    <link rel="stylesheet" href="{{ asset('css/print.css') }}">
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <title>Student QR Codes</title>
-
     <style>
-        @page {
-            size: 8.5in 11in;
-            margin: 0;
-        }
 
-        * {
-            box-sizing: border-box;
-        }
-
-        html,
-        body {
-            margin: 0;
-            padding: 0;
-            width: 8.5in;
-        }
-
-        body {
-            font-family: Arial, sans-serif;
-        }
-
-        .print-page {
-            width: 8.5in;
-            height: 11in;
-
-            margin: 0 auto;
-
-            display: grid;
-
-            grid-template-columns: repeat(2, 3.8in);
-            grid-template-rows: repeat(4, 2.6in);
-
-            gap: 5px;
-
-            justify-content: center;
-            align-content: center;
-
-            page-break-after: always;
-            break-after: page;
-        }
-
-        .print-page:last-child {
-            page-break-after: auto;
-            break-after: auto;
-        }
-        
-
-        .qr-card {
-           display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            page-break-inside: avoid;
-            break-inside: avoid;
-            background-image: url('/images/qr-background.png');
-            background-size: contain;
-            background-position: center;
-            background-repeat: no-repeat;
-            position: relative;
-        }
-        .qr-code-container {
-            width: 50px;
-            height: 50px;
-            padding: 0.75px;
-            border-radius: 4px;
-            background: white;
-            position: absolute;
-            bottom: 17px;
-            left: 32px;
-        }
-       
-
-        .qr-card svg {
-            width: 100%;
-            height: 100%;
-            display: block;
-        }
-        .codes-container{
-            /*border: 1px solid red; */
-            width: 120px;
-            height: 28px;
-            position: absolute;
-            bottom: 18px;
-            left: 78px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .code {
-            font-size: 8px;
-            font-weight: bold;
-         
-           
-        }
-
-        @media print {
-
-            * {
-                -webkit-print-color-adjust: exact !important;
-                print-color-adjust: exact !important;
-            }
-
-            html,
-            body {
-                margin: 0;
-                padding: 0;
-            }
-
-            .print-page {
-                page-break-after: always;
-                break-after: page;
-            }
-
-            .print-page:last-child {
-                page-break-after: auto;
-                break-after: auto;
-            }
-        }
     </style>
 </head>
 
 <body>
 
-    @foreach($qrData->chunk(8) as $studentChunk) 
-        <div class="print-page"> 
-            @foreach($studentChunk as $student) 
-                <div class="qr-card"> 
-                    <div class="qr-code-container"> 
-                        {!! $student['qr'] !!} 
-                    </div> 
-                    <div class="codes-container">
-                        <div class="code"> 
-                            {{ $student['code'] }} 
-                        </div> 
+    @foreach($qrData->chunk(8) as $studentChunk)
+    <div class="print-page">
+        @foreach($studentChunk as $student)
+            <div class="qr-card">
+                <div class="qr-code-container">
+                    {!! $student['qr'] !!}
+                </div>
+
+                <div class="codes-container">
+                    <div class="code">
+                        {{ $student['code'] }}
                     </div>
-                </div> 
-            @endforeach 
-        </div> 
-    @endforeach
+                </div>
+            </div>
+        @endforeach
+    </div>
+@endforeach
+
+
+
+
+
+    <script src="{{asset('js/studentPrint.js') }}"></script>
 
 </body>
 </html>
