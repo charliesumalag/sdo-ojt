@@ -23,68 +23,45 @@
                 <button type="button" class="btn btn-primary   px-4 " id="importButton">Import Excel File</button>
             </form>
         </div>
+    </div>
+    <div id="notification" class="alert d-none fs-6" role="alert"></div>
+    <!-- Filters -->
+    <div class="filter-container">
+        <div class="filter-group">
+            <div class="filter-item">
+                <select id="schoolFilter" class="filter-select"></select>
+            </div>
+            <div class="filter-item">
+                <select id="gradeFilter" class="filter-select"></select>
+            </div>
+            <div class="filter-item">
+                <select id="sectionFilter" class="filter-select"></select>
+            </div>
+            <div class="filter-item">
+                <select id="statusFilter" class="filter-select" disabled>
+                    <option value="Not Printed">Not Printed</option>
+                    <option value="Printed">Printed</option>
+                </select>
+            </div>
+        </div>
+        <button type="button" id="clearFilters" class="clear-filter-btn">
+            <i class="bi bi-x-lg clear-icon"></i>
+            <span>Clear</span>
+        </button>
 
     </div>
-    <div id="notification" class="alert d-none" role="alert"></div>
-    <!-- Filters -->
-    <!-- Filters -->
-<div class="filter-container">
-
-    <div class="filter-group">
-
-        {{-- station --}}
-        <div class="filter-item">
-            <select id="schoolFilter" class="filter-select">
-            </select>
-        </div>
-
-        {{-- year level --}}
-        <div class="filter-item">
-            <select id="gradeFilter" class="filter-select">
-            </select>
-        </div>
-
-        {{-- section --}}
-        <div class="filter-item">
-            <select id="sectionFilter" class="filter-select">
-            </select>
-        </div>
-
-        {{-- status --}}
-        <div class="filter-item">
-            <select id="statusFilter" class="filter-select" disabled>
-                <option value="Not Printed">Not Printed</option>
-                <option value="Printed">Printed</option>
-            </select>
-        </div>
-
-    </div>
-
-    {{-- Clear --}}
-    <button type="button" id="clearFilters" class="clear-filter-btn">
-        <i class="bi bi-x-lg clear-icon"></i>
-        <span>Clear</span>
-    </button>
-
-</div>
-
 
     <!-- Student Records -->
     <div class="border p-4 rounded mt-4" id="studentTableContainer">
         <div class="d-flex border-bottom justify-content-between align-items-center pb-3">
             <div class="d-flex align-items-center gap-2 ">
                 <h2  class="fs-6 fw-semibold mb-0">Student List</h2>
-                <span
-                    id="recordCount"
-                    class="badge rounded-pill text-primary bg-primary-subtle">
-                </span>
+                <span id="recordCount" class="badge rounded-pill text-primary bg-primary-subtle"></span>
             </div>
             <div class="d-flex gap-2">
-
                 <button type="button" id="generateQrButton" class="btn btn-primary">Generate QR(<span id="generateCount"></span>)</button>
             </div>
         </div>
-
         <!-- Student Table -->
         <div class="table-responsive rounded ">
             <table class="table-hover mb-0 table table-striped text-secondary">
@@ -102,7 +79,6 @@
                 </tbody>
             </table>
         </div>
-
         <div id="pagination" class="d-flex gap-1 justify-content-end mt-3"></div>
     </div>
     <div id="noStudentsMessage" class="text-center text-secondary py-4 d-none">No records found.</div>

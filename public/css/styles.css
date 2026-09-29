@@ -273,7 +273,9 @@ aside {
     font-size: 14px;
 }
 
-
+.notification{
+    font-size: 14px;
+}
 #studentTableContainer table {
     font-size: 14px;
 }

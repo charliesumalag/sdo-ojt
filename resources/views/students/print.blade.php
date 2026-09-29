@@ -11,7 +11,6 @@
 </head>
 
 <body>
-
     @foreach($qrData->chunk(8) as $studentChunk)
     <div class="print-page">
         @foreach($studentChunk as $student)
@@ -19,7 +18,6 @@
                 <div class="qr-code-container">
                     {!! $student['qr'] !!}
                 </div>
-
                 <div class="codes-container">
                     <div class="code">
                         {{ $student['code'] }}
@@ -30,11 +28,6 @@
     </div>
 @endforeach
 
-
-
-
-
-    <script src="{{asset('js/studentPrint.js') }}"></script>
 
 </body>
 </html>

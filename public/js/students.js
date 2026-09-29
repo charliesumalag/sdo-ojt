@@ -27,7 +27,6 @@ $(document).ready(function () {
     // Import file
     $('#file').change(function () {
         const file = this.files[0];
-
         if (!file) {
             return;
         }
@@ -44,46 +43,26 @@ $(document).ready(function () {
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             },
-
             beforeSend: function () {
                 showLoading('Importing Student Records');
             },
-
             success: function (response) {
                 showImportResult(response);
-
                 resetFilters();
                 loadFilters();
                 showEmptyStudentState();
-
                 $('#file').val('');
             },
-
             error: function (xhr) {
                 if (xhr.status === 422) {
-
-                    const message =
-                        xhr.responseJSON?.message ||
-                        'The Excel file format is incorrect.';
-
+                    const message = xhr.responseJSON?.message || 'The Excel file format is incorrect.';
                     showNotification(message, 'warning');
-
                 } else if (xhr.status === 419) {
-
-                    showNotification(
-                        'Your session has expired. Please refresh the page and try again.',
-                        'warning'
-                    );
-
+                    showNotification('Your session has expired. Please refresh the page and try again.','warning');
                 } else {
-
-                    showNotification(
-                        'Unable to import the file. Please check the file and try again.',
-                        'danger'
-                    );
+                    showNotification('Unable to import the file. Please check the file and try again.','danger');
                 }
             },
-
             complete: function () {
                 hideLoading();
             }
@@ -96,28 +75,16 @@ $(document).ready(function () {
     // =========================================================
 
     $('#schoolFilter').change(function () {
-
         const school = $(this).val();
-
         console.log('Selected school:', school);
-
         // Reset grade
-        $('#gradeFilter')
-            .html('<option value="" selected disabled>Grade Level</option>')
-            .prop('disabled', true);
-
+        $('#gradeFilter').html('<option value="" selected disabled>Grade Level</option>').prop('disabled', true);
         // Reset section
-        $('#sectionFilter')
-            .html('<option value="" selected disabled>Section</option>')
-            .prop('disabled', true);
-
+        $('#sectionFilter').html('<option value="" selected disabled>Section</option>').prop('disabled', true);
         // Reset status
-        $('#statusFilter')
-            .html('<option value="" selected disabled>Status</option>')
-            .prop('disabled', true);
+        $('#statusFilter').html('<option value="" selected disabled>Status</option>').prop('disabled', true);
 
         updateStudentRecordsHeading();
-
         if (!school) {
             showEmptyStudentState();
             return;
@@ -125,35 +92,22 @@ $(document).ready(function () {
 
         // Enable grade filter
         $('#gradeFilter').prop('disabled', false);
-
         // Get grades
         $.ajax({
             url: '/student-grades',
             method: 'GET',
-
             data: {
                 school: school
             },
-
             success: function (grades) {
-
                 grades.forEach(function (grade) {
-
-                    $('#gradeFilter').append(
-                        `<option value="${grade}">Grade ${grade}</option>`
-                    );
-
+                    $('#gradeFilter').append(`<option value="${grade}">Grade ${grade}</option>`);
                 });
             },
-
             error: function (xhr) {
-                console.error(
-                    'Failed to load grades:',
-                    xhr.responseText
-                );
+                console.error('Failed to load grades:',xhr.responseText);
             }
         });
-
         showEmptyStudentState();
     });
 
@@ -339,7 +293,6 @@ $(document).ready(function () {
     // =========================================================
 
     $('#generateQrButton').click(function () {
-
         const filters = {
             search: $('#search').val(),
             gender: $('#genderFilter').val(),
@@ -349,33 +302,25 @@ $(document).ready(function () {
             school_year: $('#schoolYearFilter').val(),
             status: $('#statusFilter').val()
         };
-
         const params = new URLSearchParams();
 
         Object.keys(filters).forEach(function (key) {
-
             if (filters[key]) {
                 params.append(key, filters[key]);
             }
-
         });
 
         const printUrl = '/students/print?' + params.toString();
-
+        console.log(printUrl);
         const printFrame = document.getElementById('printFrame');
-
         showLoading('Generating QR Codes');
-
         $('#printFrame').off('load');
 
         $('#printFrame').one('load', function () {
             // Get the exact student codes from the loaded print page
-            const studentCodes = $(printFrame.contentDocument)
-                .find('.code')
-                .map(function () {
-                    return $(this).text().trim();
-                })
-                .get();
+            const studentCodes = $(printFrame.contentDocument).find('.code').map(function () {
+                return $(this).text().trim();
+            }).get();
 
             console.log(
                 'QR student codes received:',
@@ -383,29 +328,18 @@ $(document).ready(function () {
             );
 
             // Store the codes on the iframe element
-            printFrame.dataset.studentCodes =
-                JSON.stringify(studentCodes);
+            printFrame.dataset.studentCodes = JSON.stringify(studentCodes);
 
             setTimeout(function () {
-
                 hideLoading();
-
                 printFrame.contentWindow.onafterprint = function () {
-
-                    const modalElement =
-                        document.getElementById(
-                            'printConfirmationModal'
-                        );
-
-                    const printModal =
-                        new bootstrap.Modal(modalElement);
-
+                    const modalElement = document.getElementById('printConfirmationModal');
+                    const printModal = new bootstrap.Modal(modalElement);
                     printModal.show();
                 };
 
                 printFrame.contentWindow.focus();
                 printFrame.contentWindow.print();
-
             }, 300);
         });
 
@@ -450,7 +384,7 @@ $(document).ready(function () {
                     printModal.hide();
                 }
 
-                showNotification(`${response.updated} student QR code(s) printed successfully.`,'success');
+                showNotification('Printed successfully','success');
 
                 if ($('#statusFilter option[value="Printed"]').length === 0) {
                     $('#statusFilter').append('<option value="Printed">Printed</option>');
@@ -489,28 +423,13 @@ $(document).ready(function () {
 // =========================================================
 
 function resetFilters() {
-
     $('#search').val('');
-
     $('#schoolFilter').val('');
-
-    $('#gradeFilter')
-        .val('')
-        .prop('disabled', true);
-
-    $('#sectionFilter')
-        .html('<option value="" selected disabled>Section</option>')
-        .val('')
-        .prop('disabled', true);
-
+    $('#gradeFilter').val('').prop('disabled', true);
+    $('#sectionFilter').html('<option value="" selected disabled>Section</option>').val('').prop('disabled', true);
     $('#genderFilter').val('');
-
     $('#schoolYearFilter').val('');
-
-    $('#statusFilter')
-        .html('<option value="" selected disabled>Status</option>')
-        .val('')
-        .prop('disabled', true);
+    $('#statusFilter').html('<option value="" selected disabled>Status</option>').val('').prop('disabled', true);
 }
 
 
@@ -885,12 +804,7 @@ function showNotification(message, type) {
 
     const notification = $('#notification');
 
-    notification
-        .removeClass(
-            'd-none alert-success alert-danger alert-warning'
-        )
-        .addClass('alert-' + type)
-        .text(message);
+    notification.removeClass('d-none alert-success alert-danger alert-warning').addClass('alert-' + type).text(message);
 
     setTimeout(function () {
 
