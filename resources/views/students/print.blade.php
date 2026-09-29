@@ -30,16 +30,17 @@
             width: 8.5in;
             height: 11in;
 
-            padding: 0.4in;
-
             margin: 0 auto;
 
             display: grid;
 
-            grid-template-columns: repeat(2, 1fr);
-            grid-template-rows: repeat(4, 1fr);
+            grid-template-columns: repeat(2, 3.8in);
+            grid-template-rows: repeat(4, 2.6in);
 
-            gap: 10px;
+            gap: 5px;
+
+            justify-content: center;
+            align-content: center;
 
             page-break-after: always;
             break-after: page;
@@ -49,66 +50,56 @@
             page-break-after: auto;
             break-after: auto;
         }
+        
 
         .qr-card {
-            border: 1px solid #000;
-
-            padding: 10px;
-
-            display: flex;
+           display: flex;
             flex-direction: column;
-
             align-items: center;
             justify-content: center;
-
             text-align: center;
-
             page-break-inside: avoid;
             break-inside: avoid;
-
             background-image: url('/images/qr-background.png');
-
-            background-size: 100% 100%;
+            background-size: contain;
             background-position: center;
             background-repeat: no-repeat;
-
             position: relative;
         }
-
         .qr-code-container {
             width: 50px;
-            height: 43px;
-
+            height: 50px;
+            padding: 0.75px;
             border-radius: 4px;
-
-            padding: 2px;
-
             background: white;
-
             position: absolute;
-
             bottom: 17px;
-            left: 10px;
+            left: 32px;
         }
+       
 
         .qr-card svg {
             width: 100%;
             height: 100%;
-
             display: block;
+        }
+        .codes-container{
+            /*border: 1px solid red; */
+            width: 120px;
+            height: 28px;
+            position: absolute;
+            bottom: 18px;
+            left: 78px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
 
         .code {
-            font-size: 10px;
-
+            font-size: 8px;
             font-weight: bold;
-
-            margin-top: 5px;
-
-            position: absolute;
-
-            bottom: 25px;
-            left: 65px;
+         
+           
         }
 
         @media print {
@@ -146,9 +137,11 @@
                     <div class="qr-code-container"> 
                         {!! $student['qr'] !!} 
                     </div> 
-                    <div class="code"> 
-                        {{ $student['code'] }} 
-                    </div> 
+                    <div class="codes-container">
+                        <div class="code"> 
+                            {{ $student['code'] }} 
+                        </div> 
+                    </div>
                 </div> 
             @endforeach 
         </div> 

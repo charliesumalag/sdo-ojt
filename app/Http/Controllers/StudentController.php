@@ -29,6 +29,9 @@ class StudentController extends Controller
         if ($request->school_year) {
             $query->where('school_year', $request->school_year);
         }
+        if ($request->status) {
+            $query->where('status', $request->status);
+        }
         $students = $query
             ->orderBy('last_name')
             ->paginate(25);
@@ -36,16 +39,6 @@ class StudentController extends Controller
         return response()->json($students);
     }
 
-
-    public function show($code)
-    {
-        $student = Students::where('code', $code)->first();
-        if (!$student) {
-            abort(404, 'Student not found.');
-        }
-
-        return view('students.showscan', compact('student'));
-    }
 
     public function import(Request $request)
     {
@@ -134,7 +127,6 @@ class StudentController extends Controller
 
         // Generate QR data
         $qrData = $students->map(function ($student) {
-            $url = route('students.show', $student->code);
 
             $qrText =
                 "STUDENT INFORMATION\n\n" .
@@ -196,5 +188,18 @@ class StudentController extends Controller
             ->pluck('section');
 
         return response()->json($sections);
+    }
+
+    public function status(Request $request)
+    {
+        $status = Students::where('school', $request->school)
+            ->where('grade_level', $request->grade_level)
+            ->where('section', $request->section)
+            ->select('status')
+            ->distinct()
+            ->orderBy('status')
+            ->pluck('status');
+
+        return response()->json($status);
     }
 }

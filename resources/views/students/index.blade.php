@@ -30,19 +30,24 @@
     <div class="bg-white border rounded mt-4 p-3">
         <div class="row">
             {{-- station dropdown --}}
-            <div class="col-md-3 position-relative">
+            <div class="col-md-2 position-relative">
                 <select id="schoolFilter" class="form-select">    
                 </select>
             </div>
             {{-- year level --}}
-            <div class="col-md-3">  
+            <div class="col-md-2">  
                 <select id="gradeFilter" class="form-select">
                 </select>
             </div>
             {{-- section --}}
-            <div class="col-md-3">
+            <div class="col-md-2">
                 <select id="sectionFilter" class="form-select">
                 </select>
+            </div>
+            <div class="col-md-2">
+               <select id="statusFilter" class="form-select" disabled>
+                
+            </select>
             </div>
            <div class="col-md-3 d-flex align-items-end">
                 <button type="button" id="clearFilters" class="btn btn-outline-secondary">

@@ -2,31 +2,31 @@
 
 $(document).ready(function () {
 
-   $('#schoolFilter, #gradeFilter, #sectionFilter').change(function () {
+   $('#schoolFilter, #gradeFilter, #sectionFilter, #statusFilter' ).change(function () {
         updateStudentRecordsHeading();
     });
 
     loadFilters();
-
-resetFilters();
-
-showEmptyStudentState();
+    resetFilters();
+    showEmptyStudentState();
 
     $('#clearFilters').click(function () {
         resetFilters();
-        $('#studentRecordsHeading').text('Student Records');
+        $('#studentRecordsHeading').text('');
         showEmptyStudentState();
     });
 
     $('#importButton').click(function () {
         $('#file').click();
     });
+    
 
     $('#file').change(function () {
         const file = this.files[0];
         if (!file) {
             return;
         }
+        
 
         const formData = new FormData();
         formData.append('file', file);
@@ -46,12 +46,15 @@ showEmptyStudentState();
             },
             success: function (response) {
                 showImportResult(response);
+                resetFilters();
                 loadFilters();
+                showEmptyStudentState();
                 $('#file').val('');
             },
             error: function (xhr) {
-                if (xhr.status === 422) {
-                    showNotification('Please select a valid Excel file (.xlsx or .xls).','warning');
+               if (xhr.status === 422) {
+                    const message = xhr.responseJSON?.message || 'The Excel file format is incorrect.';
+                    showNotification(message, 'warning');
                 } else if (xhr.status === 419) {
                     showNotification('Your session has expired. Please refresh the page and try again.','warning');
                 } else {
@@ -66,20 +69,27 @@ showEmptyStudentState();
 
     $('#schoolFilter').change(function () {
         const school = $(this).val();
+        console.log(school);
         $('#gradeFilter').val('');
         $('#sectionFilter').val('');
-       
+         $('#statusFilter').val('');
+
         $('#sectionFilter').html('<option value="" selected disabled>Select Section</option>');
         $('#sectionFilter').prop('disabled', true);
+    
+
+        $('#statusFilter').html('<option value="" selected disabled>Select Status</option>');
+        $('#statusFilter').prop('disabled', true);
         updateStudentRecordsHeading();
         if (!school) {
             $('#gradeFilter').prop('disabled', true);
             showEmptyStudentState();
             return;
         }
-
-        $('#gradeFilter').prop('disabled', false);
         $('#gradeFilter').html('<option value="" selected disabled>Select Grade Level</option>');
+        $('#gradeFilter').prop('disabled', false);
+
+      
 
         $.ajax({
             url: '/student-grades',
@@ -101,7 +111,10 @@ showEmptyStudentState();
         const school = $('#schoolFilter').val();
         const grade = $(this).val();
         $('#sectionFilter').val('');
+        $('#statusFilter').val('');
         $('#sectionFilter').html('<option value="" selected disabled>Select Section</option>');
+        $('#statusFilter').val('');
+        $('#statusFilter').prop('disabled', true);
         updateStudentRecordsHeading();
         if (!school || !grade) {
             $('#sectionFilter').prop('disabled', true);
@@ -128,14 +141,43 @@ showEmptyStudentState();
         });
         showEmptyStudentState();
     });
-
+    //start of seciton filter
     $('#sectionFilter').change(function () {
         const section = $(this).val();
+        $('#statusFilter').val('');
+        const school = $('#schoolFilter').val();
+        const grade_level = $('#gradeFilter').val();
         if (section) {
-            loadStudents(1);
+            $('#statusFilter').prop('disabled', false);
         } else {
+            $('#statusFilter').prop('disabled', true);
+            $('#statusFilter').val('');
             showEmptyStudentState();
         }
+
+        $.ajax({
+            url: '/status',
+            method: 'GET',
+            data: {
+                school: school,
+                section: section,
+                grade_level: grade_level,
+            },
+            success: function(statuses) {
+                 $('#statusFilter').html('<option value="" selected disabled>Select Status</option>');
+                statuses.forEach((status) => {
+                    $('#statusFilter').append(`<option value="${status}">${status}</option>`)
+                })
+            },
+
+
+
+
+        })
+    });
+    //end of section filter
+    $('#statusFilter').change(function () {
+        loadStudents(1);
     });
 
     $('#generateQrButton').click(function () {
@@ -181,6 +223,8 @@ function resetFilters() {
     $('#sectionFilter').val('');
     $('#genderFilter').val('');
     $('#schoolYearFilter').val('');
+     $('#statusFilter').val('');
+    $('#statusFilter').prop('disabled', true);
     $('#gradeFilter').prop('disabled', true);
     $('#sectionFilter').prop('disabled', true);
 }
@@ -205,7 +249,8 @@ function loadStudents(page = 1) {
             grade_level: grade,
             school: school,
             section: section,
-            school_year: $('#schoolYearFilter').val()
+            school_year: $('#schoolYearFilter').val(),
+            status: $('#statusFilter').val(),
         },
         beforeSend: function () {
             showLoading('Loading students');
@@ -283,21 +328,12 @@ function loadFilters() {
         url: '/student-filters',
         method: 'GET',
         success: function (filters) {
-            $('#schoolFilter').html(
-    '<option value="" selected disabled>Select School</option>'
-);
-
-$('#gradeFilter').html(
-    '<option value="" selected disabled>Select Grade Level</option>'
-);
-
-$('#sectionFilter').html(
-    '<option value="" selected disabled>Select Section</option>'
-);
-
+            $('#schoolFilter').html('<option value="" selected disabled>Select School</option>');
+            $('#gradeFilter').html('<option value="" selected disabled>Select Grade Level</option>');
+            $('#sectionFilter').html('<option value="" selected disabled>Select Section</option>');
+             $('#statusFilter').html('<option value="" selected disabled>Select Status</option>');
             $('#gradeFilter').prop('disabled', true);
             $('#sectionFilter').prop('disabled', true);
-
             filters.schools.forEach(function (school) {
                 $('#schoolFilter').append(`<option value="${school}">${school}</option>`);
             });
@@ -309,7 +345,6 @@ $('#sectionFilter').html(
 }
 
 function showImportResult(response) {
-
     // Change heading and subheader depending on import result
     if (response.imported > 0) {
 
@@ -385,7 +420,7 @@ function showNotification(message, type) {
 
     setTimeout(function () {
         notification.addClass('d-none');
-    }, 4000);
+    }, 10000);
 }
 
 
@@ -405,7 +440,7 @@ function showEmptyStudentState() {
 
     // Show empty message
 
-    $('#noStudentsMessage').removeClass('d-none').text('Select a school, grade level, and section to view student records and generate QR codes.');
+    $('#noStudentsMessage').removeClass('d-none').text('No records found');
 
     // Clear pagination
     $('#pagination').empty();
@@ -419,6 +454,7 @@ function updateStudentRecordsHeading() {
     const school = $('#schoolFilter').val();
     const grade = $('#gradeFilter').val();
     const section = $('#sectionFilter').val();
+    const status = $('#statusFilter').val();
 
     let heading = '';
 
@@ -433,6 +469,9 @@ function updateStudentRecordsHeading() {
     if (section) {
         heading += '<i class="bi bi-chevron-right"></i> ' + section;
     }
+    if (status) { 
+        const statusText = status === 'printed' ? 'Printed' : 'Not Printed'; 
+        heading += '<i class="bi bi-chevron-right"></i> ' + statusText; }
 
     if (!heading) {
         heading = '';
