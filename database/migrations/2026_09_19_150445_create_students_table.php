@@ -22,6 +22,7 @@ return new class extends Migration
             $table->string('section');
             $table->string('school_year')->nullable();
             $table->string('code')->unique();
+            $table->string('status')->default('Not Printed');
             $table->timestamps();
         });
     }

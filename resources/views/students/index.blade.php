@@ -5,7 +5,7 @@
     <div class="loading-box">
         <div class="spinner"></div>
         <div class="loading-text">Loading...</div>
-        <div class="loading-subtext">Please wait</div>
+        <div class="loading-subtext">Please wait...</div>
     </div>
 </div>
 <div class="p-4">
@@ -20,7 +20,7 @@
         <div class="d-flex gap-2">
             <form id="importForm" enctype="multipart/form-data">
                 <input type="file" name="file" id="file" accept=".xlsx,.xls,.csv" hidden>
-                <button type="button" class="btn btn-outline-secondary px-4 " id="importButton">Import Excel File</button>
+                <button type="button" class="btn btn-secondary px-4 " id="importButton">Import Excel File</button>
             </form>
         </div>
 
@@ -45,8 +45,9 @@
                 </select>
             </div>
            <div class="col-md-3 d-flex align-items-end">
-                <button type="button" id="clearFilters" class="btn btn-outline-secondary w-100">
-                    <i class="bi bi-x-lg me-1"></i>Clear</button>
+                <button type="button" id="clearFilters" class="btn btn-outline-secondary">
+                    <i class="bi bi-x-lg me-1"></i>Clear
+                </button>
             </div>
         </div>
     </div>
@@ -74,9 +75,9 @@
                     <tr>
                         <th class="small">Learner Ref Number<br>(LRN)</th>
                         <th class="small">Student Name</th>
-                        <th class="small">School</th>
                         <th class="small">Grade & Sec</th>
                         <th class="small">Gender</th>
+                        <th class="small">Status</th>
                     </tr>
                 </thead>
                 <tbody id="studentTable">

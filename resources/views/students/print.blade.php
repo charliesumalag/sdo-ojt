@@ -139,28 +139,19 @@
 
 <body>
 
-    @foreach($qrData->chunk(8) as $studentChunk)
-
-        <div class="print-page">
-
-            @foreach($studentChunk as $student)
-
-                <div class="qr-card">
-
-                    <div class="qr-code-container">
-                        {!! $student['qr'] !!}
-                    </div>
-
-                    <div class="code">
-                        {{ $student['code'] }}
-                    </div>
-
-                </div>
-
-            @endforeach
-
-        </div>
-
+    @foreach($qrData->chunk(8) as $studentChunk) 
+        <div class="print-page"> 
+            @foreach($studentChunk as $student) 
+                <div class="qr-card"> 
+                    <div class="qr-code-container"> 
+                        {!! $student['qr'] !!} 
+                    </div> 
+                    <div class="code"> 
+                        {{ $student['code'] }} 
+                    </div> 
+                </div> 
+            @endforeach 
+        </div> 
     @endforeach
 
 </body>

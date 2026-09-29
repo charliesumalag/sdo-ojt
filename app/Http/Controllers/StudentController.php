@@ -117,18 +117,44 @@ class StudentController extends Controller
 
         // Get all matching students
         $students = $query
-            ->select('code', 'last_name')
+            ->select(
+                'code',
+                'lrn',
+                'first_name',
+                'last_name',
+                'middle_initial',
+                'gender',
+                'school',
+                'grade_level',
+                'section',
+                'school_year'
+            )
             ->orderBy('last_name')
             ->get();
 
         // Generate QR data
         $qrData = $students->map(function ($student) {
             $url = route('students.show', $student->code);
-            $qr = (string) QrCode::size(150)->margin(1)->generate($url);
+
+            $qrText =
+                "STUDENT INFORMATION\n\n" .
+                "LRN: {$student->lrn}\n" .
+                "Name: {$student->first_name} " .
+                ($student->middle_initial
+                    ? "{$student->middle_initial} "
+                    : "") .
+                "{$student->last_name}\n" .
+                "School: {$student->school}\n" .
+                "Grade Level: {$student->grade_level}\n" .
+                "Section: {$student->section}\n";
+
+            $qr = (string) QrCode::size(150)
+                ->margin(1)
+                ->generate($qrText);
 
             return [
                 'code' => $student->code,
-                'url' => $url,
+                'qrText' => $qrText,
                 'qr' => $qr,
             ];
         });

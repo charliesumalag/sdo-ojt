@@ -2,28 +2,15 @@
 
 $(document).ready(function () {
 
-    $('#schoolFilter, #gradeFilter, #sectionFilter').change(function () {
-        const school = $('#schoolFilter').val();
-        const grade = $('#gradeFilter').val();
-        const section = $('#sectionFilter').val();
-
-        let heading = '';
-        if (school) {
-            heading += ' <i class="bi bi-chevron-right"></i>  ' + school;
-        }
-        if (grade) {
-            heading += ' <i class="bi bi-chevron-right"></i>  Grade ' + grade;
-        }
-        if (section) {
-            heading += ' <i class="bi bi-chevron-right"></i>  ' + section;
-        }
-        $('#studentRecordsHeading').html(heading);
-
+   $('#schoolFilter, #gradeFilter, #sectionFilter').change(function () {
+        updateStudentRecordsHeading();
     });
 
-    resetFilters();
     loadFilters();
-    showEmptyStudentState();
+
+resetFilters();
+
+showEmptyStudentState();
 
     $('#clearFilters').click(function () {
         resetFilters();
@@ -54,6 +41,9 @@ $(document).ready(function () {
                 'X-CSRF-TOKEN':
                     $('meta[name="csrf-token"]').attr('content')
             },
+            beforeSend: function () {
+                showLoading('Importing Student Records');
+            },
             success: function (response) {
                 showImportResult(response);
                 loadFilters();
@@ -67,6 +57,9 @@ $(document).ready(function () {
                 } else {
                     showNotification('Unable to import the file. Please check the file and try again.','danger');
                 }
+            },
+            complete: function () {
+                hideLoading();
             }
         });
     });
@@ -75,8 +68,10 @@ $(document).ready(function () {
         const school = $(this).val();
         $('#gradeFilter').val('');
         $('#sectionFilter').val('');
+       
         $('#sectionFilter').html('<option value="" selected disabled>Select Section</option>');
         $('#sectionFilter').prop('disabled', true);
+        updateStudentRecordsHeading();
         if (!school) {
             $('#gradeFilter').prop('disabled', true);
             showEmptyStudentState();
@@ -107,7 +102,7 @@ $(document).ready(function () {
         const grade = $(this).val();
         $('#sectionFilter').val('');
         $('#sectionFilter').html('<option value="" selected disabled>Select Section</option>');
-
+        updateStudentRecordsHeading();
         if (!school || !grade) {
             $('#sectionFilter').prop('disabled', true);
             showEmptyStudentState();
@@ -161,7 +156,7 @@ $(document).ready(function () {
         });
         const printUrl ='/students/print?' + params.toString();
         const printFrame = document.getElementById('printFrame');
-        showLoading('Generating QR Codes...');
+        showLoading('Generating QR Codes');
         $('#printFrame').off('load');
 
         $('#printFrame').one('load', function () {
@@ -213,7 +208,7 @@ function loadStudents(page = 1) {
             school_year: $('#schoolYearFilter').val()
         },
         beforeSend: function () {
-            showLoading('Loading students...');
+            showLoading('Loading students');
         },
         success: function (response) {
             $('#studentTable').empty();
@@ -231,10 +226,18 @@ function loadStudents(page = 1) {
                     const row = `
                         <tr>
                             <td>${student.lrn ?? ''}</td>
-                            <td>${student.last_name ?? ''},${student.first_name ?? ''}${student.middle_initial? ' ' + student.middle_initial + '.': ''} </td>
-                            <td>${student.school ?? ''}</td>
+                            <td>${student.last_name ?? ''},${student.first_name ?? ''}${student.middle_initial? ' ' + student.middle_initial + '.': ''} </td>   
                             <td>${student.grade_level ?? ''}-${student.section ?? ''}</td>
                             <td>${student.gender ?? ''}</td>
+                            <td>
+                                <span class="badge rounded-pill ${
+                                    student.status === 'printed'
+                                        ? 'text-success bg-success-subtle'
+                                        : 'text-secondary bg-secondary-subtle'
+                                    }">
+                                    ${student.status === 'printed' ? 'Printed' : 'Not Printed'}
+                                </span>
+                            </td>
                         </tr>
                     `;
                     $('#studentTable').append(row);
@@ -280,9 +283,17 @@ function loadFilters() {
         url: '/student-filters',
         method: 'GET',
         success: function (filters) {
-            $('#schoolFilter').html('<option value="" selected disabled>' + 'Select School' + '</option>');
-            $('#gradeFilter').html('<option value="" selected disabled>' + 'Select Grade Level' + '</option>');
-            $('#sectionFilter').html('<option value="" selected disabled>' + 'Select Section' + '</option>');
+            $('#schoolFilter').html(
+    '<option value="" selected disabled>Select School</option>'
+);
+
+$('#gradeFilter').html(
+    '<option value="" selected disabled>Select Grade Level</option>'
+);
+
+$('#sectionFilter').html(
+    '<option value="" selected disabled>Select Section</option>'
+);
 
             $('#gradeFilter').prop('disabled', true);
             $('#sectionFilter').prop('disabled', true);
@@ -298,34 +309,74 @@ function loadFilters() {
 }
 
 function showImportResult(response) {
+
+    // Change heading and subheader depending on import result
+    if (response.imported > 0) {
+
+        $('#importResultModalLabel').text('Import Completed');
+
+        $('#importResultMessage').text(
+            'Your student records have been successfully imported.'
+        );
+
+    } else if (response.skipped > 0) {
+
+        $('#importResultModalLabel').text('No Records Imported');
+
+        $('#importResultMessage').text(
+            'The import process has completed.'
+        );
+
+    } else {
+
+        $('#importResultModalLabel').text('No Records Found');
+
+        $('#importResultMessage').text(
+            'No student records were available to import.'
+        );
+    }
+
+
+    // Update imported count
     $('#modalImported').text(response.imported);
+
+    // Update skipped count
     $('#modalSkipped').text(response.skipped);
-    $('#importResultMessage').text(response.message);
+
+    // Update skipped rows
     $('#skippedRowsTable').empty();
 
-
     if (response.skipped_rows && response.skipped_rows.length > 0) {
+
         $('#skippedRowsContainer').removeClass('d-none');
+
         $('#skippedRowsCount').text(response.skipped_rows.length);
 
         response.skipped_rows.forEach(function (row) {
+
             $('#skippedRowsTable').append(`
                 <tr>
                     <td class="fw-semibold">${row.excel_row}</td>
-                    <td><span class="text-danger">${row.reason}</span></td>
+                    <td>
+                        <span class="text-danger">${row.reason}</span>
+                    </td>
                 </tr>
             `);
         });
 
     } else {
+
         $('#skippedRowsContainer').addClass('d-none');
     }
 
-    // Show Bootstrap modal
+
+    // Show modal
     const modalElement = document.getElementById('importResultModal');
     const modal = new bootstrap.Modal(modalElement);
+
     modal.show();
 }
+
 
 
 function showNotification(message, type) {
@@ -362,4 +413,30 @@ function showEmptyStudentState() {
     // Reset counts
     $('#recordCount').text('');
     $('#generateCount').text('0');
+}
+
+function updateStudentRecordsHeading() {
+    const school = $('#schoolFilter').val();
+    const grade = $('#gradeFilter').val();
+    const section = $('#sectionFilter').val();
+
+    let heading = '';
+
+    if (school) {
+        heading += '<i class="bi bi-chevron-right"></i> ' + school;
+    }
+
+    if (grade) {
+        heading += '<i class="bi bi-chevron-right"></i> Grade ' + grade;
+    }
+
+    if (section) {
+        heading += '<i class="bi bi-chevron-right"></i> ' + section;
+    }
+
+    if (!heading) {
+        heading = '';
+    }
+
+    $('#studentRecordsHeading').html(heading);
 }
