@@ -453,10 +453,8 @@ function loadStudents(page = 1) {
     }
 
     $.ajax({
-
         url: '/studentslist',
         method: 'GET',
-
         data: {
             page: page,
             search: $('#search').val(),
@@ -467,90 +465,37 @@ function loadStudents(page = 1) {
             school_year: $('#schoolYearFilter').val(),
             status: status
         },
-
         beforeSend: function () {
             showLoading('Loading students');
         },
-
         success: function (response) {
-
             $('#studentTable').empty();
-
-            $('#recordCount').text(
-                response.from +
-                '-' +
-                response.to +
-                ' of ' +
-                response.total +
-                ' Records'
-            );
-
+            $('#recordCount').text(response.from + '-' + response.to + ' of ' + response.total + ' Records');
             $('#generateCount').text(response.total);
 
             if (response.data.length === 0) {
-
                 $('#studentTableContainer').addClass('d-none');
-
-                $('#noStudentsMessage')
-                    .removeClass('d-none')
-                    .text('No records found.');
-
+                $('#noStudentsMessage').removeClass('d-none').text('No records found.');
                 $('#pagination').empty();
-
             } else {
-
                 $('#studentTableContainer').removeClass('d-none');
-
                 $('#noStudentsMessage').addClass('d-none');
 
-
-
                 response.data.forEach(function (student) {
-                    const fullName =
-                        `${student.last_name ?? ''}, ${student.first_name ?? ''}${student.middle_initial ? ' ' + student.middle_initial + '.' : ''}`;
-
-                    const statusBadge =
-                        student.status === 'Printed'
-                            ? 'bg-success'
-                            : 'bg-secondary';
-
+                    const fullName = `${student.last_name ?? ''}, ${student.first_name ?? ''}${student.middle_initial ? ' ' + student.middle_initial + '.' : ''}`;
+                    const statusBadge = student.status === 'Printed' ? 'bg-success' : 'bg-secondary';
                     const row = `
                         <tr>
-
-                            <td>
-                                ${student.lrn ?? ''}
-                            </td>
-
-                            <td>
-                                ${fullName}
-                            </td>
-
-                            <td>
-                                ${student.grade_level ?? ''}-${student.section ?? ''}
-                            </td>
-
-                            <td>
-                                ${student.gender ?? ''}
-                            </td>
-
-                            <td>
-                                <span class="badge rounded-pill ${statusBadge}">
-                                    ${student.status}
-                                </span>
-                            </td>
-
+                            <td><input type="checkbox" name="students[]" value="${student.id}"></td>
+                            <td>${student.lrn ?? ''}</td>
+                            <td>${fullName}</td>
+                            <td>${student.grade_level ?? ''}-${student.section ?? ''}</td>
+                            <td>${student.gender ?? ''}</td>
+                            <td><span class="badge rounded-pill ${statusBadge}">${student.status}</span></td>
                         </tr>
                     `;
-
                     $('#studentTable').append(row);
                 });
-
-
-
-
-
-
-
             }
 
             // Pagination
@@ -563,15 +508,9 @@ function loadStudents(page = 1) {
                 renderPagination(response);
             }
         },
-
         error: function (xhr) {
-
-            console.error(
-                'Failed to load students:',
-                xhr.responseText
-            );
+            console.error('Failed to load students:',xhr.responseText);
         },
-
         complete: function () {
             hideLoading();
         }

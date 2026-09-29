@@ -67,6 +67,7 @@
             <table class="table-hover mb-0 table table-striped text-secondary">
                 <thead class="table-light">
                     <tr>
+                        <th class="checkbox-column">All<br><input type="checkbox" name="" value=""> </input></th>
                         <th class="">Learner Ref Number<br>(LRN)</th>
                         <th class="">Student Name</th>
                         <th class="">Grade & Sec</th>

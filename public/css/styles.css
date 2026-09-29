@@ -293,3 +293,7 @@ aside {
     color:white;
     font-size: 14px;
 }
+.checkbox-column {
+    width: 1%;
+    white-space: nowrap;
+}
