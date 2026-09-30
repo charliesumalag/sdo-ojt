@@ -2,10 +2,49 @@ $(document).ready(function() {
     console.log('employee js running')
 
     loadFilters();
+    resetFilters();
 
 
+
+    $('#stationFilter').change(function () {
+        const station = $(this).val();
+console.log(station)
+        //heaer names of  all next dropdowns
+        //$('#positionFilter').html(``)
+
+        //this is for table display conditional continue later
+        if(!station){
+            return;
+        }
+
+        //endable next dropdown which is the position
+        $('#positionFilter').prop('disabled', false);
+
+        //request dropdown data for position
+        $.ajax({
+            url: '/employees-positions',
+            method: 'GET',
+            data: {
+                station: station,
+            },
+            success: function (positions){
+                console.log(positions);
+                positions.forEach(function (position) {
+                    $('#positionFilter').append(`<option value="${position}">${position}</option>`)
+
+                })
+           },
+            error: function (xhr) {
+                console.error('Failed to load grades:',xhr.responseText);
+            }
+
+
+        })
+
+    })
 
 })
+//end of document . ready
 
 function loadFilters() {
 
@@ -31,4 +70,9 @@ function loadFilters() {
         },
     })
 
+}
+function resetFilters(){
+    $('#stationFilter').val('');
+    $('#positionFilter').val('').prop('disabled', true);
+    $('#statusFilter').val('').prop('disabled', true);
 }

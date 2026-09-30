@@ -24,4 +24,17 @@ class EmployeesController extends Controller
                 ->pluck('station'),
         ]);
     }
+
+    //employeesPosition
+    public function employeesPosition(Request $request)
+    {
+        dd($request->station);
+        $positions = Employees::where('station', $request->station)
+            ->select('position')
+            ->distinct()
+            ->orderBy('position')
+            ->pluck('position');
+        return response()->json($positions);
+    }
+
 }
