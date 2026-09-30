@@ -20,22 +20,21 @@
         <div class="d-flex gap-2">
             <form id="importForm" enctype="multipart/form-data">
                 <input type="file" name="file" id="file" accept=".xlsx,.xls,.csv" hidden>
-                <button type="button" class="btn btn-primary   px-4 " id="importButton">Import Excel File</button>
+                <button type="button" class="btn btn-primary   px-4 " id="importButtonEmp">Import Excel File</button>
             </form>
         </div>
     </div>
     <div id="notification" class="alert d-none fs-6" role="alert"></div>
-    <!-- Filters -->
+    <!-- Filters-->
+
+
     <div class="filter-container">
         <div class="filter-group">
             <div class="filter-item">
-                <select id="schoolFilter" class="filter-select"></select>
+                <select id="stationFilter" class="filter-select"></select>
             </div>
             <div class="filter-item">
-                <select id="gradeFilter" class="filter-select"></select>
-            </div>
-            <div class="filter-item">
-                <select id="sectionFilter" class="filter-select"></select>
+                <select id="positionFilter" class="filter-select"></select>
             </div>
             <div class="filter-item">
                 <select id="statusFilter" class="filter-select" disabled>
@@ -51,7 +50,8 @@
 
     </div>
 
-    <!-- Student Records -->
+
+    <!-- Student Records
     <div class="border p-4 rounded mt-4" id="studentTableContainer">
         <div class="d-flex border-bottom justify-content-between align-items-center pb-3">
             <div class="d-flex align-items-center gap-2 ">
@@ -62,7 +62,9 @@
                 <button type="button" id="generateQrButton" class="btn btn-primary">Generate QR(<span id="generateCount"></span>)</button>
             </div>
         </div>
-        <!-- Student Table -->
+
+         -->
+        <!-- Student Table
         <div class="table-responsive rounded ">
             <table class="table-hover mb-0 table table-striped text-secondary">
                 <thead class="table-light">
@@ -76,7 +78,8 @@
                     </tr>
                 </thead>
                 <tbody id="studentTable">
-                    <!-- AJAX inserts students na dito -->
+                     -->
+                    <!-- AJAX inserts students na dito
                 </tbody>
             </table>
         </div>
@@ -84,6 +87,7 @@
     </div>
     <div id="noStudentsMessage" class="text-center text-secondary py-4 d-none">No records found.</div>
 </div>
+ -->
 
 {{-- partial import modal --}}
 @include('partials.imported-modal')
@@ -91,5 +95,5 @@
 <div id="printArea"></div>
 <iframe id="printFrame"></iframe>
 @include('partials.print-confirmation')
-<script src="{{asset('js/students.js') }}"></script>
+<script src="{{ asset('js/employees.js') }}"></script>
 @endsection

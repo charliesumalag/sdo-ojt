@@ -626,7 +626,7 @@ function loadFilters() {
 
             // School
             $('#schoolFilter').html(
-                '<option value="" selected disabled>Station</option>'
+                '<option value="" selected disabled>School</option>'
             );
 
             // Grade

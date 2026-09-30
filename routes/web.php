@@ -20,3 +20,4 @@ Route::post('/students/print-confirmed', [StudentController::class, 'printConfir
 
 
 Route::get('/employees', [EmployeesController::class, 'index'])->name('employees');
+Route::get('/employees-filters', [EmployeesController::class, 'employeesFilters']);
