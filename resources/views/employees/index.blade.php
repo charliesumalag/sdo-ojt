@@ -12,10 +12,10 @@
     <div class="d-flex justify-content-between align-items-center  border-bottom pb-2">
         <div>
             <div class="d-flex align-items-center gap-2 ">
-                <h1 class="fs-3 fw-semibold text-dark mb-0 p-0 m-0">Student Records</h1>
+                <h1 class="fs-3 fw-semibold text-dark mb-0 p-0 m-0">Employees Records</h1>
                 <span id="studentRecordsHeading" class="text-secondary"></span>
             </div>
-            <p class="small text-secondary">View students and import new student records.</p>
+            <p class="small text-secondary">View and import new employee records.</p>
         </div>
         <div class="d-flex gap-2">
             <form id="importForm" enctype="multipart/form-data">
@@ -55,7 +55,7 @@
     <div class="border p-4 rounded mt-4" id="studentTableContainer">
         <div class="d-flex border-bottom justify-content-between align-items-center pb-3">
             <div class="d-flex align-items-center gap-2 ">
-                <h2  class="fs-6 fw-semibold mb-0">Student List</h2>
+                <h2  class="fs-6 fw-semibold mb-0">Employees List</h2>
                 <span id="recordCount" class="badge rounded-pill text-primary bg-primary-subtle"></span>
             </div>
             <div class="d-flex gap-2">

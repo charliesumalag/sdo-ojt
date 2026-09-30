@@ -108,8 +108,11 @@ class StudentController extends Controller
             $query->where('school_year', $request->school_year);
         }
 
+        $lrns = $request->input('lrns', []);
+
         // Get all matching students
         $students = $query
+            ->whereIn('lrn', $lrns)
             ->select(
                 'code',
                 'lrn',
@@ -124,6 +127,8 @@ class StudentController extends Controller
             )
             ->orderBy('last_name')
             ->get();
+
+
 
         // Generate QR data
         $qrData = $students->map(function ($student) {

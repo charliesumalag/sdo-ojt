@@ -9,18 +9,29 @@
 </header>
 
 <nav class="d-flex flex-column gap-2">
-    <a class="primary-bg-color w-100 nav-link-custom  d-flex align-items-center gap-2 text-decoration-none" href="#">
-        <img src="/icons/user-search-active.png" width="18" height="18" alt="Students">
-        <span class="text-white ">Students</span>
+
+    <a
+        href="{{ route('employees') }}"
+        class="w-100 nav-link-custom d-flex align-items-center gap-2 text-decoration-none
+        {{ request()->routeIs('employees') ? 'primary-bg-color text-white' : 'bg-white text-dark' }}"
+    >
+        <i class="bi bi-people-fill"></i>
+        <span>Employees</span>
     </a>
-    <a class="bg-white w-100 nav-link-custom d-flex align-items-center gap-2 text-decoration-none" href="#">
-        <img src="/icons/national-icon.png" width="18" height="18" alt="Students">
-        <span class=" ">Employees</span>
+
+    <a
+        href="{{ route('students') }}"
+        class="w-100 nav-link-custom d-flex align-items-center gap-2 text-decoration-none
+        {{ request()->routeIs('students') ? 'primary-bg-color text-white' : 'bg-white text-dark' }}"
+    >
+        <i class="bi bi-mortarboard-fill"></i>
+        <span>Students</span>
     </a>
-    <a class="bg-white w-100 nav-link-custom d-flex align-items-center gap-2 text-decoration-none" href="#">
-        <img src="/icons/briefcase-icon.png" width="18" height="18" alt="Students">
-        <span class="">Others</span>
-    </a>
+
+
+
 </nav>
+
+
 
 
