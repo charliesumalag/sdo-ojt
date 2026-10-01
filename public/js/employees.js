@@ -348,7 +348,7 @@ function loadEmployee(page = 1){
             $('#employeesTable').empty();
             if(response.data.length === 0){
                 $('#employeesTableContainer').addClass('d-none');
-                $('#noEmployeesMessage').removeClass('d-none').text('No records found.');
+                //$('#noEmployeesMessage').addClass('d-none').text('No records found.');
                 $('#pagination').empty();
             }else{
                 $('#employeesTableContainer').removeClass('d-none');
@@ -406,7 +406,7 @@ function showEmptyStudentState() {
     $('#employeesTableContainer').addClass('d-none');
 
     // Show empty message
-    $('#noEmployeesMessage').removeClass('d-none').text('No records found');
+    //$('#noEmployeesMessage').removeClass('d-none').text('No records found');
 
     // Clear pagination
     $('#pagination').empty();
