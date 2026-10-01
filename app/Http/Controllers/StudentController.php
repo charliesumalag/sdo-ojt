@@ -165,10 +165,9 @@ class StudentController extends Controller
         return view('students.index');
     }
 
-    public function studentList()
-    { {
-            return view('students.index');
-        }
+    public function studentList(Request $request)
+    {
+        return view('students.index');
     }
 
 
@@ -207,11 +206,12 @@ class StudentController extends Controller
 
         return response()->json($status);
     }
-    public function printConfirmed(Request $request){
+    public function printConfirmed(Request $request)
+    {
 
-         $request->validate([
-        'codes' => ['required', 'array'],
-        'codes.*' => ['required', 'string'],
+        $request->validate([
+            'codes' => ['required', 'array'],
+            'codes.*' => ['required', 'string'],
         ]);
 
         $updated = Students::whereIn('code', $request->codes)

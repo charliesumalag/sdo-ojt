@@ -13,7 +13,7 @@
         <div>
             <div class="d-flex align-items-center gap-2 ">
                 <h1 class="fs-3 fw-semibold text-dark mb-0 p-0 m-0">Employees Records</h1>
-                <span id="studentRecordsHeading" class="text-secondary"></span>
+                <span id="studentRecordsHeading"></span>
             </div>
             <p class="small text-secondary">View and import new employee records.</p>
         </div>
@@ -51,43 +51,39 @@
     </div>
 
 
-    <!-- Student Records
-    <div class="border p-4 rounded mt-4" id="studentTableContainer">
+ 
+    <div class="border p-4 rounded mt-4" id="employeesTableContainer">
         <div class="d-flex border-bottom justify-content-between align-items-center pb-3">
             <div class="d-flex align-items-center gap-2 ">
                 <h2  class="fs-6 fw-semibold mb-0">Employees List</h2>
                 <span id="recordCount" class="badge rounded-pill text-primary bg-primary-subtle"></span>
             </div>
             <div class="d-flex gap-2">
-                <button type="button" id="generateQrButton" class="btn btn-primary">Generate QR(<span id="generateCount"></span>)</button>
+                <button type="button" id="generateQrButton" class="btn btn-primary">Generate QR<span id="generateCount"></span></button>
             </div>
         </div>
 
-         -->
-        <!-- Student Table
         <div class="table-responsive rounded ">
             <table class="table-hover mb-0 table table-striped text-secondary">
                 <thead class="table-light">
                     <tr>
                         <th>All<br><input class="checkbox-all" id="checkAll" type="checkbox" name="" value=""> </input></th>
-                        <th class="">Learner Ref Number<br>(LRN)</th>
+                        <th class="">Employee ID</th>
                         <th class="">Student Name</th>
-                        <th class="">Grade & Sec</th>
-                        <th class="">Gender</th>
+                        <th class="">Station</th>
+                        <th class="">Position</th>
                         <th class="">Status</th>
                     </tr>
                 </thead>
-                <tbody id="studentTable">
-                     -->
-                    <!-- AJAX inserts students na dito
+                <tbody id="employeesTable">
+                    
                 </tbody>
             </table>
         </div>
         <div id="pagination" class="d-flex gap-1 justify-content-end mt-3"></div>
     </div>
-    <div id="noStudentsMessage" class="text-center text-secondary py-4 d-none">No records found.</div>
+    <div id="noEmployeesMessage" class="text-center text-secondary py-4 d-none">No records found.</div>
 </div>
- -->
 
 {{-- partial import modal --}}
 @include('partials.imported-modal')

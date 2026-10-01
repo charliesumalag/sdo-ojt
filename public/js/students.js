@@ -3,10 +3,11 @@
 $(document).ready(function () {
 
     // Update heading when any filter changes
-    $('#schoolFilter, #gradeFilter, #sectionFilter, #statusFilter').change(function () {
-        updateStudentRecordsHeading();
-    });
+   $('#schoolFilter, #gradeFilter, #sectionFilter, #statusFilter').change(function () {
 
+    updateStudentRecordsHeading();
+
+});
     // Initial state
     loadFilters();
     resetFilters();
@@ -376,23 +377,17 @@ $(document).ready(function () {
     });
 
     $('#confirmPrintButton').click(function () {
-
         const printFrame = document.getElementById('printFrame');
-
         // Get the exact student codes from the QR print page
         const studentCodes =JSON.parse(printFrame.dataset.studentCodes || '[]');
-
         console.log('Students being marked as Printed:', studentCodes);
-
         if (!studentCodes || studentCodes.length === 0) {
             console.error('No student codes found.');
             return;
         }
-
         $.ajax({
             url: '/students/print-confirmed',
             type: 'POST',
-
             data: {
                 _token: $('meta[name="csrf-token"]').attr('content'),
                 codes: studentCodes
@@ -400,46 +395,35 @@ $(document).ready(function () {
             beforeSend: function () {
                 showLoading('Loading students');
             },
-
             success: function (response) {
-
                 console.log(response.message);
                 console.log('Updated:', response.updated);
-
                 const modalElement = document.getElementById('printConfirmationModal');
                 const printModal = bootstrap.Modal.getInstance(modalElement);
                 if (printModal) {
                     printModal.hide();
                 }
-
                 showNotification('Printed successfully','success');
-
                 if ($('#statusFilter option[value="Printed"]').length === 0) {
                     $('#statusFilter').append('<option value="Printed">Printed</option>');
                 }
-
                 // Select Printed
                 $('#statusFilter').val('Printed');
-
                 // Update heading
                 updateStudentRecordsHeading();
-
                 // Reload student list
                 loadStudents(1);
             },
             error: function (xhr) {
-
                 console.error('Failed to update print status.');
-
                 console.error(xhr.responseText);
-
+            },
+            complete: function () {
+                hideLoading();
             }
         });
 
-});
-
-
-
+    });
 
 
 });
@@ -788,13 +772,8 @@ function showNotification(message, type) {
 // =========================================================
 
 function showLoading(message = 'Loading...') {
-
     $('.loading-text').text(message);
-
-    $('#loadingOverlay').css(
-        'display',
-        'flex'
-    );
+    $('#loadingOverlay').css('display','flex');
 }
 
 
