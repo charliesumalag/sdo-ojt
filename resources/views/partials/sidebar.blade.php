@@ -1,9 +1,9 @@
 <header class="d-flex gap-2 align-items-center">
-    <div class="p-2 primary-bg-color rounded-2 ">
-        <img src="/icons/admin-vector.png" alt="" width="19" height="19" class="flex-shrink-0">
+    <div class=" ">
+        <img src="/images/sdo-logo.png" alt="" width="40" height="40" class="flex-shrink-0">
     </div>
     <div class="">
-        <h1 class="fs-5 fw-bold text-dark">SDO Personnel</h1>
+        <h1 class="fs-5 fw-bold text-dark">SDO Marikina</h1>
         <p class="small-12 text-secondary">QR Identification System</p>
     </div>
 </header>
