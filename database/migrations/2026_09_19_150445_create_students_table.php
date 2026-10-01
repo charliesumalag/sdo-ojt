@@ -17,10 +17,10 @@ return new class extends Migration
             $table->string('middle_initial')->nullable();
             $table->string('gender')->nullable();
             $table->string('school')->nullable();
-            $table->string('parents_name')->nullable();
+            //$table->string('parents_name')->nullable();
             $table->string('grade_level');
             $table->string('section');
-            $table->string('school_year')->nullable();
+            //$table->string('school_year')->nullable();
             $table->string('code')->unique();
             $table->string('status')->default('Not Printed');
             $table->timestamps();

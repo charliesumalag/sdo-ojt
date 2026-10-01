@@ -26,9 +26,9 @@ class StudentController extends Controller
         if ($request->section) {
             $query->where('section', $request->section);
         }
-        if ($request->school_year) {
-            $query->where('school_year', $request->school_year);
-        }
+        //if ($request->school_year) {
+        //    $query->where('school_year', $request->school_year);
+        //}
         if ($request->status) {
             $query->where('status', $request->status);
         }
@@ -104,9 +104,9 @@ class StudentController extends Controller
             $query->where('section', $request->section);
         }
 
-        if ($request->school_year) {
-            $query->where('school_year', $request->school_year);
-        }
+        //if ($request->school_year) {
+        //    $query->where('school_year', $request->school_year);
+        //}
 
         $lrns = $request->input('lrns', []);
 
@@ -123,7 +123,7 @@ class StudentController extends Controller
                 'school',
                 'grade_level',
                 'section',
-                'school_year'
+                //'school_year'
             )
             ->orderBy('last_name')
             ->get();

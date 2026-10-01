@@ -355,6 +355,8 @@ function loadStudents(page = 1) {
         showEmptyStudentState();
         return;
     }
+    $('#checkAll').prop('checked', false);
+    $('#generateCount').text('');
 
     $.ajax({
         url: '/studentslist',

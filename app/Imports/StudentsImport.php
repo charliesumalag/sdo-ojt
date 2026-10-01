@@ -27,19 +27,54 @@ class StudentsImport implements ToModel, WithHeadingRow, WithEvents
                     ->toArray();
 
                 $headers = $rows[0] ?? [];
-                $expectedHeaders = ['lrn', 'first_name', 'last_name', 'middle_initial', 'gender', 'school', 'parents_name', 'grade_level', 'section', 'school_year',];
+               // $expectedHeaders = ['lrn', 'first_name', 'last_name', 'middle_initial', 'gender', 'school', 'parents_name', 'grade_level', 'section', 'school_year',];
 
-                $actualHeaders = array_map(function ($header) {
+               $expectedHeaders = [
+                    'LRN',
+                    'First Name',
+                    'Last Name',
+                    'Middle Initial',
+                    'Gender',
+                    'Station',
+                    'Grade Level',
+                    'Section'
+                ];
+
+                $normalizeHeader = function ($header) {
                     return strtolower(
                         str_replace(' ', '_', trim((string) $header))
                     );
-                }, $headers);
+                };
 
-                $missingHeaders = array_diff(
+
+                //$actualHeaders = array_map(function ($header) {
+                 //   return strtolower(
+                  //      str_replace(' ', '_', trim((string) $header))
+                   // );
+                //}, $headers);
+
+                $expectedHeaders = array_map(
+                    $normalizeHeader,
+                    $expectedHeaders
+                );
+
+                  // Normalize actual Excel headers
+                $actualHeaders = array_map(
+                    $normalizeHeader,
+                    $headers
+                );
+
+                 $missingHeaders = array_diff(
                     $expectedHeaders,
                     $actualHeaders
                 );
 
+                //$missingHeaders = array_diff(
+                //    $expectedHeaders,
+                //    $actualHeaders
+                //);
+
+                // Stop the import if required headers are missing
                 if (!empty($missingHeaders)) {
                     throw new \Exception(
                         'Invalid Excel format. Missing columns: '
@@ -60,11 +95,11 @@ class StudentsImport implements ToModel, WithHeadingRow, WithEvents
         $lastName = trim((string) ($row['last_name'] ?? ''));
         $middleInitial = trim((string) ($row['middle_initial'] ?? ''));
         $gender = trim((string) ($row['gender'] ?? ''));
-        $school = trim((string) ($row['school'] ?? ''));
-        $parentsName = trim((string) ($row['parents_name'] ?? ''));
+        $station = trim((string) ($row['station'] ?? ''));
+        //$parentsName = trim((string) ($row['parents_name'] ?? ''));
         $gradeLevel = trim((string) ($row['grade_level'] ?? ''));
         $section = trim((string) ($row['section'] ?? ''));
-        $schoolYear = trim((string) ($row['school_year'] ?? ''));
+        //$schoolYear = trim((string) ($row['school_year'] ?? ''));
 
         $missingFields = [];
 
@@ -83,8 +118,8 @@ class StudentsImport implements ToModel, WithHeadingRow, WithEvents
         if ($gender === '') {
             $missingFields[] = 'gender';
         }
-        if ($school === '') {
-            $missingFields[] = 'school';
+        if ($station === '') {
+            $missingFields[] = 'station';
         }
 
         if ($gradeLevel === '') {
@@ -95,9 +130,9 @@ class StudentsImport implements ToModel, WithHeadingRow, WithEvents
             $missingFields[] = 'section';
         }
 
-        if ($schoolYear === '') {
-            $missingFields[] = 'school_year';
-        }
+        //if ($schoolYear === '') {
+        //    $missingFields[] = 'school_year';
+        //}
 
 
 
@@ -112,7 +147,7 @@ class StudentsImport implements ToModel, WithHeadingRow, WithEvents
         //kuhain ang first letter ng middle inital
         $sectionInitial = substr($section, 0, 1);
 
-        $code = $school . '-' . $gradeLevel . '-' . $sectionInitial . '-' . $lrn;
+        $code = $station . '-' . $gradeLevel . '-' . $sectionInitial . '-' . $lrn;
 
         if (Students::where('code', $code)->exists()) {
             $this->skipped++;
@@ -131,11 +166,11 @@ class StudentsImport implements ToModel, WithHeadingRow, WithEvents
             'last_name' => $lastName,
             'middle_initial' => $middleInitial,
             'gender' => $gender,
-            'school' => $school,
-            'parents_name' => $parentsName,
+            'school' => $station,
+            //'parents_name' => $parentsName,
             'grade_level' => $gradeLevel,
             'section' => $section,
-            'school_year' => $schoolYear,
+            //'school_year' => $schoolYear,
             'code' => $code,
         ]);
     }

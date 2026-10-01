@@ -21,7 +21,7 @@ class Students extends Model
         'parents_name',
         'grade_level',
         'section',
-        'school_year',
+        //'school_year',
         'code',
     ];
 }
