@@ -36,7 +36,8 @@ class EmployeesImport implements ToModel, WithHeadingRow, WithEvents
                     'Last Name',
                     'Middle Initial',
                     'Position',
-                    'Station'
+                    'Station',
+                    'Employement Type'
                 ];
 
                 // Function to convert headers into backend format
@@ -85,6 +86,7 @@ class EmployeesImport implements ToModel, WithHeadingRow, WithEvents
         $middleInitial = trim((string) ($row['middle_initial'] ?? ''));
         $position = trim((string) ($row['position'] ?? ''));
         $station = trim((string) ($row['station'] ?? ''));
+        $employementType = trim((string) ($row['employement_type'] ?? ''));
 
         $missingFields = [];
 
@@ -105,6 +107,9 @@ class EmployeesImport implements ToModel, WithHeadingRow, WithEvents
         }
         if ($station === '') {
             $missingFields[] = 'station';
+        }
+        if ($employementType === ''){
+            $missingFields[] = 'employement_type';
         }
 
 
@@ -144,6 +149,7 @@ class EmployeesImport implements ToModel, WithHeadingRow, WithEvents
             'middle_initial' => $middleInitial,
             'position' => $position,
             'station' => $station,
+            'employement_type' => $employementType,
             'code' => $code,
         ]);
     }

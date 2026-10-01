@@ -30,7 +30,7 @@ Route::post('/students/print-confirmed', [StudentController::class, 'printConfir
 
 Route::get('/employees', [EmployeesController::class, 'index'])->name('employees');
 Route::get('/employees-filters', [EmployeesController::class, 'employeesFilters']);
-Route::get('/employees-positions', [EmployeesController::class, 'employeesPosition']);
+Route::get('/employees-employementType', [EmployeesController::class, 'employeesEmployementType']);
 Route::post('/employees/import', [EmployeesController::class, 'empImport']);
 Route::get('/employees-status', [EmployeesController::class, 'empStatus']);
 Route::get('/employee-list', [EmployeesController::class, 'employeeList']);

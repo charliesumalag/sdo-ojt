@@ -15,6 +15,7 @@ class Employees extends Model
         'middle_initial',
         'position',
         'station',
+        'employement_type',
         'code',
     ];
 }

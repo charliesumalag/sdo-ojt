@@ -34,7 +34,7 @@
                 <select id="stationFilter" class="filter-select"></select>
             </div>
             <div class="filter-item">
-                <select id="positionFilter" class="filter-select"></select>
+                <select id="employementTypeFilter" class="filter-select"></select>
             </div>
             <div class="filter-item">
                 <select id="statusFilter" class="filter-select" disabled>
@@ -51,7 +51,7 @@
     </div>
 
 
- 
+
     <div class="border p-4 rounded mt-4" id="employeesTableContainer">
         <div class="d-flex border-bottom justify-content-between align-items-center pb-3">
             <div class="d-flex align-items-center gap-2 ">
@@ -76,7 +76,7 @@
                     </tr>
                 </thead>
                 <tbody id="employeesTable">
-                    
+
                 </tbody>
             </table>
         </div>

@@ -1,17 +1,18 @@
 $(document).ready(function() {
 
-    $('#stationFilter, #positionFilter, #statusFilter').change(function () {
+    $('#stationFilter, #employementTypeFilter, #statusFilter').change(function () {
         updateEmployeeRecordsHeading();
     });
 
     loadFilters();
-    resetFilters();
     showEmptyStudentState();
 
     $('#clearFilters').click(function () {
         resetFilters();
         $('#studentRecordsHeading').text('');
         showEmptyStudentState();
+        $('#stationFilter').val('SDO');
+        loadEmployee(1);
     });
 
     $('#importButtonEmp').click(function() {
@@ -69,11 +70,9 @@ $(document).ready(function() {
 
     $('#stationFilter').change(function () {
         const station = $(this).val();
-        console.log(station)
-        $('#positionFilter').html('<option value="" selected disabled>Position</option>').prop('disabled', true);
-
         // Reset status dropdown
         $('#statusFilter').html('<option value="" selected disabled>Status</option>').prop('disabled', true);
+         $('#employementTypeFilter').html('<option value="" selected disabled>EmployementType</option>').prop('disabled', true);
 
         //this is for table display conditional continue later
         if(!station){
@@ -82,20 +81,21 @@ $(document).ready(function() {
         }
 
         //endable next dropdown which is the position
-        $('#positionFilter').prop('disabled', false);
+        $('#employementTypeFilter').prop('disabled', false);
 
         //request dropdown data for position
         $.ajax({
-            url: '/employees-positions',
+            url: '/employees-employementType',
             method: 'GET',
             data: {
                 station: station,
             },
-            success: function (positions){
-                console.log(positions);
-                positions.forEach(function (position) {
-                    $('#positionFilter').append(`<option value="${position}">${position}</option>`)
+            success: function (employementType){
+
+                employementType.forEach(function (empType) {
+                    $('#employementTypeFilter').append(`<option value="${empType}">${empType}</option>`)
                 })
+                loadEmployee(1);
            },
             error: function (xhr) {
                 console.error('Failed to load position:',xhr.responseText);
@@ -104,13 +104,13 @@ $(document).ready(function() {
         showEmptyStudentState();
     })
 
-    $('#positionFilter').change(function () {
+    $('#employementTypeFilter').change(function () {
         const station = $('#stationFilter').val();
-        const position = $(this).val();
+        const employementType = $(this).val();
 
         $('#statusFilter').html('<option value="" selected disabled>Status</option>').prop('disabled', true);
 
-        if(!station || !position){
+        if(!station || !employementType){
             showEmptyStudentState();
             return;
         }
@@ -120,7 +120,7 @@ $(document).ready(function() {
             method: 'GET',
             data: {
                 station: station,
-                position: position
+                employementType: employementType
             },
             success: function(statuses){
                 if (!statuses || statuses.length === 0) {
@@ -305,7 +305,12 @@ function loadFilters() {
             console.log(employees.station);
             employees.station.forEach(function (station){
                 $('#stationFilter').append(`<option value="${station}">${station}</option>`)
+
             })
+
+             $('#stationFilter').val('SDO');
+             loadEmployee(1);
+             $('#stationFilter').trigger('change');
         },
     })
 
@@ -318,7 +323,7 @@ function loadEmployee(page = 1){
     const position = $('#positionFilter').val();
     const status = $('#statusFilter').val();
 
-    if(!station || !position || !status){
+    if(!station){
         showEmptyStudentState();
         return;
     }

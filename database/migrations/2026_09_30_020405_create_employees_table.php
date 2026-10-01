@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('middle_initial')->nullable();
             $table->string('position')->nullable();
             $table->string('station')->nullable();
+            $table->string('employement_type');
             $table->string('code')->unique();
             $table->string('status')->default('Not Printed');
             $table->timestamps();
