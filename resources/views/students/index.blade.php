@@ -59,7 +59,7 @@
                 <span id="recordCount" class="badge rounded-pill text-primary bg-primary-subtle"></span>
             </div>
             <div class="d-flex gap-2">
-                <button type="button" id="generateQrButton" class="btn btn-primary">Generate QR(<span id="generateCount"></span>)</button>
+                <button type="button" id="generateQrButton" class="btn btn-primary">Generate QR <span id="generateCount"></span></button>
             </div>
         </div>
         <!-- Student Table -->

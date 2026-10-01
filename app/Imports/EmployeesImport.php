@@ -29,7 +29,7 @@ class EmployeesImport implements ToModel, WithHeadingRow, WithEvents
                 // Get the first row (Excel headers)
                 $headers = $rows[0] ?? [];
 
-                // Headers that the Excel file is expected to have
+
                 $expectedHeaders = [
                     'Employee ID',
                     'First Name',
@@ -76,13 +76,6 @@ class EmployeesImport implements ToModel, WithHeadingRow, WithEvents
 
         ];
     }
-
-    // $row['employee_id']
-    //$row['first_name']
-    //$row['last_name']
-    //$row['middle_initial']
-    //$row['position']
-    //$row['station']}}
 
     public function model(array $row)
     {

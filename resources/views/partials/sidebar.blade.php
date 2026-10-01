@@ -3,7 +3,7 @@
         <img src="/icons/admin-vector.png" alt="" width="19" height="19" class="flex-shrink-0">
     </div>
     <div class="">
-        <h1 class="fs-5 fw-bold text-dark">SDO Marikina</h1>
+        <h1 class="fs-5 fw-bold text-dark">SDO Personnel</h1>
         <p class="small-12 text-secondary">QR Identification System</p>
     </div>
 </header>

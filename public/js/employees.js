@@ -28,8 +28,8 @@ $(document).ready(function() {
         //pur the file into the container which is a formdata.
         const formData = new FormData();
         formData.append('file', file);
-        
-        
+
+
         //send the file inot backend
         $.ajax({
             url:'/employees/import',
@@ -70,15 +70,10 @@ $(document).ready(function() {
     $('#stationFilter').change(function () {
         const station = $(this).val();
         console.log(station)
-         $('#positionFilter')
-        .html('<option value="" selected disabled>Position</option>')
-        .prop('disabled', true);
+        $('#positionFilter').html('<option value="" selected disabled>Position</option>').prop('disabled', true);
 
         // Reset status dropdown
-        $('#statusFilter')
-        .html('<option value="" selected disabled>Status</option>')
-        .prop('disabled', true);
-
+        $('#statusFilter').html('<option value="" selected disabled>Status</option>').prop('disabled', true);
 
         //this is for table display conditional continue later
         if(!station){
@@ -100,7 +95,6 @@ $(document).ready(function() {
                 console.log(positions);
                 positions.forEach(function (position) {
                     $('#positionFilter').append(`<option value="${position}">${position}</option>`)
-
                 })
            },
             error: function (xhr) {
@@ -111,7 +105,6 @@ $(document).ready(function() {
     })
 
     $('#positionFilter').change(function () {
-
         const station = $('#stationFilter').val();
         const position = $(this).val();
 
@@ -122,7 +115,6 @@ $(document).ready(function() {
             return;
         }
 
-       
         $.ajax({
             url: '/employees-status',
             method: 'GET',
@@ -132,39 +124,24 @@ $(document).ready(function() {
             },
             success: function(statuses){
                 if (!statuses || statuses.length === 0) {
-
-                    $('#statusFilter')
-                        .append(
-                            '<option value="" selected disabled>No Status</option>'
-                        )
-                        .prop('disabled', true);
-
+                    $('#statusFilter').append('<option value="" selected disabled>No Status</option>').prop('disabled', true);
                     showEmptyStudentState();
-
                     return;
                 }
-
 
                 statuses.forEach(function (status) {
                     $('#statusFilter').append(`<option value="${status}">${status}</option>`);
                 });
-
                 if (statuses.includes('Not Printed')) {
-
                     $('#statusFilter').val('Not Printed');
-
                 } else {
-
                     // Otherwise select the first status
                     $('#statusFilter').val(statuses[0]);
                 }
-
                 // Enable status filter
                 $('#statusFilter').prop('disabled', false);
-
                 updateEmployeeRecordsHeading();
                 loadEmployee(1);
-
             },
             error: function (xhr) {
                 console.log('Failed to load status', xhr.responseText);
@@ -236,19 +213,15 @@ $(document).ready(function() {
     });
 
     $('#checkAll').on('change', function () {
-
         $('.employee-checkbox').prop('checked', this.checked);
-
         const checked = $('.employee-checkbox:checked').length;
 
         $('#generateCount').text(
             checked > 0 ? ` (${checked})` : ''
         );
-
     });
 
     $(document).on('change', '.employee-checkbox', function () {
-
         const total = $('.employee-checkbox').length;
         const totalChecked = $('.employee-checkbox:checked').length;
 
@@ -304,16 +277,12 @@ $(document).ready(function() {
             error: function (xhr) {
                 console.error('Failed to update print status.');
                 console.error(xhr.responseText);
-
             },
             complete: function () {
                 hideLoading();
-
             }
         });
-
     });
-
 })
 //end of document . ready
 
@@ -340,7 +309,7 @@ function loadFilters() {
         },
     })
 
-   
+
 
 }
 
@@ -393,7 +362,6 @@ function loadEmployee(page = 1){
                             <td><span class="badge rounded-pill ${statusBadge}">${employee.status}</span></td>
                         </tr>
                     `;
-
                     $('#employeesTable').append(row);
                 })
             }
@@ -419,28 +387,21 @@ function resetFilters(){
 }
 
 
-
-
 function showLoading(message = 'Loading...') {
     $('.loading-text').text(message);
     $('#loadingOverlay').css('display','flex');
 }
 
 function hideLoading() {
-
     $('#loadingOverlay').hide();
 }
 
 function showEmptyStudentState() {
-
     // Hide table
-    $('#employeesTableContainer')
-        .addClass('d-none');
+    $('#employeesTableContainer').addClass('d-none');
 
     // Show empty message
-    $('#noEmployeesMessage')
-        .removeClass('d-none')
-        .text('No records found');
+    $('#noEmployeesMessage').removeClass('d-none').text('No records found');
 
     // Clear pagination
     $('#pagination').empty();
@@ -452,11 +413,8 @@ function showEmptyStudentState() {
 }
 
 function renderPagination(response) {
-
     $('#pagination').empty();
-
     if (response.current_page > 1) {
-
         $('#pagination').append(`
             <button
                 class="btn btn-sm btn-outline-secondary page-button"
@@ -466,12 +424,7 @@ function renderPagination(response) {
         `);
     }
 
-    for (
-        let page = 1;
-        page <= response.last_page;
-        page++
-    ) {
-
+    for (let page = 1;page <= response.last_page;page++) {
         $('#pagination').append(`
             <button
                 class="btn btn-sm ${
@@ -486,7 +439,6 @@ function renderPagination(response) {
     }
 
     if (response.current_page < response.last_page) {
-
         $('#pagination').append(`
             <button
                 class="btn btn-sm btn-outline-secondary page-button"
@@ -498,15 +450,11 @@ function renderPagination(response) {
 }
 
 function showNotification(message, type) {
-
     const notification = $('#notification');
-
     notification.removeClass('d-none alert-success alert-danger alert-warning').addClass('alert-' + type).text(message);
 
     setTimeout(function () {
-
         notification.addClass('d-none');
-
     }, 10000);
 }
 
@@ -514,29 +462,14 @@ function showNotification(message, type) {
 
 function showImportResult(response) {
     if (response.imported > 0) {
-
         $('#importResultModalLabel').text('Records Added Successfully');
-
-        $('#importResultMessage').text(
-            'Employee records were saved successfully.'
-        );
-
+        $('#importResultMessage').text('Employee records were saved successfully.');
     } else if (response.skipped > 0) {
-
         $('#importResultModalLabel').text('No New Records Added');
-
-        $('#importResultMessage').text(
-            'All employee records are already added.'
-        );
-
+        $('#importResultMessage').text('All employee records are already added.');
     } else {
-
         $('#importResultModalLabel').text('No Employee Records Found');
-
-        $('#importResultMessage').text(
-            'No employee records were found.'
-        );
-
+        $('#importResultMessage').text('No employee records were found.');
     }
     // Imported count
     $('#modalImported').text(response.imported);
@@ -545,7 +478,6 @@ function showImportResult(response) {
 
     // Clear skipped rows
     $('#skippedRowsTable').empty();
-
     if (response.skippedRows && response.skippedRows.length > 0)  {
         $('#skippedRowsContainer').removeClass('d-none');
         $('#skippedRowsCount').text(response.skippedRows.length);
@@ -567,42 +499,18 @@ function showImportResult(response) {
     modal.show();
 }
 
-// =========================================================
-// UPDATE HEADING
-// =========================================================
-
 function updateEmployeeRecordsHeading() {
-
     const station = $('#stationFilter').val();
-
     const position = $('#positionFilter').val();
-
     const status = $('#statusFilter').val();
-
     let heading = '';
-
     if (station) {
-
-        heading +=
-            '<i class="bi bi-chevron-right"></i> ' +
-            station;
-    }
-
+        heading += '<i class="bi bi-chevron-right"></i> ' + station;}
     if (position) {
-
-        heading +=
-            '<i class="bi bi-chevron-right"></i> ' +
-            position;
-    }
-
+        heading += '<i class="bi bi-chevron-right"></i> ' + position;}
     if (status) {
-
-        heading +=
-            '<i class="bi bi-chevron-right"></i> ' +
-            status;
+        heading += '<i class="bi bi-chevron-right"></i> ' + status;
     }
 
-    $('#studentRecordsHeading').html(
-        heading
-    );
+    $('#studentRecordsHeading').html(heading);
 }
