@@ -12,6 +12,7 @@ $(document).ready(function () {
         resetFilters();
         $('#studentRecordsHeading').text('');
         showEmptyStudentState();
+        showNotificationFilterRequires('Please Select Station', 'warning', 'school');
     });
 
     $('#importButton').click(function () {
@@ -377,6 +378,7 @@ function loadStudents(page = 1) {
             console.log(response.students.data)
             $('#studentTable').empty();
             if (response.students.data.length === 0) {
+                
                 showImportStudentsPrompt();
             } else {
                 $('#studentTableContainer').removeClass('d-none');
@@ -468,10 +470,14 @@ function loadFilters() {
 
             const schools = filters.schools || [];
             if (schools.length === 0) {
+                console.log('no imported data')
+                $('#clearFilters').prop('disabled', true).addClass('disabled');
                 $('#schoolFilter').html('<option value="" selected disabled>Station</option>');
                 $('#schoolFilter').prop('disabled', true);
                 showImportStudentsPrompt();
                 return;
+            }else{
+                $('#clearFilters').prop('disabled', false).removeClass('disabled');
             }
             showNotificationFilterRequires('Please Select Station', 'warning');
             // Populate schools

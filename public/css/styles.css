@@ -297,3 +297,9 @@ aside {
     width: 1%;
     white-space: nowrap;
 }
+.clear-filter-btn:disabled,
+.clear-filter-btn.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    pointer-events: none;
+}

@@ -7,7 +7,6 @@ $(document).ready(function() {
 
     loadFilters();
     showEmptyStudentState();
-   
 
     $('#clearFilters').click(function () {
         resetFilters();
@@ -15,6 +14,7 @@ $(document).ready(function() {
         showEmptyStudentState();
         $('#stationFilter').val('SDO');
         loadEmployee(1);
+     
     });
 
     $('#importButtonEmp').click(function() {
@@ -73,8 +73,9 @@ $(document).ready(function() {
     $('#stationFilter').change(function () {
         const station = $(this).val();
         // Reset status dropdown
+       // $('#stationFilter').html('<option value="" selected disabled>Station</option>').prop('disabled', true);
         $('#statusFilter').html('<option value="" selected disabled>Status</option>').prop('disabled', true);
-         $('#employementTypeFilter').html('<option value="" selected disabled>EmploymentType</option>').prop('disabled', true);
+        $('#employementTypeFilter').html('<option value="" selected disabled>EmploymentType</option>').prop('disabled', true);
 
         //this is for table display conditional continue later
         if(!station){
@@ -315,13 +316,17 @@ function loadFilters() {
             if(employees.station.length === 0){
                 $('#stationFilter').prop('disabled', true);
                 $('#employementTypeFilter').prop('disabled', true);
+                $('#clearFilters').prop('disabled', true).addClass('disabled');
                 console.log('no import data yet');
                 showNotificationFilterRequires('No employee records are available. Please import or upload employee records.','warning','noEmployee');
             }else{
+                console.log('imported succcesfully');
                 $('#stationFilter').val('SDO');
                 $('#stationFilter').prop('disabled', false);
                 $('#employementTypeFilter').prop('disabled', false);
+                $('#clearFilters').prop('disabled', false).removeClass('disabled');
                 showNotificationFilterRequires('','','hasEmployees');
+                
                 loadEmployee(1);
                 $('#stationFilter').trigger('change');
             }
@@ -407,6 +412,7 @@ function loadEmployee(page = 1){
 }
 function resetFilters(){
     $('#stationFilter').val('');
+    $('#employementTypeFilter').val('')
     $('#positionFilter').val('').prop('disabled', true);
     $('#statusFilter').val('').prop('disabled', true);
 }
