@@ -24,7 +24,7 @@
             </form>
         </div>
     </div>
-    <div id="notification" class="alert d-none fs-6" role="alert"></div>
+    <div id="notification" class="alert d-flex align-items-center  w-100 d-none fs-6" role="alert"></div>
     <!-- Filters -->
     <div class="filter-container">
         <div class="filter-group">
@@ -82,7 +82,7 @@
         </div>
         <div id="pagination" class="d-flex gap-1 justify-content-end mt-3"></div>
     </div>
-    <div id="noStudentsMessage" class="text-center text-secondary py-4 d-none">No records found.</div>
+    <div id="noStudentsMessage" class="text-center text-secondary py-4 d-none"></div>
 </div>
 
 {{-- partial import modal --}}

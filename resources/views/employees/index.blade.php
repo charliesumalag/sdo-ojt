@@ -24,7 +24,7 @@
             </form>
         </div>
     </div>
-    <div id="notification" class="alert d-none fs-6" role="alert"></div>
+    <div id="notification" class="alert d-flex align-items-center w-100 d-none fs-6" role="alert"></div>
     <!-- Filters-->
 
 

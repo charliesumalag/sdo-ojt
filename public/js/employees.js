@@ -4,8 +4,10 @@ $(document).ready(function() {
         updateEmployeeRecordsHeading();
     });
 
+
     loadFilters();
     showEmptyStudentState();
+   
 
     $('#clearFilters').click(function () {
         resetFilters();
@@ -292,9 +294,10 @@ function loadFilters() {
         url: '/employees-filters',
         method: 'GET',
         success: function(employees){
+            
             //dropdown Select disable option
             $('#stationFilter').html('<option value="" selected disabled>Station</option>');
-            $('#positionFilter').html('<option value="" selected disabled>Position</option>');
+            $('#employementTypeFilter').html('<option value="" selected disabled>Employment Type</option>');
             $('#statusFilter').html('<option value="" selected disabled>Status</option>');
 
 
@@ -302,16 +305,31 @@ function loadFilters() {
             $('#positionFilter').prop('disabled', true);
             $('#statusFilter').prop('disabled', true);
 
+            
             //get now the available school on database
-            console.log(employees.station);
+
             employees.station.forEach(function (station){
                 $('#stationFilter').append(`<option value="${station}">${station}</option>`)
-
             })
 
-             $('#stationFilter').val('SDO');
-             loadEmployee(1);
-             $('#stationFilter').trigger('change');
+            if(employees.station.length === 0){
+                $('#stationFilter').prop('disabled', true);
+                $('#employementTypeFilter').prop('disabled', true);
+                console.log('no import data yet');
+                showNotificationFilterRequires('No employee records are available. Please import or upload employee records.','warning','noEmployee');
+            }else{
+                $('#stationFilter').val('SDO');
+                $('#stationFilter').prop('disabled', false);
+                $('#employementTypeFilter').prop('disabled', false);
+                showNotificationFilterRequires('','','hasEmployees');
+                loadEmployee(1);
+                $('#stationFilter').trigger('change');
+            }
+
+
+           
+
+           
         },
     })
 
@@ -320,7 +338,8 @@ function loadFilters() {
 }
 
 function loadEmployee(page = 1){
-    const station = $('#stationFilter').val();
+    
+     const station = $('#stationFilter').val();
     const position = $('#positionFilter').val();
     const status = $('#statusFilter').val();
 
@@ -341,7 +360,7 @@ function loadEmployee(page = 1){
             status: status,
         },
         beforeSend: function () {
-            showLoading('Loading records');
+            showLoading('Loading employee records...');
         },
         success: function(response){
 
@@ -457,7 +476,7 @@ function renderPagination(response) {
 
 function showNotification(message, type) {
     const notification = $('#notification');
-    notification.removeClass('d-none alert-success alert-danger alert-warning').addClass('alert-' + type).text(message);
+    notification.removeClass('d-none alert-success alert-danger alert-warning').addClass('alert-' + type).html(`<i class="bi bi-exclamation-lg text-danger fs-4"></i>${message}`);
 
     setTimeout(function () {
         notification.addClass('d-none');
@@ -520,3 +539,12 @@ function updateEmployeeRecordsHeading() {
 
     $('#studentRecordsHeading').html(heading);
 }
+function showNotificationFilterRequires(message= '', type = '', filter = '') {
+    const notification = $('#notification');
+    if(filter === 'noEmployee'){
+        notification.removeClass('d-none alert-success alert-danger alert-warning').addClass('alert-' + type).html(`<i class="bi bi-exclamation-lg text-danger fs-4"></i>${message}`);
+    }else if (filter === 'hasEmployees'){
+        notification.addClass('d-none alert-success alert-danger alert-warning').addClass('alert-' + type).text(message);
+    }
+}
+

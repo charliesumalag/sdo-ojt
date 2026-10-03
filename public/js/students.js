@@ -7,7 +7,6 @@ $(document).ready(function () {
     loadFilters();
     resetFilters();
     showEmptyStudentState();
-    showNotificationFilterRequires('Please Select station first', 'warning');
 
     $('#clearFilters').click(function () {
         resetFilters();
@@ -372,19 +371,18 @@ function loadStudents(page = 1) {
             status: status
         },
         beforeSend: function () {
-            showLoading('Loading students');
+            showLoading('Loading students records...');
         },
         success: function (response) {
+            console.log(response.students.data)
             $('#studentTable').empty();
-            if (response.data.length === 0) {
-                $('#studentTableContainer').addClass('d-none');
-                $('#noStudentsMessage').removeClass('d-none').text('No records found.');
-                $('#pagination').empty();
+            if (response.students.data.length === 0) {
+                showImportStudentsPrompt();
             } else {
                 $('#studentTableContainer').removeClass('d-none');
                 $('#noStudentsMessage').addClass('d-none');
 
-                response.data.forEach(function (student) {
+                response.students.data.forEach(function (student) {
                     const fullName = `${student.last_name ?? ''}, ${student.first_name ?? ''}${student.middle_initial ? ' ' + student.middle_initial + '.' : ''}`;
                     const statusBadge = student.status === 'Printed' ? 'bg-success' : 'bg-secondary';
                     const row = `
@@ -468,10 +466,20 @@ function loadFilters() {
             $('#sectionFilter').prop('disabled', true);
             $('#statusFilter').prop('disabled', true);
 
+            const schools = filters.schools || [];
+            if (schools.length === 0) {
+                $('#schoolFilter').html('<option value="" selected disabled>Station</option>');
+                $('#schoolFilter').prop('disabled', true);
+                showImportStudentsPrompt();
+                return;
+            }
+            showNotificationFilterRequires('Please Select Station', 'warning');
             // Populate schools
             filters.schools.forEach(function (school) {
+                $('#schoolFilter').prop('disabled', false);
                 $('#schoolFilter').append(`<option value="${school}">${school}</option>`);
             });
+            showEmptyStudentState();
         },
         error: function (xhr) {
             console.error('Failed to load filters:',xhr.responseText);
@@ -526,7 +534,7 @@ function showImportResult(response) {
 
 function showNotification(message, type) {
     const notification = $('#notification');
-    notification.removeClass('d-none alert-success alert-danger alert-warning').addClass('alert-' + type).text(message);
+    notification.removeClass('d-none alert-success alert-danger alert-warning').addClass('alert-' + type).html(`<i class="bi bi-exclamation-lg text-danger fs-4"></i>${message}`);
 
     setTimeout(function () {
         notification.addClass('d-none');
@@ -535,13 +543,15 @@ function showNotification(message, type) {
 function showNotificationFilterRequires(message= '', type = '', filter = '') {
     const notification = $('#notification');
     if(filter === ''){
-        notification.removeClass('d-none alert-success alert-danger alert-warning').addClass('alert-' + type).text(message);
+        notification.removeClass('d-none alert-success alert-danger alert-warning').addClass('alert-' + type).html(`<i class="bi bi-caret-right fs-5 text-danger"></i> ${message}`);
     }else if (filter === 'school'){
-        notification.removeClass('d-none alert-success alert-danger alert-warning').addClass('alert-' + type).text(message);
+        notification.removeClass('d-none alert-success alert-danger alert-warning').addClass('alert-' + type).html(`<i class="bi bi-caret-right fs-5 text-danger"></i> ${message}`);
     }else if (filter === 'grade'){
-        notification.removeClass('d-none alert-success alert-danger alert-warning').addClass('alert-' + type).text(message);
+        notification.removeClass('d-none alert-success alert-danger alert-warning').addClass('alert-' + type).html(`<i class="bi bi-caret-right fs-5 text-danger"></i> ${message}`);
     }else if(filter === 'section'){
-        notification.addClass('d-none alert-success alert-danger alert-warning').addClass('alert-' + type).text(message);
+        notification.addClass('d-none alert-success alert-danger alert-warning').addClass('alert-' + type).html(`<i class="bi bi-caret-right fs-5 text-danger"></i> ${message}`);
+    } else if(filter === 'noStudents'){
+        notification.removeClass('d-none alert-success alert-danger alert-warning').addClass('alert-' + type).html(`<i class="bi bi-exclamation-lg fs-4 text-danger"></i>${message}`)
     }
 }
 
@@ -596,4 +606,18 @@ function updateStudentRecordsHeading() {
     }
 
     $('#studentRecordsHeading').html(heading);
+}
+
+function showImportStudentsPrompt() {
+    $('#studentTableContainer').addClass('d-none');
+    $('#pagination').empty();
+    $('#recordCount').text('');
+    $('#generateCount').text('');
+
+    showNotificationFilterRequires(
+        'No student records are available. Please import or upload student records.',
+        'warning', 'noStudents'
+    );
+
+    $('#noStudentsMessage').addClass('d-none').empty();
 }
