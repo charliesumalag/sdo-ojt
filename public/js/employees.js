@@ -507,13 +507,13 @@ function showImportResult(response) {
 
 function updateEmployeeRecordsHeading() {
     const station = $('#stationFilter').val();
-    const position = $('#positionFilter').val();
+    const employmentType = $('#employementTypeFilter').val();
     const status = $('#statusFilter').val();
     let heading = '';
     if (station) {
         heading += '<i class="bi bi-chevron-right"></i> ' + station;}
-    if (position) {
-        heading += '<i class="bi bi-chevron-right"></i> ' + position;}
+    if (employmentType) {
+        heading += '<i class="bi bi-chevron-right"></i> ' + employmentType;}
     if (status) {
         heading += '<i class="bi bi-chevron-right"></i> ' + status;
     }
