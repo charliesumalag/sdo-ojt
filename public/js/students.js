@@ -2,11 +2,12 @@
 
 $(document).ready(function () {
    $('#schoolFilter, #gradeFilter, #sectionFilter, #statusFilter').change(function () {
-    updateStudentRecordsHeading();
-});
+        updateStudentRecordsHeading();
+    });
     loadFilters();
     resetFilters();
     showEmptyStudentState();
+    showNotificationFilterRequires('Please Select station first', 'warning');
 
     $('#clearFilters').click(function () {
         resetFilters();
@@ -66,6 +67,7 @@ $(document).ready(function () {
 
     $('#schoolFilter').change(function () {
         const school = $(this).val();
+        showNotificationFilterRequires('Please Select Grade Level', 'warning', 'school');
         console.log('Selected school:', school);
         $('#gradeFilter').html('<option value="" selected disabled>Grade Level</option>').prop('disabled', true);
         // Reset section
@@ -102,6 +104,8 @@ $(document).ready(function () {
     $('#gradeFilter').change(function () {
         const school = $('#schoolFilter').val();
         const grade = $(this).val();
+
+        showNotificationFilterRequires('Please Select Section', 'warning', 'grade');
 
         // Reset section
         $('#sectionFilter').html('<option value="" selected disabled>Section</option>').prop('disabled', true);
@@ -142,6 +146,8 @@ $(document).ready(function () {
         const section = $(this).val();
         const school = $('#schoolFilter').val();
         const grade_level = $('#gradeFilter').val();
+
+        showNotificationFilterRequires('', '', 'section');
 
         // Reset status
         $('#statusFilter').html('<option value="" selected disabled>Not Printed</option>').prop('disabled', true);
@@ -333,12 +339,9 @@ $(document).ready(function () {
 });
 
 function resetFilters() {
-    $('#search').val('');
     $('#schoolFilter').val('');
     $('#gradeFilter').val('').prop('disabled', true);
     $('#sectionFilter').html('<option value="" selected disabled>Section</option>').val('').prop('disabled', true);
-    $('#genderFilter').val('');
-    $('#schoolYearFilter').val('');
     $('#statusFilter').html('<option value="" selected disabled>Status</option>').val('').prop('disabled', true);
 }
 
@@ -363,12 +366,9 @@ function loadStudents(page = 1) {
         method: 'GET',
         data: {
             page: page,
-            search: $('#search').val(),
-            gender: $('#genderFilter').val(),
             grade_level: grade,
             school: school,
             section: section,
-            school_year: $('#schoolYearFilter').val(),
             status: status
         },
         beforeSend: function () {
@@ -385,7 +385,6 @@ function loadStudents(page = 1) {
                 $('#noStudentsMessage').addClass('d-none');
 
                 response.data.forEach(function (student) {
-                    console.log('this is load students' +    student.lrn)
                     const fullName = `${student.last_name ?? ''}, ${student.first_name ?? ''}${student.middle_initial ? ' ' + student.middle_initial + '.' : ''}`;
                     const statusBadge = student.status === 'Printed' ? 'bg-success' : 'bg-secondary';
                     const row = `
@@ -452,6 +451,7 @@ function loadFilters() {
         url: '/student-filters',
         method: 'GET',
         success: function (filters) {
+            console.log(JSON.stringify(filters));
             // School
             $('#schoolFilter').html('<option value="" selected disabled>Station</option>');
             // Grade
@@ -531,6 +531,18 @@ function showNotification(message, type) {
     setTimeout(function () {
         notification.addClass('d-none');
     }, 10000);
+}
+function showNotificationFilterRequires(message= '', type = '', filter = '') {
+    const notification = $('#notification');
+    if(filter === ''){
+        notification.removeClass('d-none alert-success alert-danger alert-warning').addClass('alert-' + type).text(message);
+    }else if (filter === 'school'){
+        notification.removeClass('d-none alert-success alert-danger alert-warning').addClass('alert-' + type).text(message);
+    }else if (filter === 'grade'){
+        notification.removeClass('d-none alert-success alert-danger alert-warning').addClass('alert-' + type).text(message);
+    }else if(filter === 'section'){
+        notification.addClass('d-none alert-success alert-danger alert-warning').addClass('alert-' + type).text(message);
+    }
 }
 
 

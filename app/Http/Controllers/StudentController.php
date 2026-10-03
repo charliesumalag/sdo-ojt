@@ -14,9 +14,8 @@ class StudentController extends Controller
     public function index(Request $request)
     {
         $query = Students::query();
-        if ($request->gender) {
-            $query->where('gender', $request->gender);
-        }
+        $hasStudents = Students::exists();
+        $studentsFirstLoad = Students::query()->get();
         if ($request->grade_level) {
             $query->where('grade_level', $request->grade_level);
         }
@@ -26,9 +25,6 @@ class StudentController extends Controller
         if ($request->section) {
             $query->where('section', $request->section);
         }
-        //if ($request->school_year) {
-        //    $query->where('school_year', $request->school_year);
-        //}
         if ($request->status) {
             $query->where('status', $request->status);
         }
@@ -36,7 +32,10 @@ class StudentController extends Controller
             ->orderBy('last_name')
             ->paginate(25);
 
-        return response()->json($students);
+        return response()->json([
+            'students' => $students,
+            'hasStudents' => $hasStudents
+        ]);
     }
 
 
@@ -203,7 +202,7 @@ class StudentController extends Controller
             ->distinct()
             ->orderBy('status')
             ->pluck('status');
- 
+
         return response()->json($status);
     }
     public function printConfirmed(Request $request)
