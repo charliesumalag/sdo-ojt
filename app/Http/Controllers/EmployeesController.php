@@ -49,12 +49,12 @@ class EmployeesController extends Controller
     //employeesPosition
     public function employeesEmployementType(Request $request)
     {
-        $employementType = Employees::where('station', $request->station)
-            ->select('employement_type')
+        $employmentType = Employees::where('station', $request->station)
+            ->select('employment_type')
             ->distinct()
-            ->orderBy('employement_type')
-            ->pluck('employement_type');
-        return response()->json($employementType);
+            ->orderBy('employment_type')
+            ->pluck('employment_type');
+        return response()->json($employmentType);
     }
 
 
@@ -96,7 +96,7 @@ class EmployeesController extends Controller
     public function empStatus(Request $request)
     {
         $status = Employees::where('station', $request->station)
-            ->where('employement_type', $request->employementType)
+            ->where('employment_type', $request->employmentType)
             ->select('status')
             ->distinct()
             ->orderBy('status')

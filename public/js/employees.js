@@ -72,7 +72,7 @@ $(document).ready(function() {
         const station = $(this).val();
         // Reset status dropdown
         $('#statusFilter').html('<option value="" selected disabled>Status</option>').prop('disabled', true);
-         $('#employementTypeFilter').html('<option value="" selected disabled>EmployementType</option>').prop('disabled', true);
+         $('#employementTypeFilter').html('<option value="" selected disabled>EmploymentType</option>').prop('disabled', true);
 
         //this is for table display conditional continue later
         if(!station){
@@ -90,9 +90,10 @@ $(document).ready(function() {
             data: {
                 station: station,
             },
-            success: function (employementType){
+            success: function (employmentType){
+                console.log(employmentType);
 
-                employementType.forEach(function (empType) {
+                employmentType.forEach(function (empType) {
                     $('#employementTypeFilter').append(`<option value="${empType}">${empType}</option>`)
                 })
                 loadEmployee(1);
@@ -106,11 +107,11 @@ $(document).ready(function() {
 
     $('#employementTypeFilter').change(function () {
         const station = $('#stationFilter').val();
-        const employementType = $(this).val();
+        const employmentType = $(this).val();
 
         $('#statusFilter').html('<option value="" selected disabled>Status</option>').prop('disabled', true);
 
-        if(!station || !employementType){
+        if(!station || !employmentType){
             showEmptyStudentState();
             return;
         }
@@ -120,7 +121,7 @@ $(document).ready(function() {
             method: 'GET',
             data: {
                 station: station,
-                employementType: employementType
+                employmentType: employmentType
             },
             success: function(statuses){
                 if (!statuses || statuses.length === 0) {

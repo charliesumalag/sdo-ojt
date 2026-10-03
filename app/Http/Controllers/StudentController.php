@@ -203,7 +203,7 @@ class StudentController extends Controller
             ->distinct()
             ->orderBy('status')
             ->pluck('status');
-
+ 
         return response()->json($status);
     }
     public function printConfirmed(Request $request)

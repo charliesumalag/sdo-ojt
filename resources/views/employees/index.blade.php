@@ -49,9 +49,6 @@
         </button>
 
     </div>
-
-
-
     <div class="border p-4 rounded mt-4" id="employeesTableContainer">
         <div class="d-flex border-bottom justify-content-between align-items-center pb-3">
             <div class="d-flex align-items-center gap-2 ">
@@ -69,7 +66,7 @@
                     <tr>
                         <th>All<br><input class="checkbox-all" id="checkAll" type="checkbox" name="" value=""> </input></th>
                         <th class="">Employee ID</th>
-                        <th class="">Student Name</th>
+                        <th class="">Employee Name</th>
                         <th class="">Station</th>
                         <th class="">Position</th>
                         <th class="">Status</th>
