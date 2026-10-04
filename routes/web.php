@@ -9,7 +9,7 @@ Route::get('/', function () {
     return redirect()->route('employees');
 });
 
-
+  
 //stiudyante
 
 Route::get('/students', [StudentController::class, 'studentList'])->name('students');

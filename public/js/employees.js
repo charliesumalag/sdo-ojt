@@ -1,12 +1,71 @@
-$(document).ready(function() {
-
+$(document).ready(function () {
+    loadFilters();
+    showEmptyStudentState();
     $('#stationFilter, #employementTypeFilter, #statusFilter').change(function () {
         updateEmployeeRecordsHeading();
     });
 
+    $('#stationFilter').change(function () {
+        const station = $(this).val();
+        resetEmploymentTypeFilter();
+        resetStatusFilter();
+        if (!station) {
+            showEmptyStudentState();
+            return;
+        }
+        $('#employementTypeFilter').prop('disabled', false);
+        loadEmploymentType(station);
+    });
+    //start of employmentfilter change
+    $('#employementTypeFilter').change(function () {
+        const station = $('#stationFilter').val();
+        const employmentType = $(this).val();
+        resetStatusFilter();
+        if (!station || !employmentType) {
+            showEmptyStudentState();
+            return;
+        }
 
-    loadFilters();
-    showEmptyStudentState();
+        // Request available statuses from the backend.
+        $.ajax({
+            url: '/employees-status',
+            method: 'GET',
+            data: {
+                station: station,
+                employmentType: employmentType
+            },
+            success: function (statuses) {
+                // If no status exists, keep the status dropdown disabled.
+                if (!statuses || statuses.length === 0) {
+                    $('#statusFilter').append('<option value="" selected disabled>No Status</option>').prop('disabled', true);
+                    showEmptyStudentState();
+                    return;
+                }
+                statuses.forEach(function (status) {
+                    $('#statusFilter').append(`<option value="${status}">${status}</option>`);
+                });
+                // Prefer "Not Printed" as the default status.
+                if (statuses.includes('Not Printed')) {
+                    $('#statusFilter').val('Not Printed');
+                } else {
+                    $('#statusFilter').val(statuses[0]);
+                }
+                $('#statusFilter').prop('disabled', false);
+                updateEmployeeRecordsHeading();
+                loadEmployee(1);
+            },
+
+            error: function (xhr) {
+                console.error('Failed to load status:',xhr.responseText);
+            }
+        });
+        // Hide the table while the status filter is being loaded.
+        showEmptyStudentState();
+    });
+
+    $('#statusFilter').change(function () {
+        loadEmployee(1);
+    });
 
     $('#clearFilters').click(function () {
         resetFilters();
@@ -14,30 +73,27 @@ $(document).ready(function() {
         showEmptyStudentState();
         $('#stationFilter').val('SDO');
         loadEmployee(1);
-     
     });
 
-    $('#importButtonEmp').click(function() {
-        console.log('import clicked')
+
+    $('#importButtonEmp').click(function () {
         $('#file').click();
-    })
+    });
 
-    $('#file').change(function(){
+    $('#file').change(function () {
         const file = this.files[0];
-        console.log(file);
+        if (!file) {
+            return;
+        }
 
-
-        if(!file)return;
-        //pur the file into the container which is a formdata.
         const formData = new FormData();
         formData.append('file', file);
 
-
-        //send the file inot backend
         $.ajax({
-            url:'/employees/import',
+            url: '/employees/import',
             method: 'POST',
             data: formData,
+            // Required when sending FormData.
             processData: false,
             contentType: false,
             headers: {
@@ -46,145 +102,50 @@ $(document).ready(function() {
             beforeSend: function () {
                 showLoading('Uploading Employee Records');
             },
-            success: function(response){
+            success: function (response) {
                 showImportResult(response);
                 resetFilters();
                 loadFilters();
                 showEmptyStudentState();
                 $('#file').val('');
-            },error: function(xhr){
-                let message = 'The employee file could not be imported.';
+            },
+            error: function (xhr) {
+                let message ='The employee file could not be imported or uploaded.';
 
                 if (xhr.responseJSON && xhr.responseJSON.message) {
                     message = xhr.responseJSON.message;
                 }
-
                 showNotification(message, 'danger');
-
                 $('#file').val('');
             },
-            complete: function (){
+            complete: function () {
                 hideLoading();
             }
-        })
-    })
-
-
-    $('#stationFilter').change(function () {
-        const station = $(this).val();
-        // Reset status dropdown
-       // $('#stationFilter').html('<option value="" selected disabled>Station</option>').prop('disabled', true);
-        $('#statusFilter').html('<option value="" selected disabled>Status</option>').prop('disabled', true);
-        $('#employementTypeFilter').html('<option value="" selected disabled>EmploymentType</option>').prop('disabled', true);
-
-        //this is for table display conditional continue later
-        if(!station){
-            showEmptyStudentState();
-            return;
-        }
-
-        //endable next dropdown which is the position
-        $('#employementTypeFilter').prop('disabled', false);
-
-        //request dropdown data for position
-        $.ajax({
-            url: '/employees-employementType',
-            method: 'GET',
-            data: {
-                station: station,
-            },
-            success: function (employmentType){
-                console.log(employmentType);
-
-                employmentType.forEach(function (empType) {
-                    $('#employementTypeFilter').append(`<option value="${empType}">${empType}</option>`)
-                })
-                loadEmployee(1);
-           },
-            error: function (xhr) {
-                console.error('Failed to load position:',xhr.responseText);
-            }
         });
-        showEmptyStudentState();
-    })
-
-    $('#employementTypeFilter').change(function () {
-        const station = $('#stationFilter').val();
-        const employmentType = $(this).val();
-
-        $('#statusFilter').html('<option value="" selected disabled>Status</option>').prop('disabled', true);
-
-        if(!station || !employmentType){
-            showEmptyStudentState();
-            return;
-        }
-
-        $.ajax({
-            url: '/employees-status',
-            method: 'GET',
-            data: {
-                station: station,
-                employmentType: employmentType
-            },
-            success: function(statuses){
-                if (!statuses || statuses.length === 0) {
-                    $('#statusFilter').append('<option value="" selected disabled>No Status</option>').prop('disabled', true);
-                    showEmptyStudentState();
-                    return;
-                }
-
-                statuses.forEach(function (status) {
-                    $('#statusFilter').append(`<option value="${status}">${status}</option>`);
-                });
-                if (statuses.includes('Not Printed')) {
-                    $('#statusFilter').val('Not Printed');
-                } else {
-                    // Otherwise select the first status
-                    $('#statusFilter').val(statuses[0]);
-                }
-                // Enable status filter
-                $('#statusFilter').prop('disabled', false);
-                updateEmployeeRecordsHeading();
-                loadEmployee(1);
-            },
-            error: function (xhr) {
-                console.log('Failed to load status', xhr.responseText);
-            }
-        });
-        showEmptyStudentState();
-    })
-
-    $('#statusFilter').change(function () {
-        //updateStudentRecordsHeading();
-        loadEmployee(1);
     });
 
     $('#generateQrButton').click(function () {
-        const filters = {
-            station: $('#stationFilter').val(),
-            position: $('#positionFilter').val(),
-            status: $('#statusFilter').val()
-        };
+        const filters = getEmployeeFilters();
+        const selectedEmployees = [];
 
-        let selectedEmployee = [];
-        $('.employee-checkbox:checked').each(function() {
-            selectedEmployee.push($(this).val());
-        })
+        $('.employee-checkbox:checked').each(function () {
+            selectedEmployees.push($(this).val());
+        });
 
-        if (selectedEmployee.length === 0) {
-            showNotification('Please select at least one employee.', 'warning');
+        if (selectedEmployees.length === 0) {
+            showNotification('Please select at least one employee.','warning');
             return;
         }
 
         const params = new URLSearchParams();
-
         Object.keys(filters).forEach(function (key) {
             if (filters[key]) {
                 params.append(key, filters[key]);
             }
         });
-        selectedEmployee.forEach(function (employee_id) {
-            params.append('employee_id[]', employee_id);
+
+        selectedEmployees.forEach(function (employeeId) {
+            params.append('employee_id[]', employeeId);
         });
 
         const printUrl = '/employee/print?' + params.toString();
@@ -192,70 +153,58 @@ $(document).ready(function() {
         showLoading('Generating QR Codes');
         $('#printFrame').off('load');
 
+
+        // Wait until the print page has finished loading.
         $('#printFrame').one('load', function () {
-            // Get the exact student codes from the loaded print page
+
+            // Get the exact employee codes from the print page.
             const employeeCodes = $(printFrame.contentDocument).find('.code').map(function () {
                 return $(this).text().trim();
             }).get();
-            // Store the codes on the iframe element
+
+            // Store the codes temporarily on the iframe.
             printFrame.dataset.employeeCodes = JSON.stringify(employeeCodes);
 
             setTimeout(function () {
                 hideLoading();
                 printFrame.contentWindow.onafterprint = function () {
                     const modalElement = document.getElementById('printConfirmationModal');
-                    const printModal = new bootstrap.Modal(modalElement);
+                    const printModal = new bootstrap.Modal(modalElement); 
                     printModal.show();
                 };
-
                 printFrame.contentWindow.focus();
                 printFrame.contentWindow.print();
             }, 300);
         });
-
         printFrame.src = printUrl;
     });
 
+    // Select/unselect all employees.
     $('#checkAll').on('change', function () {
-        $('.employee-checkbox').prop('checked', this.checked);
-        const checked = $('.employee-checkbox:checked').length;
-
-        $('#generateCount').text(
-            checked > 0 ? ` (${checked})` : ''
-        );
+        $('.employee-checkbox').prop('checked',this.checked);
+        updateGenerateCount();
     });
 
-    $(document).on('change', '.employee-checkbox', function () {
-        const total = $('.employee-checkbox').length;
-        const totalChecked = $('.employee-checkbox:checked').length;
-
-        $('#generateCount').text(
-            totalChecked > 0 ? ` (${totalChecked})` : ''
-        );
-
-        $('#checkAll').prop(
-            'checked',
-            total > 0 && total === totalChecked
-        );
-
+    $(document).on('change','.employee-checkbox',function () {
+        updateGenerateCount();
+        updateCheckAllState();
     });
 
-
-
+    //confirmatttion sa print -> changing status
     $('#confirmPrintButton').click(function () {
         const printFrame = document.getElementById('printFrame');
-        // Get the exact student codes from the QR print page
-        const employeeCodes =JSON.parse(printFrame.dataset.employeeCodes || '[]');
-        console.log('Students being marked as Printed:', employeeCodes);
+        const employeeCodes = JSON.parse(printFrame.dataset.employeeCodes || '[]');
+
         if (!employeeCodes || employeeCodes.length === 0) {
-            console.error('No student codes found.');
+            console.error('No employee codes found.');
             return;
         }
+
         $.ajax({
             url: '/employees/print-confirmed',
             type: 'POST',
             data: {
-                _token: $('meta[name="csrf-token"]').attr('content'),
+                _token:$('meta[name="csrf-token"]').attr('content'),
                 codes: employeeCodes
             },
             beforeSend: function () {
@@ -263,19 +212,19 @@ $(document).ready(function() {
             },
             success: function (response) {
                 console.log(response.message);
-                console.log('Updated:', response.updated);
+                console.log('Updated:',response.updated);
                 const modalElement = document.getElementById('printConfirmationModal');
                 const printModal = bootstrap.Modal.getInstance(modalElement);
+
                 if (printModal) {
                     printModal.hide();
                 }
-                showNotification('Printed successfully', 'success');
+                showNotification('Printed successfully','success');
+
                 if ($('#statusFilter option[value="Printed"]').length === 0) {
                     $('#statusFilter').append('<option value="Printed">Printed</option>');
                 }
-                // Select Printed
                 $('#statusFilter').val('Printed');
-                // Reload student list
                 loadEmployee(1);
             },
             error: function (xhr) {
@@ -287,71 +236,47 @@ $(document).ready(function() {
             }
         });
     });
-})
-//end of document . ready
+});
 
 function loadFilters() {
     $.ajax({
         url: '/employees-filters',
         method: 'GET',
-        success: function(employees){
-            
-            //dropdown Select disable option
-            $('#stationFilter').html('<option value="" selected disabled>Station</option>');
-            $('#employementTypeFilter').html('<option value="" selected disabled>Employment Type</option>');
-            $('#statusFilter').html('<option value="" selected disabled>Status</option>');
+        success: function (employees) {
+            resetFilterDropdowns();
+            $('#employementTypeFilter').prop('disabled',true);
+            $('#statusFilter').prop('disabled',true);
 
+            employees.station.forEach(function (station) {
+                $('#stationFilter').append(`<option value="${station}">${station}</option>`);
+            });
 
-            //disabled other dropdown when station is not selected.
-            $('#positionFilter').prop('disabled', true);
-            $('#statusFilter').prop('disabled', true);
-
-            
-            //get now the available school on database
-
-            employees.station.forEach(function (station){
-                $('#stationFilter').append(`<option value="${station}">${station}</option>`)
-            })
-
-            if(employees.station.length === 0){
-                $('#stationFilter').prop('disabled', true);
-                $('#employementTypeFilter').prop('disabled', true);
+            if (employees.station.length === 0) {
+                $('#stationFilter').prop('disabled',true);
+                $('#employementTypeFilter').prop('disabled',true);
                 $('#clearFilters').prop('disabled', true).addClass('disabled');
-                console.log('no import data yet');
                 showNotificationFilterRequires('No employee records are available. Please import or upload employee records.','warning','noEmployee');
-            }else{
-                console.log('imported succcesfully');
-                $('#stationFilter').val('SDO');
-                $('#stationFilter').prop('disabled', false);
-                $('#employementTypeFilter').prop('disabled', false);
-                $('#clearFilters').prop('disabled', false).removeClass('disabled');
-                showNotificationFilterRequires('','','hasEmployees');
-                
-                loadEmployee(1);
-                $('#stationFilter').trigger('change');
+                return;
             }
-
-
-           
-
-           
-        },
-    })
-
-
-
+            $('#stationFilter').val('SDO');
+            $('#stationFilter').prop('disabled',false);
+            $('#employementTypeFilter').prop('disabled',false);
+            $('#clearFilters').prop('disabled', false).removeClass('disabled');
+            showNotificationFilterRequires('','','hasEmployees');
+            loadEmployee(1);
+            $('#stationFilter').trigger('change');
+        }
+    });
 }
 
-function loadEmployee(page = 1){
-    
-     const station = $('#stationFilter').val();
-    const position = $('#positionFilter').val();
-    const status = $('#statusFilter').val();
+function loadEmployee(page = 1) {
+    const filters = getEmployeeFilters();
 
-    if(!station){
+    if (!filters.station) {
         showEmptyStudentState();
         return;
     }
+
     $('#checkAll').prop('checked', false);
     $('#generateCount').text('');
 
@@ -360,61 +285,144 @@ function loadEmployee(page = 1){
         method: 'GET',
         data: {
             page: page,
-            station: station,
-            position: position,
-            status: status,
+            ...filters
         },
         beforeSend: function () {
             showLoading('Loading employee records...');
         },
-        success: function(response){
-
-            console.log(response.data);
-            $('#employeesTable').empty();
-            if(response.data.length === 0){
-                $('#employeesTableContainer').addClass('d-none');
-                //$('#noEmployeesMessage').addClass('d-none').text('No records found.');
-                $('#pagination').empty();
-            }else{
-                $('#employeesTableContainer').removeClass('d-none');
-                $('#noEmployeesMessage').addClass('d-none');
-
-                response.data.forEach(function (employee){
-                    const fullName = `${employee.last_name ?? ''},${employee.first_name ?? ''} ${employee.middle_initial ? ' ' + employee.middle_initial + '.' : ''}`;
-                    const statusBadge = employee.status === 'Printed' ? 'bg-success' : 'bg-secondary';
-                    const row = `
-                        <tr>
-                            <td><input type="checkbox" class="employee-checkbox" name="employee[]" value="${employee.employee_id}"></td>
-                            <td>${employee.employee_id ?? ''}</td>
-                            <td>${fullName}</td>
-                            <td>${employee.station ?? ''}</td>
-                            <td>${employee.position ?? ''}</td>
-                            <td><span class="badge rounded-pill ${statusBadge}">${employee.status}</span></td>
-                        </tr>
-                    `;
-                    $('#employeesTable').append(row);
-                })
-            }
-            if(response.total === 0){
-                $('#pagination').empty();
-            }else{
-                renderPagination(response);
-            }
+        success: function (response) {
+            renderEmployeeTable(response);
+            renderPagination(response);
         },
-        error: function(xhr){
-                console.error('failed to load employees', xhr.responseText);
+        error: function (xhr) {
+            console.error('Failed to load employees:',xhr.responseText);
         },
         complete: function () {
             hideLoading();
         }
-    })
-
+    });
 }
-function resetFilters(){
+
+function getEmployeeFilters() {
+    return {
+        station: $('#stationFilter').val(),
+        employmentType: $('#employementTypeFilter').val(),
+        status: $('#statusFilter').val()
+    };
+}
+
+function renderEmployeeTable(response) {
+    const employees = response.data;
+    $('#employeesTable').empty();
+    if (employees.length === 0) {
+        $('#employeesTableContainer').addClass('d-none');
+        $('#noEmployeesMessage').removeClass('d-none');
+        $('#pagination').empty();
+        return;
+    }
+    $('#employeesTableContainer').removeClass('d-none');
+    $('#noEmployeesMessage').addClass('d-none');
+    
+    employees.forEach(function (employee) {
+        const employeeRow = createEmployeeRow(employee);
+        $('#employeesTable').append(employeeRow);
+    });
+}
+
+function createEmployeeRow(employee) {
+    const fullName = `${employee.last_name ?? ''}, ` +`${employee.first_name ?? ''}` + `${employee.middle_initial ? ' ' + employee.middle_initial + '.' : ''}`;
+    const statusBadge = employee.status === 'Printed' ? 'bg-success' : 'bg-secondary';
+    return `
+        <tr>
+            <td> <input type="checkbox" class="employee-checkbox" name="employee[]" value="${employee.employee_id}"></td>
+            <td>${employee.employee_id ?? ''}</td>
+            <td>${fullName}</td>
+            <td>${employee.station ?? ''}</td>
+            <td>${employee.position ?? ''}</td>
+            <td><span class="badge rounded-pill ${statusBadge}">${employee.status ?? ''}</span></td>
+        </tr>
+    `;
+}
+
+
+function renderPagination(response) {
+    $('#pagination').empty();
+    if (response.current_page > 1) {
+        $('#pagination').append(`<button class="btn btn-sm btn-outline-secondary page-button" data-page="${response.current_page - 1}">Previous</button>`);
+    }
+
+    for (let page = 1;page <= response.last_page;page++) {
+        $('#pagination').append(`<button class="btn btn-sm ${page === response.current_page ? 'btn-primary' : 'btn-outline-secondary'} px-2 page-button" data-page="${page}">${page}</button>`);
+    }
+
+    if (response.current_page < response.last_page) {
+        $('#pagination').append(`<button class="btn btn-sm btn-outline-secondary page-button" data-page="${response.current_page + 1}">Next</button>`);
+    }
+}
+
+function updateGenerateCount() {
+    const checked = $('.employee-checkbox:checked').length;
+    $('#generateCount').text(checked > 0 ? ` (${checked})`: '');
+}
+
+function updateCheckAllState() {
+    const total = $('.employee-checkbox').length;
+    const totalChecked = $('.employee-checkbox:checked').length;
+    $('#checkAll').prop('checked',total > 0 && total === totalChecked);
+}
+
+function loadEmploymentType(station) {
+    $.ajax({
+        url: '/employees-employementType',
+        method: 'GET',
+        data: {
+            station: station
+        },
+        success: function (employmentTypes) {
+            populateEmploymentTypeFilter(
+                employmentTypes
+            );
+            loadEmployee(1);
+        },
+        error: function (xhr) {
+            console.error('Failed to load employment types:',xhr.responseText);
+        }
+    });
+}
+
+function populateEmploymentTypeFilter(employmentTypes) {
+    $('#employementTypeFilter').html('<option value="" selected disabled>' +'Employment Type' +'</option>');
+
+    employmentTypes.forEach(function (employmentType) {
+        $('#employementTypeFilter').append(`<option value="${employmentType}">${employmentType}</option>`);
+    });
+}
+
+function resetFilters() {
     $('#stationFilter').val('');
-    $('#employementTypeFilter').val('')
-    $('#positionFilter').val('').prop('disabled', true);
-    $('#statusFilter').val('').prop('disabled', true);
+    resetEmploymentTypeFilter();
+    resetStatusFilter();
+}
+
+function resetStatusFilter() {
+    $('#statusFilter').html('<option value="" selected disabled>' +'Status' + '</option>').prop('disabled', true);
+}
+
+function resetEmploymentTypeFilter() {
+    $('#employementTypeFilter').html('<option value="" selected disabled>' + 'Employment Type' + '</option>').prop('disabled', true);
+}
+
+function resetFilterDropdowns() {
+    $('#stationFilter').html('<option value="" selected disabled>' + 'Station' + '</option>');
+    resetEmploymentTypeFilter();
+    resetStatusFilter();
+}
+
+function showEmptyStudentState() {
+    $('#employeesTableContainer').addClass('d-none');
+    $('#pagination').empty();
+    $('#recordCount').text('');
+    $('#generateCount').text('0');
 }
 
 
@@ -427,59 +435,6 @@ function hideLoading() {
     $('#loadingOverlay').hide();
 }
 
-function showEmptyStudentState() {
-    // Hide table
-    $('#employeesTableContainer').addClass('d-none');
-
-    // Show empty message
-    //$('#noEmployeesMessage').removeClass('d-none').text('No records found');
-
-    // Clear pagination
-    $('#pagination').empty();
-
-    // Reset counts
-    $('#recordCount').text('');
-
-    $('#generateCount').text('0');
-}
-
-function renderPagination(response) {
-    $('#pagination').empty();
-    if (response.current_page > 1) {
-        $('#pagination').append(`
-            <button
-                class="btn btn-sm btn-outline-secondary page-button"
-                data-page="${response.current_page - 1}">
-                Previous
-            </button>
-        `);
-    }
-
-    for (let page = 1;page <= response.last_page;page++) {
-        $('#pagination').append(`
-            <button
-                class="btn btn-sm ${
-                    page === response.current_page
-                        ? 'btn-primary'
-                        : 'btn-outline-secondary'
-                } px-2 page-button"
-                data-page="${page}">
-                ${page}
-            </button>
-        `);
-    }
-
-    if (response.current_page < response.last_page) {
-        $('#pagination').append(`
-            <button
-                class="btn btn-sm btn-outline-secondary page-button"
-                data-page="${response.current_page + 1}">
-                Next
-            </button>
-        `);
-    }
-}
-
 function showNotification(message, type) {
     const notification = $('#notification');
     notification.removeClass('d-none alert-success alert-danger alert-warning').addClass('alert-' + type).html(`<i class="bi bi-exclamation-lg text-danger fs-4"></i>${message}`);
@@ -489,29 +444,38 @@ function showNotification(message, type) {
     }, 10000);
 }
 
-
+function showNotificationFilterRequires(message = '', type = '', filter = '') {
+    const notification = $('#notification');
+    if (filter === 'noEmployee') {
+        notification.removeClass('d-none alert-success alert-danger alert-warning').addClass('alert-' + type).html(`<i class="bi bi-exclamation-lg text-danger fs-4"></i>${message}`);
+    }
+    else if (filter === 'hasEmployees') {
+        notification.addClass('d-none').removeClass('alert-success alert-danger alert-warning');
+    }
+}
 
 function showImportResult(response) {
     if (response.imported > 0) {
         $('#importResultModalLabel').text('Records Added Successfully');
         $('#importResultMessage').text('Employee records were saved successfully.');
-    } else if (response.skipped > 0) {
+    }
+    else if (response.skipped > 0) {
         $('#importResultModalLabel').text('No New Records Added');
         $('#importResultMessage').text('All employee records are already added.');
-    } else {
+    }
+    else {
         $('#importResultModalLabel').text('No Employee Records Found');
         $('#importResultMessage').text('No employee records were found.');
     }
-    // Imported count
-    $('#modalImported').text(response.imported);
-    // Skipped count
-    $('#modalSkipped').text(response.skipped);
 
-    // Clear skipped rows
+    $('#modalImported').text(response.imported);
+    $('#modalSkipped').text(response.skipped);
     $('#skippedRowsTable').empty();
-    if (response.skippedRows && response.skippedRows.length > 0)  {
+
+    if (response.skippedRows && response.skippedRows.length > 0) {
         $('#skippedRowsContainer').removeClass('d-none');
         $('#skippedRowsCount').text(response.skippedRows.length);
+
         response.skippedRows.forEach(function (row) {
             $('#skippedRowsTable').append(`
                 <tr>
@@ -520,11 +484,11 @@ function showImportResult(response) {
                 </tr>
             `);
         });
-    } else {
+    }
+    else {
         $('#skippedRowsContainer').addClass('d-none');
     }
 
-    // Show modal
     const modalElement = document.getElementById('importResultModal');
     const modal = new bootstrap.Modal(modalElement);
     modal.show();
@@ -535,22 +499,17 @@ function updateEmployeeRecordsHeading() {
     const employmentType = $('#employementTypeFilter').val();
     const status = $('#statusFilter').val();
     let heading = '';
+
     if (station) {
-        heading += '<i class="bi bi-chevron-right"></i> ' + station;}
+        heading += '<i class="bi bi-chevron-right"></i> ' + station;
+    }
+
     if (employmentType) {
-        heading += '<i class="bi bi-chevron-right"></i> ' + employmentType;}
+        heading += '<i class="bi bi-chevron-right"></i> ' + employmentType;
+    }
+
     if (status) {
         heading += '<i class="bi bi-chevron-right"></i> ' + status;
     }
-
     $('#studentRecordsHeading').html(heading);
 }
-function showNotificationFilterRequires(message= '', type = '', filter = '') {
-    const notification = $('#notification');
-    if(filter === 'noEmployee'){
-        notification.removeClass('d-none alert-success alert-danger alert-warning').addClass('alert-' + type).html(`<i class="bi bi-exclamation-lg text-danger fs-4"></i>${message}`);
-    }else if (filter === 'hasEmployees'){
-        notification.addClass('d-none alert-success alert-danger alert-warning').addClass('alert-' + type).text(message);
-    }
-}
-
