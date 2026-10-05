@@ -189,52 +189,39 @@ $(document).ready(function () {
     });
 
     $('#generateQrButton').click(function () {
+        const filters = getStudentFilters();
+        const selectedStudents = [];
+        $('.student-checkbox:checked').each(function () {
+            selectedStudents.push($(this).val());
+        });
 
-    const filters = getStudentFilters();
-
-    const selectedStudents = [];
-
-    $('.student-checkbox:checked').each(function () {
-        selectedStudents.push($(this).val());
-    });
-
-    // Do not continue if nothing was selected.
-    if (selectedStudents.length === 0) {
-        showNotification(
-            'Please select at least one student.',
-            'warning'
-        );
-        return;
-    }
-
-    // Create URL query parameters.
-    const params = new URLSearchParams();
-
-    // Add active filters.
-    Object.keys(filters).forEach(function (key) {
-
-        if (filters[key]) {
-            params.append(key, filters[key]);
+        // Do not continue if nothing was selected.
+        if (selectedStudents.length === 0) {
+            showNotification('Please select at least one student.','warning');
+            return;
         }
+        // Create URL query parameters.
+        const params = new URLSearchParams();
+
+        // Add active filters.
+        Object.keys(filters).forEach(function (key) {
+            if (filters[key]) {
+                params.append(key, filters[key]);
+            }
+        });
+
+        // Add selected student LRNs.
+        selectedStudents.forEach(function (lrn) {
+            params.append('lrns[]', lrn);
+        });
+
+        // Build the print page URL.
+        const printUrl = '/students/print?' + params.toString();
+
+        // Go directly to the Laravel print page.
+        window.open(printUrl,'_blank');
 
     });
-
-    // Add selected student LRNs.
-    selectedStudents.forEach(function (lrn) {
-
-        params.append('lrns[]', lrn);
-
-    });
-
-    // Build the print page URL.
-    const printUrl =
-        '/students/print?' +
-        params.toString();
-
-    // Go directly to the Laravel print page.
-    window.location.href = printUrl;
-
-});
 
 
 

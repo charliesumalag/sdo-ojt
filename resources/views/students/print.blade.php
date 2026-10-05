@@ -11,6 +11,16 @@
 </head>
 
 <body>
+    <div class="print-controls">
+        <button type="button" id="printButton">
+            Print
+        </button>
+
+        <button type="button" id="cancelButton">
+            Cancel
+        </button>
+    </div>
+    <div class="page-container">
     @foreach($qrData->chunk(8) as $studentChunk)
     <div class="print-page">
         @foreach($studentChunk as $student)
@@ -27,6 +37,15 @@
         @endforeach
     </div>
 @endforeach
+</div>
+<script>
+    document.getElementById('printButton').addEventListener('click', function () {
+        window.print();
+    });
+      document.getElementById('cancelButton').addEventListener('click', function () {
+        window.close();
+    });
+</script>
 
 
 </body>

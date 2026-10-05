@@ -7,26 +7,48 @@
     box-sizing: border-box;
 }
 
-html,body {
+html,
+body {
     margin: 0;
     padding: 0;
-    width: 8.5in;
 }
 
 body {
     font-family: Arial, sans-serif;
 }
 
+/* =========================
+   PAGE CONTAINER
+========================= */
+
+.page-container {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 30px;
+    margin-top: 80px;
+}
+
+
+/* =========================
+   PRINT PAGE
+========================= */
+
 .print-page {
     width: 8.5in;
     height: 11in;
-    margin: 0 auto;
+
     display: grid;
+
     grid-template-columns: repeat(2, 3.8in);
     grid-template-rows: repeat(4, 2.6in);
+
     gap: 5px;
+
     justify-content: center;
     align-content: center;
+
     page-break-after: always;
     break-after: page;
 }
@@ -37,32 +59,50 @@ body {
 }
 
 
+/* =========================
+   QR CARD
+========================= */
+
 .qr-card {
     display: flex;
-    /*border: 1px solid red;*/
     flex-direction: column;
     align-items: center;
     justify-content: center;
+
     text-align: center;
+
     page-break-inside: avoid;
     break-inside: avoid;
+
     background-image: url('/images/qr-background.png');
     background-size: 100% 100%;
     background-position: center;
     background-repeat: no-repeat;
+
     position: relative;
 }
+
+
+/* =========================
+   QR CODE
+========================= */
 
 .qr-code-container {
     width: 50px;
     height: 50px;
+
     display: flex;
     justify-content: center;
     align-items: center;
+
     padding: 0.25px;
+
     border-radius: 2px;
+
     background: white;
+
     position: absolute;
+
     bottom: 18px;
     left: 12px;
 }
@@ -73,13 +113,20 @@ body {
     display: block;
 }
 
-.codes-container{
-    /* border: 1px solid red; */
+
+/* =========================
+   EMPLOYEE CODE
+========================= */
+
+.codes-container {
     width: 140px;
     height: 28px;
+
     position: absolute;
+
     bottom: 18px;
     left: 58px;
+
     display: flex;
     justify-content: center;
     align-items: center;
@@ -90,6 +137,76 @@ body {
     font-weight: bold;
 }
 
+
+/* =========================
+   PRINT CONTROLS
+========================= */
+
+.print-controls {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 9999;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+
+    padding: 20px 0;
+    background: #e5e5e5;
+}
+
+.print-controls button {
+    padding: 10px 24px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+#printButton {
+    background: #0d6efd;
+    color: white;
+}
+
+#cancelButton {
+    background: #6c757d;
+    color: white;
+}
+
+.print-controls button:hover {
+    opacity: 0.9;
+}
+
+/* =========================
+   SCREEN PREVIEW
+========================= */
+
+@media screen {
+
+    body {
+        background: #e5e5e5;
+    }
+
+    .page-container {
+
+    }
+
+    .print-page {
+        background: white;
+
+        box-shadow:
+            0 2px 10px rgba(0, 0, 0, 0.2);
+    }
+}
+
+
+/* =========================
+   PRINT
+========================= */
+
 @media print {
 
     * {
@@ -97,14 +214,33 @@ body {
         print-color-adjust: exact !important;
     }
 
-    html,body {
+    html,
+    body {
         margin: 0;
         padding: 0;
     }
 
+    .print-controls {
+        display: none !important;
+    }
+
+    .page-container {
+        width: 8.5in;
+        padding: 0;
+        margin: 0;
+        gap: 0;
+    }
+
     .print-page {
+        width: 8.5in;
+        height: 11in;
+
+        margin: 0;
+
         page-break-after: always;
         break-after: page;
+
+        box-shadow: none;
     }
 
     .print-page:last-child {

@@ -170,7 +170,7 @@ $(document).ready(function () {
         params.toString();
 
     // Go directly to the employee print page.
-    window.location.href = printUrl;
+    window.open(printUrl,'_blank');
 
 });
 
