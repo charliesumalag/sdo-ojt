@@ -85,8 +85,5 @@
 {{-- partial import modal --}}
 @include('partials.imported-modal')
 @include('partials.print-confirmation')
-<div id="printArea"></div>
-<iframe id="printFrame"></iframe>
-@include('partials.print-confirmation')
 <script src="{{ asset('js/employees.js') }}"></script>
 @endsection

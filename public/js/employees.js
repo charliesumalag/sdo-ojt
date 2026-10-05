@@ -125,59 +125,55 @@ $(document).ready(function () {
     });
 
     $('#generateQrButton').click(function () {
-        const filters = getEmployeeFilters();
-        const selectedEmployees = [];
 
-        $('.employee-checkbox:checked').each(function () {
-            selectedEmployees.push($(this).val());
-        });
+    const filters = getEmployeeFilters();
+    const selectedEmployees = [];
 
-        if (selectedEmployees.length === 0) {
-            showNotification('Please select at least one employee.','warning');
-            return;
+    $('.employee-checkbox:checked').each(function () {
+        selectedEmployees.push($(this).val());
+    });
+
+    // Do not continue if nothing was selected.
+    if (selectedEmployees.length === 0) {
+        showNotification(
+            'Please select at least one employee.',
+            'warning'
+        );
+        return;
+    }
+
+    // Create URL query parameters.
+    const params = new URLSearchParams();
+
+    // Add active employee filters.
+    Object.keys(filters).forEach(function (key) {
+
+        if (filters[key]) {
+            params.append(key, filters[key]);
         }
 
-        const params = new URLSearchParams();
-        Object.keys(filters).forEach(function (key) {
-            if (filters[key]) {
-                params.append(key, filters[key]);
-            }
-        });
-
-        selectedEmployees.forEach(function (employeeId) {
-            params.append('employee_id[]', employeeId);
-        });
-
-        const printUrl = '/employee/print?' + params.toString();
-        const printFrame = document.getElementById('printFrame');
-        showLoading('Generating QR Codes');
-        $('#printFrame').off('load');
-
-
-        // Wait until the print page has finished loading.
-        $('#printFrame').one('load', function () {
-
-            // Get the exact employee codes from the print page.
-            const employeeCodes = $(printFrame.contentDocument).find('.code').map(function () {
-                return $(this).text().trim();
-            }).get();
-
-            // Store the codes temporarily on the iframe.
-            printFrame.dataset.employeeCodes = JSON.stringify(employeeCodes);
-
-            setTimeout(function () {
-                hideLoading();
-                printFrame.contentWindow.onafterprint = function () {
-                    const modalElement = document.getElementById('printConfirmationModal');
-                    const printModal = new bootstrap.Modal(modalElement); 
-                    printModal.show();
-                };
-                printFrame.contentWindow.focus();
-                printFrame.contentWindow.print();
-            }, 300);
-        });
-        printFrame.src = printUrl;
     });
+
+    // Add selected employee IDs.
+    selectedEmployees.forEach(function (employeeId) {
+
+        params.append(
+            'employee_id[]',
+            employeeId
+        );
+
+    });
+
+    // Build the employee QR print page URL.
+    const printUrl =
+        '/employee/print?' +
+        params.toString();
+
+    // Go directly to the employee print page.
+    window.location.href = printUrl;
+
+});
+
 
     // Select/unselect all employees.
     $('#checkAll').on('change', function () {
@@ -322,7 +318,7 @@ function renderEmployeeTable(response) {
     }
     $('#employeesTableContainer').removeClass('d-none');
     $('#noEmployeesMessage').addClass('d-none');
-    
+
     employees.forEach(function (employee) {
         const employeeRow = createEmployeeRow(employee);
         $('#employeesTable').append(employeeRow);

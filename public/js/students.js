@@ -189,166 +189,53 @@ $(document).ready(function () {
     });
 
     $('#generateQrButton').click(function () {
-        const filters =
-            getStudentFilters();
 
+    const filters = getStudentFilters();
 
-        // Store selected students.
-        const selectedStudents = [];
+    const selectedStudents = [];
 
+    $('.student-checkbox:checked').each(function () {
+        selectedStudents.push($(this).val());
+    });
 
-        // Find all checked student checkboxes.
-        $('.student-checkbox:checked').each(function () {
+    // Do not continue if nothing was selected.
+    if (selectedStudents.length === 0) {
+        showNotification(
+            'Please select at least one student.',
+            'warning'
+        );
+        return;
+    }
 
-            selectedStudents.push(
-                $(this).val()
-            );
+    // Create URL query parameters.
+    const params = new URLSearchParams();
 
-        });
+    // Add active filters.
+    Object.keys(filters).forEach(function (key) {
 
-
-        // Do not continue if nothing was selected.
-        if (selectedStudents.length === 0) {
-
-            showNotification(
-                'Please select at least one student.',
-                'warning'
-            );
-
-            return;
+        if (filters[key]) {
+            params.append(key, filters[key]);
         }
 
+    });
 
-        // Create URL query parameters.
-        const params =
-            new URLSearchParams();
+    // Add selected student LRNs.
+    selectedStudents.forEach(function (lrn) {
 
-
-        // Add active filters.
-        Object.keys(filters).forEach(function (key) {
-
-            if (filters[key]) {
-
-                params.append(
-                    key,
-                    filters[key]
-                );
-
-            }
-
-        });
-
-
-        // Add selected LRN values.
-        selectedStudents.forEach(function (lrn) {
-
-            params.append(
-                'lrns[]',
-                lrn
-            );
-
-        });
-
-
-        // Build the QR print URL.
-        const printUrl =
-            '/students/print?' +
-            params.toString();
-
-
-        // Get the hidden print iframe.
-        const printFrame =
-            document.getElementById(
-                'printFrame'
-            );
-
-
-        // Show loading while QR codes are generated.
-        showLoading(
-            'Generating QR Codes'
-        );
-
-
-        // Remove any previous load handler.
-        $('#printFrame').off('load');
-
-
-        // Wait for the print page to load.
-        $('#printFrame').one(
-            'load',
-            function () {
-
-
-                // Get the exact student codes
-                // from the generated print page.
-                const studentCodes =
-                    $(printFrame.contentDocument)
-                        .find('.code')
-                        .map(function () {
-
-                            return $(this)
-                                .text()
-                                .trim();
-
-                        })
-                        .get();
-
-
-                // Store codes on the iframe.
-                printFrame.dataset.studentCodes =
-                    JSON.stringify(
-                        studentCodes
-                    );
-
-
-                // Give the page a short moment to finish rendering.
-                setTimeout(function () {
-
-                    hideLoading();
-
-
-                    // Show confirmation modal after printing.
-                    printFrame
-                        .contentWindow
-                        .onafterprint =
-                        function () {
-
-                            const modalElement =
-                                document.getElementById(
-                                    'printConfirmationModal'
-                                );
-
-                            const printModal =
-                                new bootstrap.Modal(
-                                    modalElement
-                                );
-
-                            printModal.show();
-
-                        };
-
-
-                    // Focus the print window.
-                    printFrame
-                        .contentWindow
-                        .focus();
-
-
-                    // Open browser print dialog.
-                    printFrame
-                        .contentWindow
-                        .print();
-
-                }, 300);
-
-            }
-        );
-
-
-        // Load print page into iframe.
-        printFrame.src = printUrl;
+        params.append('lrns[]', lrn);
 
     });
+
+    // Build the print page URL.
+    const printUrl =
+        '/students/print?' +
+        params.toString();
+
+    // Go directly to the Laravel print page.
+    window.location.href = printUrl;
+
+});
+
 
 
     // ========================================================
