@@ -1,27 +1,26 @@
-// console.log('STUDENTS JS IS LOADED');
-
 $(document).ready(function () {
-   $('#schoolFilter, #gradeFilter, #sectionFilter, #statusFilter').change(function () {
-        updateStudentRecordsHeading();
-    });
     loadFilters();
     resetFilters();
     showEmptyStudentState();
+
+    $('#schoolFilter, #gradeFilter, #sectionFilter, #statusFilter').change(function () {
+        updateStudentRecordsHeading();
+    });
 
     $('#clearFilters').click(function () {
         resetFilters();
         $('#studentRecordsHeading').text('');
         showEmptyStudentState();
-        showNotificationFilterRequires('Please Select Station', 'warning', 'school');
+        showNotificationFilterRequires('Please Select Station','warning','school');
     });
 
     $('#importButton').click(function () {
         $('#file').click();
     });
 
-
     $('#file').change(function () {
         const file = this.files[0];
+
         if (!file) {
             return;
         }
@@ -39,7 +38,7 @@ $(document).ready(function () {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             },
             beforeSend: function () {
-                showLoading('Importing Student Records');
+                showLoading('Uploading Student Records');
             },
             success: function (response) {
                 showImportResult(response);
@@ -51,10 +50,12 @@ $(document).ready(function () {
             error: function (xhr) {
                 if (xhr.status === 422) {
                     const message = xhr.responseJSON?.message || 'The Excel file format is incorrect.';
-                    showNotification(message, 'warning');
-                } else if (xhr.status === 419) {
+                    showNotification(message,'warning');
+                }
+                else if (xhr.status === 419) {
                     showNotification('Your session has expired. Please refresh the page and try again.','warning');
-                } else {
+                }
+                else {
                     showNotification('Unable to import the file. Please check the file and try again.','danger');
                 }
             },
@@ -64,25 +65,21 @@ $(document).ready(function () {
         });
     });
 
-
     $('#schoolFilter').change(function () {
         const school = $(this).val();
-        showNotificationFilterRequires('Please Select Grade Level', 'warning', 'school');
-        console.log('Selected school:', school);
-        $('#gradeFilter').html('<option value="" selected disabled>Grade Level</option>').prop('disabled', true);
-        // Reset section
-        $('#sectionFilter').html('<option value="" selected disabled>Section</option>').prop('disabled', true);
-        // Reset status
-        $('#statusFilter').html('<option value="" selected disabled>Status</option>').prop('disabled', true);
-
+        showNotificationFilterRequires('Please Select Grade Level','warning','school');
+        resetGradeFilter();
+        resetSectionFilter();
+        resetStatusFilter();
         updateStudentRecordsHeading();
+
         if (!school) {
             showEmptyStudentState();
             return;
         }
 
-        $('#gradeFilter').prop('disabled', false);
-        // Get grades
+        $('#gradeFilter').prop('disabled',false);
+
         $.ajax({
             url: '/student-grades',
             method: 'GET',
@@ -104,14 +101,9 @@ $(document).ready(function () {
     $('#gradeFilter').change(function () {
         const school = $('#schoolFilter').val();
         const grade = $(this).val();
-
-        showNotificationFilterRequires('Please Select Section', 'warning', 'grade');
-
-        // Reset section
-        $('#sectionFilter').html('<option value="" selected disabled>Section</option>').prop('disabled', true);
-
-        // Reset status
-        $('#statusFilter').html('<option value="" selected disabled>Status</option>').prop('disabled', true);
+        showNotificationFilterRequires('Please Select Section','warning','grade');
+        resetSectionFilter();
+        resetStatusFilter();
         updateStudentRecordsHeading();
 
         if (!school || !grade) {
@@ -119,10 +111,8 @@ $(document).ready(function () {
             return;
         }
 
-        // Enable section filter
-        $('#sectionFilter').prop('disabled', false);
+        $('#sectionFilter').prop('disabled',false);
 
-        // Get sections
         $.ajax({
             url: '/student-section',
             method: 'GET',
@@ -145,61 +135,50 @@ $(document).ready(function () {
     $('#sectionFilter').change(function () {
         const section = $(this).val();
         const school = $('#schoolFilter').val();
-        const grade_level = $('#gradeFilter').val();
-
-        showNotificationFilterRequires('', '', 'section');
-
-        // Reset status
-        $('#statusFilter').html('<option value="" selected disabled>Not Printed</option>').prop('disabled', true);
+        const grade = $('#gradeFilter').val();
+        showNotificationFilterRequires('','','section');
+        resetStatusFilter();
         updateStudentRecordsHeading();
 
         if (!section) {
-            $('#statusFilter').html('<option value="" selected disabled>Status</option>').prop('disabled', true);
             showEmptyStudentState();
             return;
         }
 
-        // Load dynamic statuses
         $.ajax({
             url: '/status',
             method: 'GET',
             data: {
                 school: school,
                 section: section,
-                grade_level: grade_level
+                grade_level: grade
             },
             success: function (statuses) {
-             // Clear current status options
                 $('#statusFilter').empty();
 
                 if (!statuses || statuses.length === 0) {
-                    $('#statusFilter').append('<option value="" selected disabled>No Status</option>').prop('disabled', true);
+                    $('#statusFilter').append('<option value="" selected disabled>' + 'No Status' +'</option>').prop('disabled',true);
                     showEmptyStudentState();
                     return;
                 }
 
-                // Add statuses returned from backend
                 statuses.forEach(function (status) {
                     $('#statusFilter').append(`<option value="${status}">${status}</option>`);
                 });
 
-                // Default to Not Printed if available
                 if (statuses.includes('Not Printed')) {
                     $('#statusFilter').val('Not Printed');
-                } else {
-                    // Otherwise select the first status
+                }
+                else {
                     $('#statusFilter').val(statuses[0]);
                 }
-
-                // Enable status filter
-                $('#statusFilter').prop('disabled', false);
+                $('#statusFilter').prop('disabled',false);
                 updateStudentRecordsHeading();
-                // Automatically load students
                 loadStudents(1);
             },
             error: function (xhr) {
                 console.error('Failed to load statuses:',xhr.responseText);
-                $('#statusFilter').html('<option value="" selected disabled>Status</option>').prop('disabled', true);
+                resetStatusFilter();
             }
         });
     });
@@ -209,421 +188,1381 @@ $(document).ready(function () {
         loadStudents(1);
     });
 
-
     $('#generateQrButton').click(function () {
-        const filters = {
-            search: $('#search').val(),
-            gender: $('#genderFilter').val(),
-            grade_level: $('#gradeFilter').val(),
-            school: $('#schoolFilter').val(),
-            section: $('#sectionFilter').val(),
-            school_year: $('#schoolYearFilter').val(),
-            status: $('#statusFilter').val()
-        };
+        const filters =
+            getStudentFilters();
 
-        let selectedStudent = [];
-        console.log(selectedStudent);
-        $('.student-checkbox:checked').each(function() {
-            selectedStudent.push($(this).val());
-        })
 
-        if (selectedStudent.length === 0) {
-            showNotification('Please select at least one student.', 'warning');
+        // Store selected students.
+        const selectedStudents = [];
+
+
+        // Find all checked student checkboxes.
+        $('.student-checkbox:checked').each(function () {
+
+            selectedStudents.push(
+                $(this).val()
+            );
+
+        });
+
+
+        // Do not continue if nothing was selected.
+        if (selectedStudents.length === 0) {
+
+            showNotification(
+                'Please select at least one student.',
+                'warning'
+            );
+
             return;
         }
 
-        const params = new URLSearchParams();
 
+        // Create URL query parameters.
+        const params =
+            new URLSearchParams();
+
+
+        // Add active filters.
         Object.keys(filters).forEach(function (key) {
+
             if (filters[key]) {
-                params.append(key, filters[key]);
+
+                params.append(
+                    key,
+                    filters[key]
+                );
+
             }
-        });
-        selectedStudent.forEach(function (lrn) {
-            params.append('lrns[]', lrn);
+
         });
 
-        const printUrl = '/students/print?' + params.toString();
-        const printFrame = document.getElementById('printFrame');
-        showLoading('Generating QR Codes');
+
+        // Add selected LRN values.
+        selectedStudents.forEach(function (lrn) {
+
+            params.append(
+                'lrns[]',
+                lrn
+            );
+
+        });
+
+
+        // Build the QR print URL.
+        const printUrl =
+            '/students/print?' +
+            params.toString();
+
+
+        // Get the hidden print iframe.
+        const printFrame =
+            document.getElementById(
+                'printFrame'
+            );
+
+
+        // Show loading while QR codes are generated.
+        showLoading(
+            'Generating QR Codes'
+        );
+
+
+        // Remove any previous load handler.
         $('#printFrame').off('load');
 
-        $('#printFrame').one('load', function () {
-            // Get the exact student codes from the loaded print page
-            const studentCodes = $(printFrame.contentDocument).find('.code').map(function () {
-                return $(this).text().trim();
-            }).get();
-            // Store the codes on the iframe element
-            printFrame.dataset.studentCodes = JSON.stringify(studentCodes);
 
-            setTimeout(function () {
-                hideLoading();
-                printFrame.contentWindow.onafterprint = function () {
-                    const modalElement = document.getElementById('printConfirmationModal');
-                    const printModal = new bootstrap.Modal(modalElement);
-                    printModal.show();
-                };
+        // Wait for the print page to load.
+        $('#printFrame').one(
+            'load',
+            function () {
 
-                printFrame.contentWindow.focus();
-                printFrame.contentWindow.print();
-            }, 300);
-        });
 
+                // Get the exact student codes
+                // from the generated print page.
+                const studentCodes =
+                    $(printFrame.contentDocument)
+                        .find('.code')
+                        .map(function () {
+
+                            return $(this)
+                                .text()
+                                .trim();
+
+                        })
+                        .get();
+
+
+                // Store codes on the iframe.
+                printFrame.dataset.studentCodes =
+                    JSON.stringify(
+                        studentCodes
+                    );
+
+
+                // Give the page a short moment to finish rendering.
+                setTimeout(function () {
+
+                    hideLoading();
+
+
+                    // Show confirmation modal after printing.
+                    printFrame
+                        .contentWindow
+                        .onafterprint =
+                        function () {
+
+                            const modalElement =
+                                document.getElementById(
+                                    'printConfirmationModal'
+                                );
+
+                            const printModal =
+                                new bootstrap.Modal(
+                                    modalElement
+                                );
+
+                            printModal.show();
+
+                        };
+
+
+                    // Focus the print window.
+                    printFrame
+                        .contentWindow
+                        .focus();
+
+
+                    // Open browser print dialog.
+                    printFrame
+                        .contentWindow
+                        .print();
+
+                }, 300);
+
+            }
+        );
+
+
+        // Load print page into iframe.
         printFrame.src = printUrl;
-    });
 
-    $('#checkAll').on('change', function () {
-        $('.student-checkbox').prop('checked', this.checked);
-        const checked = $('.student-checkbox:checked').length;
-        $('#generateCount').text(checked > 0 ? ` (${checked})` : '');
-    });
-
-     $(document).on('change', '.student-checkbox', function () {
-        const total = $('.student-checkbox').length;
-        const totalChecked = $('.student-checkbox:checked').length;
-        $('#generateCount').text(totalChecked > 0 ? ` (${totalChecked})` : '');
-        $('#checkAll').prop('checked', total > 0 && total === totalChecked);
     });
 
 
-    $('#confirmPrintButton').click(function () {
-        const printFrame = document.getElementById('printFrame');
-        // Get the exact student codes from the QR print page
-        const studentCodes =JSON.parse(printFrame.dataset.studentCodes || '[]');
-        console.log('Students being marked as Printed:', studentCodes);
-        if (!studentCodes || studentCodes.length === 0) {
-            console.error('No student codes found.');
-            return;
+    // ========================================================
+    // CHECK ALL STUDENTS
+    // ========================================================
+
+    $('#checkAll').on(
+        'change',
+        function () {
+
+            // Match all student checkboxes
+            // to the Select All checkbox.
+            $('.student-checkbox').prop(
+                'checked',
+                this.checked
+            );
+
+
+            // Update selected student count.
+            updateGenerateCount();
+
         }
-        $.ajax({
-            url: '/students/print-confirmed',
-            type: 'POST',
-            data: {
-                _token: $('meta[name="csrf-token"]').attr('content'),
-                codes: studentCodes
-            },
-            beforeSend: function () {
-                showLoading('Loading students');
-            },
-            success: function (response) {
-                console.log(response.message);
-                console.log('Updated:', response.updated);
-                const modalElement = document.getElementById('printConfirmationModal');
-                const printModal = bootstrap.Modal.getInstance(modalElement);
-                if (printModal) {
-                    printModal.hide();
-                }
-                showNotification('Printed successfully','success');
-                if ($('#statusFilter option[value="Printed"]').length === 0) {
-                    $('#statusFilter').append('<option value="Printed">Printed</option>');
-                }
-                // Select Printed
-                $('#statusFilter').val('Printed');
-                // Update heading
-                updateStudentRecordsHeading();
-                // Reload student list
-                loadStudents(1);
-            },
-            error: function (xhr) {
-                console.error('Failed to update print status.');
-                console.error(xhr.responseText);
-            },
-            complete: function () {
-                hideLoading();
-            }
-        });
-
-    });
-
-
-});
-
-function resetFilters() {
-    $('#schoolFilter').val('');
-    $('#gradeFilter').val('').prop('disabled', true);
-    $('#sectionFilter').html('<option value="" selected disabled>Section</option>').val('').prop('disabled', true);
-    $('#statusFilter').html('<option value="" selected disabled>Status</option>').val('').prop('disabled', true);
-}
-
-
-function loadStudents(page = 1) {
-    const school = $('#schoolFilter').val();
-    const grade = $('#gradeFilter').val();
-    const section = $('#sectionFilter').val();
-    const status = $('#statusFilter').val();
-    const selectedStudent = [];
-
-    // Require the main filters
-    if (!school || !grade || !section || !status) {
-        showEmptyStudentState();
-        return;
-    }
-    $('#checkAll').prop('checked', false);
-    $('#generateCount').text('');
-
-    $.ajax({
-        url: '/studentslist',
-        method: 'GET',
-        data: {
-            page: page,
-            grade_level: grade,
-            school: school,
-            section: section,
-            status: status
-        },
-        beforeSend: function () {
-            showLoading('Loading students records...');
-        },
-        success: function (response) {
-            console.log(response.students.data)
-            $('#studentTable').empty();
-            if (response.students.data.length === 0) {
-                
-                showImportStudentsPrompt();
-            } else {
-                $('#studentTableContainer').removeClass('d-none');
-                $('#noStudentsMessage').addClass('d-none');
-
-                response.students.data.forEach(function (student) {
-                    const fullName = `${student.last_name ?? ''}, ${student.first_name ?? ''}${student.middle_initial ? ' ' + student.middle_initial + '.' : ''}`;
-                    const statusBadge = student.status === 'Printed' ? 'bg-success' : 'bg-secondary';
-                    const row = `
-                        <tr>
-                            <td><input type="checkbox" class="student-checkbox" name="students[]" value="${student.lrn}"></td>
-                            <td>${student.lrn ?? ''}</td>
-                            <td>${fullName}</td>
-                            <td>${student.grade_level ?? ''}-${student.section ?? ''}</td>
-                            <td>${student.gender ?? ''}</td>
-                            <td><span class="badge rounded-pill ${statusBadge}">${student.status}</span></td>
-                        </tr>
-                    `;
-                    $('#studentTable').append(row);
-                });
-            }
-
-            // Pagination
-            if (response.total === 0) {
-                $('#pagination').empty();
-            } else {
-                renderPagination(response);
-            }
-        },
-        error: function (xhr) {
-            console.error('Failed to load students:',xhr.responseText);
-        },
-        complete: function () {
-            hideLoading();
-        }
-    });
-}
-
-
-
-$(document).on('click', '.page-button', function () {
-    const page = $(this).data('page');
-    loadStudents(page);
-});
-
-
-function renderPagination(response) {
-    $('#pagination').empty();
-    if (response.current_page > 1) {
-        $('#pagination').append(`
-            <button class="btn btn-sm btn-outline-secondary page-button" data-page="${response.current_page - 1}">Previous</button>
-        `);
-    }
-
-    for (let page = 1;page <= response.last_page;page++) {
-        $('#pagination').append(`
-            <button class="btn btn-sm ${page === response.current_page ? 'btn-primary' : 'btn-outline-secondary'} px-2 page-button" data-page="${page}">${page}</button>
-        `);
-    }
-
-    if (response.current_page < response.last_page) {
-        $('#pagination').append(`<button class="btn btn-sm btn-outline-secondary page-button" data-page="${response.current_page + 1}">Next</button>`);
-    }
-}
-
-
-
-function loadFilters() {
-    $.ajax({
-        url: '/student-filters',
-        method: 'GET',
-        success: function (filters) {
-            console.log(JSON.stringify(filters));
-            // School
-            $('#schoolFilter').html('<option value="" selected disabled>Station</option>');
-            // Grade
-            $('#gradeFilter').html('<option value="" selected disabled>Grade Level</option>');
-
-            // Section
-            $('#sectionFilter').html('<option value="" selected disabled>Section</option>');
-
-            // Status
-            $('#statusFilter').html('<option value="" selected disabled>Status</option>');
-
-            // Disable dependent filters
-            $('#gradeFilter').prop('disabled', true);
-            $('#sectionFilter').prop('disabled', true);
-            $('#statusFilter').prop('disabled', true);
-
-            const schools = filters.schools || [];
-            if (schools.length === 0) {
-                console.log('no imported data')
-                $('#clearFilters').prop('disabled', true).addClass('disabled');
-                $('#schoolFilter').html('<option value="" selected disabled>Station</option>');
-                $('#schoolFilter').prop('disabled', true);
-                showImportStudentsPrompt();
-                return;
-            }else{
-                $('#clearFilters').prop('disabled', false).removeClass('disabled');
-            }
-            showNotificationFilterRequires('Please Select Station', 'warning');
-            // Populate schools
-            filters.schools.forEach(function (school) {
-                $('#schoolFilter').prop('disabled', false);
-                $('#schoolFilter').append(`<option value="${school}">${school}</option>`);
-            });
-            showEmptyStudentState();
-        },
-        error: function (xhr) {
-            console.error('Failed to load filters:',xhr.responseText);
-        }
-    });
-}
-
-
-function showImportResult(response) {
-   if (response.imported > 0) {
-        $('#importResultModalLabel').text('Records Added Successfully');
-        $('#importResultMessage').text('Student records were saved successfully.');
-    } else if (response.skipped > 0) {
-        $('#importResultModalLabel').text('No New Records Added');
-        $('#importResultMessage').text('All student records are already added.');
-    } else {
-        $('#importResultModalLabel').text('No Student Records Found');
-        $('#importResultMessage').text('No student records were found.');
-    }
-    // Imported count
-    $('#modalImported').text(response.imported);
-
-    // Skipped count
-    $('#modalSkipped').text(response.skipped);
-
-    // Clear skipped rows
-    $('#skippedRowsTable').empty();
-
-    if (response.skipped_rows && response.skipped_rows.length > 0) {
-        $('#skippedRowsContainer').removeClass('d-none');
-        $('#skippedRowsCount').text(response.skipped_rows.length);
-
-        response.skipped_rows.forEach(function (row) {
-            $('#skippedRowsTable').append(`
-                <tr>
-                    <td class="fw-semibold">${row.excel_row}</td>
-                    <td><span class="text-danger">${row.reason}</span></td>
-                </tr>
-            `);
-        });
-    } else {
-        $('#skippedRowsContainer').addClass('d-none');
-    }
-
-    // Show modal
-    const modalElement = document.getElementById('importResultModal');
-    const modal = new bootstrap.Modal(modalElement);
-    modal.show();
-}
-
-
-
-function showNotification(message, type) {
-    const notification = $('#notification');
-    notification.removeClass('d-none alert-success alert-danger alert-warning').addClass('alert-' + type).html(`<i class="bi bi-exclamation-lg text-danger fs-4"></i>${message}`);
-
-    setTimeout(function () {
-        notification.addClass('d-none');
-    }, 10000);
-}
-function showNotificationFilterRequires(message= '', type = '', filter = '') {
-    const notification = $('#notification');
-    if(filter === ''){
-        notification.removeClass('d-none alert-success alert-danger alert-warning').addClass('alert-' + type).html(`<i class="bi bi-caret-right fs-5 text-danger"></i> ${message}`);
-    }else if (filter === 'school'){
-        notification.removeClass('d-none alert-success alert-danger alert-warning').addClass('alert-' + type).html(`<i class="bi bi-caret-right fs-5 text-danger"></i> ${message}`);
-    }else if (filter === 'grade'){
-        notification.removeClass('d-none alert-success alert-danger alert-warning').addClass('alert-' + type).html(`<i class="bi bi-caret-right fs-5 text-danger"></i> ${message}`);
-    }else if(filter === 'section'){
-        notification.addClass('d-none alert-success alert-danger alert-warning').addClass('alert-' + type).html(`<i class="bi bi-caret-right fs-5 text-danger"></i> ${message}`);
-    } else if(filter === 'noStudents'){
-        notification.removeClass('d-none alert-success alert-danger alert-warning').addClass('alert-' + type).html(`<i class="bi bi-exclamation-lg fs-4 text-danger"></i>${message}`)
-    }
-}
-
-
-function showLoading(message = 'Loading...') {
-    $('.loading-text').text(message);
-    $('#loadingOverlay').css('display','flex');
-}
-
-function hideLoading() {
-    $('#loadingOverlay').hide();
-}
-
-function showEmptyStudentState() {
-    // Hide table
-    $('#studentTableContainer').addClass('d-none');
-
-    // Show empty message
-    $('#noStudentsMessage').removeClass('d-none').text('No records found');
-
-    // Clear pagination
-    $('#pagination').empty();
-    // Reset counts
-    $('#recordCount').text('');
-    $('#generateCount').text('');
-}
-
-
-
-function updateStudentRecordsHeading() {
-
-    const school = $('#schoolFilter').val();
-    const grade = $('#gradeFilter').val();
-    const section = $('#sectionFilter').val();
-    const status = $('#statusFilter').val();
-    let heading = '';
-
-    if (school) {
-        heading += '<i class="bi bi-chevron-right"></i> ' + school;
-    }
-
-    if (grade) {
-        heading += '<i class="bi bi-chevron-right"></i> Grade ' + grade;
-    }
-
-    if (section) {
-        heading += '<i class="bi bi-chevron-right"></i> ' + section;
-    }
-
-    if (status) {
-        heading += '<i class="bi bi-chevron-right"></i> ' + status;
-    }
-
-    $('#studentRecordsHeading').html(heading);
-}
-
-function showImportStudentsPrompt() {
-    $('#studentTableContainer').addClass('d-none');
-    $('#pagination').empty();
-    $('#recordCount').text('');
-    $('#generateCount').text('');
-
-    showNotificationFilterRequires(
-        'No student records are available. Please import or upload student records.',
-        'warning', 'noStudents'
     );
 
-    $('#noStudentsMessage').addClass('d-none').empty();
+
+    // ========================================================
+    // INDIVIDUAL STUDENT CHECKBOX
+    // ========================================================
+
+    $(document).on(
+        'change',
+        '.student-checkbox',
+        function () {
+
+            // Update selected count.
+            updateGenerateCount();
+
+            // Update Select All state.
+            updateCheckAllState();
+
+        }
+    );
+
+
+    // ========================================================
+    // PRINT CONFIRMATION
+    // ========================================================
+
+    $('#confirmPrintButton').click(function () {
+
+        const printFrame =
+            document.getElementById(
+                'printFrame'
+            );
+
+
+        // Retrieve student codes stored during QR generation.
+        const studentCodes =
+            JSON.parse(
+                printFrame.dataset.studentCodes ||
+                '[]'
+            );
+
+
+        // Stop if no codes were found.
+        if (
+            !studentCodes ||
+            studentCodes.length === 0
+        ) {
+
+            console.error(
+                'No student codes found.'
+            );
+
+            return;
+        }
+
+
+        // Tell Laravel that the QR codes were printed.
+        $.ajax({
+
+            url: '/students/print-confirmed',
+
+            type: 'POST',
+
+            data: {
+
+                _token:
+                    $('meta[name="csrf-token"]')
+                        .attr('content'),
+
+                codes: studentCodes
+
+            },
+
+
+            beforeSend: function () {
+
+                showLoading(
+                    'Loading students'
+                );
+
+            },
+
+
+            success: function (response) {
+
+                console.log(
+                    response.message
+                );
+
+                console.log(
+                    'Updated:',
+                    response.updated
+                );
+
+
+                // Close confirmation modal.
+                const modalElement =
+                    document.getElementById(
+                        'printConfirmationModal'
+                    );
+
+                const printModal =
+                    bootstrap.Modal.getInstance(
+                        modalElement
+                    );
+
+                if (printModal) {
+
+                    printModal.hide();
+
+                }
+
+
+                // Notify user.
+                showNotification(
+                    'Printed successfully',
+                    'success'
+                );
+
+
+                // Add Printed option if necessary.
+                if (
+                    $('#statusFilter option[value="Printed"]')
+                        .length === 0
+                ) {
+
+                    $('#statusFilter').append(
+                        '<option value="Printed">' +
+                        'Printed' +
+                        '</option>'
+                    );
+
+                }
+
+
+                // Select Printed.
+                $('#statusFilter').val(
+                    'Printed'
+                );
+
+
+                // Update heading.
+                updateStudentRecordsHeading();
+
+
+                // Reload student records.
+                loadStudents(1);
+
+            },
+
+
+            error: function (xhr) {
+
+                console.error(
+                    'Failed to update print status.'
+                );
+
+                console.error(
+                    xhr.responseText
+                );
+
+            },
+
+
+            complete: function () {
+
+                hideLoading();
+
+            }
+
+        });
+
+    });
+
+});
+
+
+// ============================================================
+// STUDENT FILTERS
+// ============================================================
+
+/**
+ * Get the current values of all student filters.
+ */
+function getStudentFilters() {
+
+    return {
+
+        search:
+            $('#search').val(),
+
+        gender:
+            $('#genderFilter').val(),
+
+        grade_level:
+            $('#gradeFilter').val(),
+
+        school:
+            $('#schoolFilter').val(),
+
+        section:
+            $('#sectionFilter').val(),
+
+        school_year:
+            $('#schoolYearFilter').val(),
+
+        status:
+            $('#statusFilter').val()
+
+    };
+
+}
+
+
+// ============================================================
+// STUDENT DATA
+// ============================================================
+
+/**
+ * Load student records using the selected filters.
+ */
+function loadStudents(page = 1) {
+
+    // Get all currently selected filters.
+    const filters =
+        getStudentFilters();
+
+
+    // Require the main filters before loading students.
+    if (
+        !filters.school ||
+        !filters.grade_level ||
+        !filters.section ||
+        !filters.status
+    ) {
+
+        showEmptyStudentState();
+
+        return;
+    }
+
+
+    // Reset checkbox selection.
+    $('#checkAll').prop(
+        'checked',
+        false
+    );
+
+    $('#generateCount').text('');
+
+
+    $.ajax({
+
+        url: '/studentslist',
+
+        method: 'GET',
+
+        data: {
+
+            page: page,
+
+            ...filters
+
+        },
+
+
+        beforeSend: function () {
+
+            showLoading(
+                'Loading students records...'
+            );
+
+        },
+
+
+        success: function (response) {
+
+            // Render returned student records.
+            renderStudentTable(response);
+
+
+            // Render pagination.
+            renderStudentPagination(response);
+
+        },
+
+
+        error: function (xhr) {
+
+            console.error(
+                'Failed to load students:',
+                xhr.responseText
+            );
+
+        },
+
+
+        complete: function () {
+
+            hideLoading();
+
+        }
+
+    });
+
+}
+
+
+// ============================================================
+// STUDENT TABLE
+// ============================================================
+
+/**
+ * Render students into the table.
+ */
+function renderStudentTable(response) {
+
+    const students =
+        response.students.data;
+
+
+    // Clear existing rows.
+    $('#studentTable').empty();
+
+
+    // Handle no matching records.
+    if (students.length === 0) {
+
+        showImportStudentsPrompt();
+
+        return;
+    }
+
+
+    // Show student table.
+    $('#studentTableContainer')
+        .removeClass('d-none');
+
+
+    // Hide empty message.
+    $('#noStudentsMessage')
+        .addClass('d-none');
+
+
+    // Create each student row.
+    students.forEach(function (student) {
+
+        const studentRow =
+            createStudentRow(student);
+
+        $('#studentTable').append(
+            studentRow
+        );
+
+    });
+
+}
+
+
+// ============================================================
+// STUDENT ROW
+// ============================================================
+
+/**
+ * Create one student table row.
+ */
+function createStudentRow(student) {
+
+    // Build student's full name.
+    const fullName =
+        `${student.last_name ?? ''}, ` +
+        `${student.first_name ?? ''}` +
+        `${
+            student.middle_initial
+                ? ' ' + student.middle_initial + '.'
+                : ''
+        }`;
+
+
+    // Choose badge based on print status.
+    const statusBadge =
+        student.status === 'Printed'
+            ? 'bg-success'
+            : 'bg-secondary';
+
+
+    return `
+        <tr>
+
+            <td>
+                <input
+                    type="checkbox"
+                    class="student-checkbox"
+                    name="students[]"
+                    value="${student.lrn}"
+                >
+            </td>
+
+            <td>
+                ${student.lrn ?? ''}
+            </td>
+
+            <td>
+                ${fullName}
+            </td>
+
+            <td>
+                ${student.grade_level ?? ''}
+                -
+                ${student.section ?? ''}
+            </td>
+
+            <td>
+                ${student.gender ?? ''}
+            </td>
+
+            <td>
+                <span class="badge rounded-pill ${statusBadge}">
+                    ${student.status ?? ''}
+                </span>
+            </td>
+
+        </tr>
+    `;
+
+}
+
+
+// ============================================================
+// PAGINATION
+// ============================================================
+
+/**
+ * Handle pagination button clicks.
+ */
+$(document).on(
+    'click',
+    '.page-button',
+    function () {
+
+        const page =
+            $(this).data('page');
+
+        loadStudents(page);
+
+    }
+);
+
+
+/**
+ * Render student pagination buttons.
+ */
+function renderStudentPagination(response) {
+
+    // Clear existing pagination.
+    $('#pagination').empty();
+
+
+    // Stop when there are no records.
+    if (response.total === 0) {
+        return;
+    }
+
+
+    // Add Previous button.
+    if (response.current_page > 1) {
+
+        $('#pagination').append(`
+            <button
+                class="btn btn-sm btn-outline-secondary page-button"
+                data-page="${response.current_page - 1}">
+                Previous
+            </button>
+        `);
+
+    }
+
+
+    // Add page buttons.
+    for (
+        let page = 1;
+        page <= response.last_page;
+        page++
+    ) {
+
+        $('#pagination').append(`
+            <button
+                class="btn btn-sm ${
+                    page === response.current_page
+                        ? 'btn-primary'
+                        : 'btn-outline-secondary'
+                } px-2 page-button"
+                data-page="${page}">
+                ${page}
+            </button>
+        `);
+
+    }
+
+
+    // Add Next button.
+    if (
+        response.current_page <
+        response.last_page
+    ) {
+
+        $('#pagination').append(`
+            <button
+                class="btn btn-sm btn-outline-secondary page-button"
+                data-page="${response.current_page + 1}">
+                Next
+            </button>
+        `);
+
+    }
+
+}
+
+
+// ============================================================
+// CHECKBOX HELPERS
+// ============================================================
+
+/**
+ * Update the number of selected students.
+ */
+function updateGenerateCount() {
+
+    const checked =
+        $('.student-checkbox:checked').length;
+
+
+    $('#generateCount').text(
+        checked > 0
+            ? ` (${checked})`
+            : ''
+    );
+
+}
+
+
+/**
+ * Update the Select All checkbox.
+ */
+function updateCheckAllState() {
+
+    const total =
+        $('.student-checkbox').length;
+
+    const totalChecked =
+        $('.student-checkbox:checked').length;
+
+
+    $('#checkAll').prop(
+        'checked',
+        total > 0 &&
+        total === totalChecked
+    );
+
+}
+
+
+// ============================================================
+// FILTER LOADING
+// ============================================================
+
+/**
+ * Load available student filter values.
+ */
+function loadFilters() {
+
+    $.ajax({
+
+        url: '/student-filters',
+
+        method: 'GET',
+
+
+        success: function (filters) {
+
+            console.log(
+                JSON.stringify(filters)
+            );
+
+
+            // Reset dropdowns.
+            resetFilterDropdowns();
+
+
+            // Disable dependent filters.
+            $('#gradeFilter').prop(
+                'disabled',
+                true
+            );
+
+            $('#sectionFilter').prop(
+                'disabled',
+                true
+            );
+
+            $('#statusFilter').prop(
+                'disabled',
+                true
+            );
+
+
+            // Get schools returned by backend.
+            const schools =
+                filters.schools || [];
+
+
+            // Handle empty database.
+            if (schools.length === 0) {
+
+                $('#clearFilters')
+                    .prop('disabled', true)
+                    .addClass('disabled');
+
+
+                $('#schoolFilter')
+                    .prop('disabled', true);
+
+
+                showImportStudentsPrompt();
+
+                return;
+            }
+
+
+            // Enable Clear Filters.
+            $('#clearFilters')
+                .prop('disabled', false)
+                .removeClass('disabled');
+
+
+            // Show initial filter instruction.
+            showNotificationFilterRequires(
+                'Please Select Station',
+                'warning'
+            );
+
+
+            // Populate schools.
+            schools.forEach(function (school) {
+
+                $('#schoolFilter')
+                    .prop('disabled', false)
+                    .append(
+                        `<option value="${school}">
+                            ${school}
+                        </option>`
+                    );
+
+            });
+
+
+            // Hide student table until filters are selected.
+            showEmptyStudentState();
+
+        },
+
+
+        error: function (xhr) {
+
+            console.error(
+                'Failed to load filters:',
+                xhr.responseText
+            );
+
+        }
+
+    });
+
+}
+
+
+// ============================================================
+// FILTER RESET HELPERS
+// ============================================================
+
+/**
+ * Reset all student filters.
+ */
+function resetFilters() {
+
+    $('#schoolFilter').val('');
+
+    resetGradeFilter();
+
+    resetSectionFilter();
+
+    resetStatusFilter();
+
+}
+
+
+/**
+ * Reset Grade Level.
+ */
+function resetGradeFilter() {
+
+    $('#gradeFilter')
+        .html(
+            '<option value="" selected disabled>' +
+            'Grade Level' +
+            '</option>'
+        )
+        .val('')
+        .prop(
+            'disabled',
+            true
+        );
+
+}
+
+
+/**
+ * Reset Section.
+ */
+function resetSectionFilter() {
+
+    $('#sectionFilter')
+        .html(
+            '<option value="" selected disabled>' +
+            'Section' +
+            '</option>'
+        )
+        .val('')
+        .prop(
+            'disabled',
+            true
+        );
+
+}
+
+
+/**
+ * Reset Status.
+ */
+function resetStatusFilter() {
+
+    $('#statusFilter')
+        .html(
+            '<option value="" selected disabled>' +
+            'Status' +
+            '</option>'
+        )
+        .val('')
+        .prop(
+            'disabled',
+            true
+        );
+
+}
+
+
+/**
+ * Reset all dropdown contents.
+ */
+function resetFilterDropdowns() {
+
+    $('#schoolFilter').html(
+        '<option value="" selected disabled>' +
+        'Station' +
+        '</option>'
+    );
+
+    resetGradeFilter();
+
+    resetSectionFilter();
+
+    resetStatusFilter();
+
+}
+
+
+// ============================================================
+// IMPORT RESULT
+// ============================================================
+
+/**
+ * Display student import results.
+ */
+function showImportResult(response) {
+
+    // Determine the appropriate result message.
+    if (response.imported > 0) {
+
+        $('#importResultModalLabel')
+            .text(
+                'Records Added Successfully'
+            );
+
+        $('#importResultMessage')
+            .text(
+                'Student records were saved successfully.'
+            );
+
+    }
+
+    else if (response.skipped > 0) {
+
+        $('#importResultModalLabel')
+            .text(
+                'No New Records Added'
+            );
+
+        $('#importResultMessage')
+            .text(
+                'All student records are already added.'
+            );
+
+    }
+
+    else {
+
+        $('#importResultModalLabel')
+            .text(
+                'No Student Records Found'
+            );
+
+        $('#importResultMessage')
+            .text(
+                'No student records were found.'
+            );
+
+    }
+
+
+    // Display imported count.
+    $('#modalImported')
+        .text(response.imported);
+
+
+    // Display skipped count.
+    $('#modalSkipped')
+        .text(response.skipped);
+
+
+    // Clear old skipped rows.
+    $('#skippedRowsTable').empty();
+
+
+    // Display skipped rows when available.
+    if (
+        response.skipped_rows &&
+        response.skipped_rows.length > 0
+    ) {
+
+        $('#skippedRowsContainer')
+            .removeClass('d-none');
+
+        $('#skippedRowsCount')
+            .text(
+                response.skipped_rows.length
+            );
+
+
+        response.skipped_rows.forEach(
+            function (row) {
+
+                $('#skippedRowsTable').append(`
+                    <tr>
+
+                        <td class="fw-semibold">
+                            ${row.excel_row}
+                        </td>
+
+                        <td>
+                            <span class="text-danger">
+                                ${row.reason}
+                            </span>
+                        </td>
+
+                    </tr>
+                `);
+
+            }
+        );
+
+    }
+
+    else {
+
+        // Hide skipped rows section.
+        $('#skippedRowsContainer')
+            .addClass('d-none');
+
+    }
+
+
+    // Show import result modal.
+    const modalElement =
+        document.getElementById(
+            'importResultModal'
+        );
+
+    const modal =
+        new bootstrap.Modal(
+            modalElement
+        );
+
+    modal.show();
+
+}
+
+
+// ============================================================
+// NOTIFICATIONS
+// ============================================================
+
+/**
+ * Show a normal notification.
+ */
+function showNotification(message, type) {
+
+    const notification =
+        $('#notification');
+
+
+    notification
+        .removeClass(
+            'd-none alert-success alert-danger alert-warning'
+        )
+        .addClass(
+            'alert-' + type
+        )
+        .html(
+            `<i class="bi bi-exclamation-lg text-danger fs-4"></i>${message}`
+        );
+
+
+    // Automatically hide notification.
+    setTimeout(function () {
+
+        notification.addClass(
+            'd-none'
+        );
+
+    }, 10000);
+
+}
+
+
+/**
+ * Show a filter instruction or database-state notification.
+ */
+function showNotificationFilterRequires(
+    message = '',
+    type = '',
+    filter = ''
+) {
+
+    const notification =
+        $('#notification');
+
+
+    // Normal filter instruction.
+    if (
+        filter === '' ||
+        filter === 'school' ||
+        filter === 'grade'
+    ) {
+
+        notification
+            .removeClass(
+                'd-none alert-success alert-danger alert-warning'
+            )
+            .addClass(
+                'alert-' + type
+            )
+            .html(
+                `<i class="bi bi-caret-right fs-5 text-danger"></i> ${message}`
+            );
+
+    }
+
+
+    // Section has completed the required filter chain.
+    else if (
+        filter === 'section'
+    ) {
+
+        notification
+            .addClass('d-none')
+            .removeClass(
+                'alert-success alert-danger alert-warning'
+            );
+
+    }
+
+
+    // No student records exist.
+    else if (
+        filter === 'noStudents'
+    ) {
+
+        notification
+            .removeClass(
+                'd-none alert-success alert-danger alert-warning'
+            )
+            .addClass(
+                'alert-' + type
+            )
+            .html(
+                `<i class="bi bi-exclamation-lg fs-4 text-danger"></i>${message}`
+            );
+
+    }
+
+}
+
+
+// ============================================================
+// LOADING
+// ============================================================
+
+/**
+ * Show loading overlay.
+ */
+function showLoading(
+    message = 'Loading...'
+) {
+
+    $('.loading-text').text(
+        message
+    );
+
+    $('#loadingOverlay').css(
+        'display',
+        'flex'
+    );
+
+}
+
+
+/**
+ * Hide loading overlay.
+ */
+function hideLoading() {
+
+    $('#loadingOverlay').hide();
+
+}
+
+
+// ============================================================
+// EMPTY STATE
+// ============================================================
+
+/**
+ * Hide student table while filters are incomplete.
+ */
+function showEmptyStudentState() {
+
+    // Hide table.
+    $('#studentTableContainer')
+        .addClass('d-none');
+
+
+    // Show empty message.
+    $('#noStudentsMessage')
+        .removeClass('d-none')
+        .text('No records found');
+
+
+    // Clear pagination.
+    $('#pagination').empty();
+
+
+    // Reset counts.
+    $('#recordCount').text('');
+
+    $('#generateCount').text('');
+
+}
+
+
+// ============================================================
+// STUDENT HEADING
+// ============================================================
+
+/**
+ * Update the student records heading
+ * based on selected filters.
+ */
+function updateStudentRecordsHeading() {
+
+    const school =
+        $('#schoolFilter').val();
+
+    const grade =
+        $('#gradeFilter').val();
+
+    const section =
+        $('#sectionFilter').val();
+
+    const status =
+        $('#statusFilter').val();
+
+
+    let heading = '';
+
+
+    // Add School.
+    if (school) {
+
+        heading +=
+            '<i class="bi bi-chevron-right"></i> ' +
+            school;
+
+    }
+
+
+    // Add Grade.
+    if (grade) {
+
+        heading +=
+            '<i class="bi bi-chevron-right"></i> Grade ' +
+            grade;
+
+    }
+
+
+    // Add Section.
+    if (section) {
+
+        heading +=
+            '<i class="bi bi-chevron-right"></i> ' +
+            section;
+
+    }
+
+
+    // Add Status.
+    if (status) {
+
+        heading +=
+            '<i class="bi bi-chevron-right"></i> ' +
+            status;
+
+    }
+
+
+    // Update heading in the page.
+    $('#studentRecordsHeading')
+        .html(heading);
+
+}
+
+
+// ============================================================
+// NO STUDENT DATA PROMPT
+// ============================================================
+
+/**
+ * Show message when no student records exist.
+ */
+function showImportStudentsPrompt() {
+
+    // Hide student table.
+    $('#studentTableContainer')
+        .addClass('d-none');
+
+
+    // Clear pagination.
+    $('#pagination').empty();
+
+
+    // Clear record count.
+    $('#recordCount').text('');
+
+
+    // Clear Generate QR count.
+    $('#generateCount').text('');
+
+
+    // Show import message.
+    showNotificationFilterRequires(
+
+        'No student records are available. Please import or upload student records.',
+
+        'warning',
+
+        'noStudents'
+
+    );
+
+
+    // Hide the normal "no records found" message.
+    $('#noStudentsMessage')
+        .addClass('d-none')
+        .empty();
+
 }
