@@ -5,65 +5,111 @@ $(document).ready(function () {
         updateEmployeeRecordsHeading();
     });
 
-    $('#stationFilter').change(function () {
-        const station = $(this).val();
-        resetEmploymentTypeFilter();
-        resetStatusFilter();
-        if (!station) {
-            showEmptyStudentState();
-            return;
-        }
-        $('#employementTypeFilter').prop('disabled', false);
-        loadEmploymentType(station);
-    });
+
+        $('#stationFilter').change(function () {
+
+    const station = $(this).val();
+
+    resetEmploymentTypeFilter();
+    resetStatusFilter();
+    updateEmployeeRecordsHeading();
+
+    if (!station) {
+        showEmptyStudentState();
+        return;
+    }
+
+    $('#employementTypeFilter').prop('disabled', false);
+
+    // First display all employees for the selected station.
+    loadEmployee(1);
+
+    // Then load available employment types.
+    loadEmploymentType(station);
+});
+
+
+
+
+
     //start of employmentfilter change
     $('#employementTypeFilter').change(function () {
-        const station = $('#stationFilter').val();
-        const employmentType = $(this).val();
-        console.log(employmentType)
-       // resetStatusFilter();
+    const station = $('#stationFilter').val();
+    const employmentType = $(this).val();
 
-        if (!station || !employmentType) {
-            showEmptyStudentState();
-            return;
-        }
+    console.log('Station:', station);
+    console.log('Employment Type:', employmentType);
 
-        // Request available statuses from the backend.
-        $.ajax({
-            url: '/employees-status',
-            method: 'GET',
-            data: {
-                station: station,
-                employmentType: employmentType,
-            },
-            success: function (statuses) {
-                // If no status exists, keep the status dropdown disabled.
-                if (!statuses || statuses.length === 0) {
-                    $('#statusFilter').append('<option value="" selected disabled>No Status</option>').prop('disabled', true);
-                    showEmptyStudentState();
-                    return;
-                }
-                statuses.forEach(function (status) {
-                    $('#statusFilter').append(`<option value="${status}">${status}</option>`);
-                });
-                // Prefer "Not Printed" as the default status.
-                if (statuses.includes('Not Printed')) {
-                    $('#statusFilter').val('Not Printed');
-                } else {
-                    $('#statusFilter').val(statuses[0]);
-                }
-                $('#statusFilter').prop('disabled', false);
-                updateEmployeeRecordsHeading();
-                loadEmployee(1);
-            },
+    // Employment type changed, so the old status is no longer valid.
+    resetStatusFilter();
 
-            error: function (xhr) {
-                console.error('Failed to load status:',xhr.responseText);
-            }
-        });
-        // Hide the table while the status filter is being loaded.
+    if (!station || !employmentType) {
         showEmptyStudentState();
+        return;
+    }
+
+    // Hide old employee records while loading statuses.
+    showEmptyStudentState();
+
+    $.ajax({
+        url: '/employees-status',
+        method: 'GET',
+        data: {
+            station: station,
+            employmentType: employmentType
+        },
+        success: function (statuses) {
+
+            console.log('Statuses:', statuses);
+
+            // Clear status dropdown again before adding new values.
+            resetStatusFilter();
+
+            if (!statuses || statuses.length === 0) {
+                $('#statusFilter')
+                    .html('<option value="" selected disabled>No Status</option>')
+                    .prop('disabled', true);
+
+                updateEmployeeRecordsHeading();
+                return;
+            }
+
+            statuses.forEach(function (status) {
+                $('#statusFilter').append(
+                    $('<option>', {
+                        value: status,
+                        text: status
+                    })
+                );
+            });
+
+            // Prefer "Not Printed".
+            if (statuses.includes('Not Printed')) {
+                $('#statusFilter').val('Not Printed');
+            } else {
+                $('#statusFilter').val(statuses[0]);
+            }
+
+            $('#statusFilter').prop('disabled', false);
+
+            updateEmployeeRecordsHeading();
+
+            // ONLY NOW load employees.
+            loadEmployee(1);
+        },
+
+        error: function (xhr) {
+            console.error(
+                'Failed to load status:',
+                xhr.responseText
+            );
+
+            resetStatusFilter();
+            showEmptyStudentState();
+        }
     });
+});
+
 
     $('#statusFilter').change(function () {
         loadEmployee(1);
@@ -106,10 +152,7 @@ $(document).ready(function () {
             },
             success: function (response) {
                 showImportResult(response);
-                resetFilters();
-                loadFilters();
-                showEmptyStudentState();
-                $('#file').val('');
+    $('#file').val('');
             },
             error: function (xhr) {
                 let message ='The employee file could not be imported or uploaded.';
@@ -244,34 +287,71 @@ function loadFilters() {
     $.ajax({
         url: '/employees-filters',
         method: 'GET',
-        success: function (employees) {
-            resetFilterDropdowns();
-            $('#employementTypeFilter').prop('disabled',true);
-            $('#statusFilter').prop('disabled',true);
 
-            employees.station.forEach(function (station) {
-                $('#stationFilter').append(`<option value="${station}">${station}</option>`);
-            });
+        success: function (employees) {
+
+            resetFilterDropdowns();
 
             if (employees.station.length === 0) {
-                $('#stationFilter').prop('disabled',true);
-                $('#employementTypeFilter').prop('disabled',true);
-                $('#clearFilters').prop('disabled', true).addClass('disabled');
-                showNotificationFilterRequires('No employee records are available. Please import or upload employee records.','warning','noEmployee');
+                $('#stationFilter').prop('disabled', true);
+                $('#employementTypeFilter').prop('disabled', true);
+                $('#statusFilter').prop('disabled', true);
+
+                $('#clearFilters')
+                    .prop('disabled', true)
+                    .addClass('disabled');
+
+                showNotificationFilterRequires(
+                    'No employee records are available. Please import or upload employee records.',
+                    'warning',
+                    'noEmployee'
+                );
+
                 return;
             }
-            $('#stationFilter').val('SDO');
-            $('#stationFilter').prop('disabled',false);
-            $('#employementTypeFilter').prop('disabled',false);
-            $('#clearFilters').prop('disabled', false).removeClass('disabled');
-            showNotificationFilterRequires('','','hasEmployees');
-            loadEmployee(1);
+
+            employees.station.forEach(function (station) {
+                $('#stationFilter').append(
+                    $('<option>', {
+                        value: station,
+                        text: station
+                    })
+                );
+            });
+
+            $('#stationFilter')
+                .prop('disabled', false)
+                .val('SDO');
+
+            $('#employementTypeFilter').prop('disabled', false);
+
+            $('#clearFilters')
+                .prop('disabled', false)
+                .removeClass('disabled');
+
+            showNotificationFilterRequires(
+                '',
+                '',
+                'hasEmployees'
+            );
+
+            // IMPORTANT:
+            // Automatically load everything for SDO.
             $('#stationFilter').trigger('change');
+        },
+
+        error: function (xhr) {
+            console.error(
+                'Failed to load employee filters:',
+                xhr.responseText
+            );
         }
     });
 }
 
-function loadEmployee(page = 1) {
+
+
+function loadEmployee(page = 1, showLoader = true) {
     const filters = getEmployeeFilters();
 
     if (!filters.station) {
@@ -289,21 +369,33 @@ function loadEmployee(page = 1) {
             page: page,
             ...filters
         },
+
         beforeSend: function () {
-            showLoading('Loading employee records...');
+            if (showLoader) {
+                showLoading('Loading employee records...');
+            }
         },
+
         success: function (response) {
             renderEmployeeTable(response);
             renderPagination(response);
         },
+
         error: function (xhr) {
-            console.error('Failed to load employees:',xhr.responseText);
+            console.error(
+                'Failed to load employees:',
+                xhr.responseText
+            );
         },
+
         complete: function () {
-            hideLoading();
+            if (showLoader) {
+                hideLoading();
+            }
         }
     });
 }
+
 
 function getEmployeeFilters() {
     return {
@@ -380,17 +472,25 @@ function loadEmploymentType(station) {
         data: {
             station: station
         },
+
         success: function (employmentTypes) {
-            populateEmploymentTypeFilter(
-                employmentTypes
-            );
-            loadEmployee(1);
+
+            populateEmploymentTypeFilter(employmentTypes);
+
+            $('#employementTypeFilter').prop('disabled', false);
+
+            // Do NOT select an employment type.
         },
+
         error: function (xhr) {
-            console.error('Failed to load employment types:',xhr.responseText);
+            console.error(
+                'Failed to load employment types:',
+                xhr.responseText
+            );
         }
     });
 }
+
 
 function populateEmploymentTypeFilter(employmentTypes) {
     $('#employementTypeFilter').html('<option value="" selected disabled>' +'Employment Type' +'</option>');
@@ -493,8 +593,23 @@ function showImportResult(response) {
 
     const modalElement = document.getElementById('importResultModal');
     const modal = new bootstrap.Modal(modalElement);
+
+    // Remove previous click handler to prevent duplicate execution.
+    $('#importResultDoneButton').off('click').one('click', function () {
+
+        // Close the modal first.
+        modal.hide();
+
+        // Now reload the filters and employee records.
+        resetFilters();
+        showEmptyStudentState();
+
+        loadFilters();
+    });
+
     modal.show();
 }
+
 
 function updateEmployeeRecordsHeading() {
     const station = $('#stationFilter').val();

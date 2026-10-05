@@ -16,23 +16,30 @@ class EmployeesController extends Controller
         return view('employees.index');
     }
 
-    public function employeeList(Request $request)
-    {
-        $query = Employees::query();
-        if ($request->station) {
-            $query->where('station', $request->station);
-        }
-        if ($request->position) {
-            $query->where('position', $request->position);
-        }
-        if ($request->status) {
-            $query->where('status', $request->status);
-        }
+public function employeeList(Request $request)
+{
+    $query = Employees::query();
 
-        $employees = $query->orderBy('last_name')->paginate(25);
-
-        return response()->json($employees);
+    if ($request->station) {
+        $query->where('station', $request->station);
     }
+
+    if ($request->employmentType) {
+        $query->where('employment_type', $request->employmentType);
+    }
+
+    if ($request->status) {
+        $query->where('status', $request->status);
+    }
+
+    $employees = $query
+        ->orderBy('last_name')
+        ->paginate(25);
+
+    return response()->json($employees);
+}
+
+
 
     //empoyee filters
     public function employeesFilters()
@@ -92,19 +99,18 @@ class EmployeesController extends Controller
             ], 422);
         }
     }
+public function empStatus(Request $request)
+{
+    $statuses = Employees::where('station', $request->station)
+        ->where('employment_type', $request->employmentType)
+        ->whereNotNull('status')
+        ->select('status')
+        ->distinct()
+        ->orderBy('status')
+        ->pluck('status');
 
-    public function empStatus(Request $request)
-    {
-        //dd($request->employmentType);
-        $status = Employees::where('station', $request->station)
-            ->where('employment_type', $request->employmentType)
-            ->select('status')
-            ->distinct()
-            ->orderBy('status')
-            ->pluck('status');
-
-        return response()->json($status);
-    }
+    return response()->json($statuses);
+}
 
 
     public function printQr(Request $request)
