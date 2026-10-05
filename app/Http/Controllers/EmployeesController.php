@@ -95,6 +95,7 @@ class EmployeesController extends Controller
 
     public function empStatus(Request $request)
     {
+        //dd($request->employmentType);
         $status = Employees::where('station', $request->station)
             ->where('employment_type', $request->employmentType)
             ->select('status')
@@ -165,7 +166,7 @@ class EmployeesController extends Controller
         });
 
         // Send QR data to print view
-        return view('students.print', compact('qrData'));
+        return view('students.printemp', compact('qrData'));
     }
     public function printConfirmed(Request $request)
     {

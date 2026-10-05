@@ -20,7 +20,9 @@ $(document).ready(function () {
     $('#employementTypeFilter').change(function () {
         const station = $('#stationFilter').val();
         const employmentType = $(this).val();
-        resetStatusFilter();
+        console.log(employmentType)
+       // resetStatusFilter();
+
         if (!station || !employmentType) {
             showEmptyStudentState();
             return;
@@ -32,7 +34,7 @@ $(document).ready(function () {
             method: 'GET',
             data: {
                 station: station,
-                employmentType: employmentType
+                employmentType: employmentType,
             },
             success: function (statuses) {
                 // If no status exists, keep the status dropdown disabled.
@@ -169,7 +171,7 @@ $(document).ready(function () {
                 hideLoading();
                 printFrame.contentWindow.onafterprint = function () {
                     const modalElement = document.getElementById('printConfirmationModal');
-                    const printModal = new bootstrap.Modal(modalElement); 
+                    const printModal = new bootstrap.Modal(modalElement);
                     printModal.show();
                 };
                 printFrame.contentWindow.focus();
@@ -322,7 +324,7 @@ function renderEmployeeTable(response) {
     }
     $('#employeesTableContainer').removeClass('d-none');
     $('#noEmployeesMessage').addClass('d-none');
-    
+
     employees.forEach(function (employee) {
         const employeeRow = createEmployeeRow(employee);
         $('#employeesTable').append(employeeRow);

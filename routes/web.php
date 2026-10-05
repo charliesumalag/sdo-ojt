@@ -1,6 +1,7 @@
 
 <?php
 
+use App\Http\Controllers\DashboardOverview;
 use App\Http\Controllers\EmployeesController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\StudentController;
@@ -9,7 +10,7 @@ Route::get('/', function () {
     return redirect()->route('employees');
 });
 
-  
+
 //stiudyante
 
 Route::get('/students', [StudentController::class, 'studentList'])->name('students');
@@ -36,3 +37,7 @@ Route::get('/employees-status', [EmployeesController::class, 'empStatus']);
 Route::get('/employee-list', [EmployeesController::class, 'employeeList']);
 Route::get('/employee/print', [EmployeesController::class, 'printQr'])->name('employee.print');
 Route::post('/employees/print-confirmed', [EmployeesController::class, 'printConfirmed'])->name('employees.print-confirmed');
+
+
+//overview dashboard
+Route::get('/overview', [DashboardOverview::class,'index']);
