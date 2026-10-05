@@ -74,11 +74,11 @@ body {
 }
 
 .codes-container{
-    /* border: 1px solid red; */
+
     width: 140px;
     height: 28px;
     position: absolute;
-    bottom: 18px;
+    bottom: 22px;
     left: 58px;
     display: flex;
     justify-content: center;

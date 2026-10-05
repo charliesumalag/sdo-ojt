@@ -603,7 +603,6 @@ function showImportResult(response) {
         // Now reload the filters and employee records.
         resetFilters();
         showEmptyStudentState();
-
         loadFilters();
     });
 
