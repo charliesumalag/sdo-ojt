@@ -23,6 +23,8 @@ Route::get('/student-grades', [StudentController::class, 'studentGrades']);
 Route::get('/student-section', [StudentController::class, 'studentSection']);
 Route::get('/status', [StudentController::class, 'status']);
 Route::post('/students/print-confirmed', [StudentController::class, 'printConfirmed'])->name('students.print-confirmed');
+Route::get('/student-ids', [StudentController::class, 'studentIds']);
+
 
 
 
@@ -37,6 +39,8 @@ Route::get('/employees-status', [EmployeesController::class, 'empStatus']);
 Route::get('/employee-list', [EmployeesController::class, 'employeeList']);
 Route::get('/employee/print', [EmployeesController::class, 'printQr'])->name('employee.print');
 Route::post('/employees/print-confirmed', [EmployeesController::class, 'printConfirmed'])->name('employees.print-confirmed');
+Route::get('/employee-ids', [EmployeesController::class, 'employeeIds']);
+
 
 
 //overview dashboard

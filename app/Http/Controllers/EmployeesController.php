@@ -194,4 +194,24 @@ public function empStatus(Request $request)
             'updated' => $updated
         ]);
     }
+    public function employeeIds (Request $request){
+
+        $query = Employees::query();
+
+        if ($request->station) {
+            $query->where('station', $request->station);
+        }
+
+        if ($request->employmentType) {
+            $query->where('employment_type', $request->employmentType);
+        }
+
+        if ($request->status) {
+            $query->where('status', $request->status);
+        }
+
+        return response()->json([
+            'ids' => $query->pluck('employee_id')
+        ]);
+    }
 }

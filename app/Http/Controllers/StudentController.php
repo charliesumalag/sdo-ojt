@@ -225,4 +225,50 @@ class StudentController extends Controller
             'updated' => $updated
         ]);
     }
+    public function studentIds(Request $request)
+    {
+        $query = Students::query();
+
+        if ($request->school) {
+            $query->where('school', $request->school);
+        }
+
+        if ($request->grade_level) {
+            $query->where('grade_level', $request->grade_level);
+        }
+
+        if ($request->section) {
+            $query->where('section', $request->section);
+        }
+
+        if ($request->status) {
+            $query->where('status', $request->status);
+        }
+
+        if ($request->gender) {
+            $query->where('gender', $request->gender);
+        }
+
+        if ($request->school_year) {
+            $query->where('school_year', $request->school_year);
+        }
+
+        if ($request->search) {
+            $search = $request->search;
+
+            $query->where(function ($q) use ($search) {
+                $q->where('lrn', 'like', "%{$search}%")
+                ->orWhere('first_name', 'like', "%{$search}%")
+                ->orWhere('last_name', 'like', "%{$search}%");
+            });
+        }
+
+        return response()->json([
+            'ids' => $query
+                ->pluck('lrn')
+                ->map(fn ($id) => (string) $id)
+                ->values()
+        ]);
+    }
+
 }
