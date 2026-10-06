@@ -2,177 +2,72 @@
 @extends('layouts.app')
 
 @section('content')
-
 <div class="container-fluid py-3">
     <div class="d-flex justify-content-between align-items-start border-bottom pb-3 mb-3">
         <div>
             <div class="d-flex align-items-center gap-2">
                 <h2 class="fw-bold mb-0">Dashboard Overview</h2>
             </div>
-
-            <p class="text-secondary mb-0 mt-1">
-                Monitor employee and student records, QR issuance, and ID printing.
-            </p>
+            <p class="text-secondary mb-0 mt-1">Monitor employee and student records, QR issuance, and ID printing.</p>
         </div>
-
-        <button class="btn btn-primary">
-            <i class="bi bi-upload me-2"></i>
-            Import Excel File
-        </button>
-
     </div>
 
-
-    <!-- =========================
-         FILTER BAR
-    ========================== -->
     <div class="dashboard-filter-bar border rounded bg-white p-2 mb-3">
-
         <div class="d-flex justify-content-between align-items-center">
-
             <div class="d-flex gap-2">
-
-                <button class="btn btn-light border dropdown-toggle">
-                    All stations
-                </button>
-
-                <button class="btn btn-light border dropdown-toggle">
-                    Employees &amp; Students
-                </button>
-
+                <button class="btn btn-light border dropdown-toggle">All stations</button>
+                <button class="btn btn-light border dropdown-toggle">Employees &amp; Students</button>
             </div>
-
             <span class="small text-secondary"> 03 Oct 2026
             </span>
-
         </div>
-
     </div>
-
-
-
-    <!-- =========================
-         SUMMARY CARDS
-    ========================== -->
     <div class="row g-3 mb-3">
-
-        <!-- Employees -->
         <div class="col-12 col-md-6 col-xl-3">
-
             <div class="dashboard-card h-100">
-
                 <div class="d-flex justify-content-between align-items-start">
-
-                    <span class="fw-semibold">
-                        Employees
-                    </span>
-
+                    <span class="fw-semibold">Employees</span>
                     <i class="bi bi-people text-primary fs-5"></i>
-
                 </div>
-
-                <div class="dashboard-number">
-                    1,280
-                </div>
-
-                <div class="text-secondary small">
-                    1,180 QR codes generated
-                </div>
-
+                <div class="dashboard-number">1,280</div>
+                <div class="text-secondary small">1,180 QR codes generated</div>
             </div>
-
         </div>
 
-
-        <!-- Students -->
         <div class="col-12 col-md-6 col-xl-3">
-
             <div class="dashboard-card h-100">
-
                 <div class="d-flex justify-content-between align-items-start">
-
-                    <span class="fw-semibold">
-                        Students
-                    </span>
-
+                    <span class="fw-semibold">sStudents</span>
                     <i class="bi bi-mortarboard text-primary fs-5"></i>
-
                 </div>
-
-                <div class="dashboard-number">
-                    1,420
-                </div>
-
-                <div class="text-secondary small">
-                    16,940 QR codes generated
-                </div>
-
+                <div class="dashboard-number">1,420</div>
+                <div class="text-secondary small">16,940 QR codes generated</div>
             </div>
-
         </div>
 
-
-        <!-- Not Printed -->
         <div class="col-12 col-md-6 col-xl-3">
-
             <div class="dashboard-card h-100">
-
                 <div class="d-flex justify-content-between align-items-start">
-
-                    <span class="fw-semibold">
-                        Not Printed
-                    </span>
-
+                    <span class="fw-semibold">Not Printed</span>
                     <i class="bi bi-qr-code text-primary fs-5"></i>
-
                 </div>
-
-                <div class="dashboard-number">
-                    18,120
-                </div>
-
-                <div class="text-secondary small">
-                    1,580 QR not printed
-                </div>
-
+                <div class="dashboard-number">18,120</div>
+                <div class="text-secondary small">1,580 QR not printed</div>
             </div>
-
         </div>
 
-
-        <!-- IDs Printed -->
         <div class="col-12 col-md-6 col-xl-3">
-
             <div class="dashboard-card h-100">
-
                 <div class="d-flex justify-content-between align-items-start">
-
-                    <span class="fw-semibold">
-                        IDs printed
-                    </span>
-
+                    <span class="fw-semibold">IDs printed</span>
                     <i class="bi bi-printer text-primary fs-5"></i>
-
                 </div>
-
-                <div class="dashboard-number">
-                    16,460
-                </div>
-
-                <div class="text-secondary small">
-                    1,660 QR ready to print
-                </div>
-
+                <div class="dashboard-number">16,460</div>
+                <div class="text-secondary small">1,660 QR ready to print</div>
             </div>
-
         </div>
-
     </div>
 
-
-    <!-- =========================
-         EMPLOYEE / STUDENT SUMMARY
-    ========================== -->
     <div class="row g-3 mb-3">
 
         <!-- Employee Summary -->
