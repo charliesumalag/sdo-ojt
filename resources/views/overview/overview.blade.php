@@ -24,24 +24,32 @@
     </div>
     <div class="row g-3 mb-3">
         <div class="col-12 col-md-6 col-xl-3">
-            <div class="dashboard-card h-100">
+            <div class="dashboard-card h-100" id="employee-card" style="display: none">
                 <div class="d-flex justify-content-between align-items-start">
                     <span class="fw-semibold">Employees</span>
                     <i class="bi bi-people text-primary fs-5"></i>
                 </div>
-                <div class="dashboard-number">1,280</div>
+                <div class="dashboard-number"  id="employee-count">
+                    <span class="placeholder-glow">
+                        <span class="placeholder col-4"></span>
+                    </span>
+                </div>
                 <div class="text-secondary small">1,180 QR codes generated</div>
             </div>
         </div>
 
         <div class="col-12 col-md-6 col-xl-3">
-            <div class="dashboard-card h-100">
+            <div class="dashboard-card h-100" id="student-card" style="display: none">
                 <div class="d-flex justify-content-between align-items-start">
-                    <span class="fw-semibold">sStudents</span>
-                    <i class="bi bi-mortarboard text-primary fs-5"></i>
+                    <span class="fw-semibold">Students</span>
+                    <i class="bi bi-people text-primary fs-5"></i>
                 </div>
-                <div class="dashboard-number">1,420</div>
-                <div class="text-secondary small">16,940 QR codes generated</div>
+                <div class="dashboard-number"  id="student-count">
+                    <span class="placeholder-glow">
+                        <span class="placeholder col-4"></span>
+                    </span>
+                </div>
+                <div class="text-secondary small">1,180 QR codes generated</div>
             </div>
         </div>
 
@@ -422,4 +430,5 @@
     </div>
 
 </div>
+<script src="{{asset('js/overview.js') }}"></script>
 @endsection

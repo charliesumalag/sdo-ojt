@@ -169,6 +169,17 @@ $(document).ready(function () {
         });
     });
 
+
+    $(document).on('click', '.page-button', function () {
+        const page = $(this).data('page');
+
+        if (!page) {
+            return;
+        }
+
+        loadEmployee(page);
+    });
+
     $('#generateQrButton').click(function () {
         const filters = getEmployeeFilters();
         const selectedEmployees = [];

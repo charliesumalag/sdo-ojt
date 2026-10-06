@@ -41,3 +41,5 @@ Route::post('/employees/print-confirmed', [EmployeesController::class, 'printCon
 
 //overview dashboard
 Route::get('/overview', [DashboardOverview::class,'index']);
+Route::get('/getEmployeeCount', [DashboardOverview::class, 'getEmpCount']);
+Route::get('/get-student-count', [DashboardOverview::class, 'getStudentCount']);
