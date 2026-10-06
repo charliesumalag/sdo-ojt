@@ -34,7 +34,7 @@ public function employeeList(Request $request)
 
     $employees = $query
         ->orderBy('last_name')
-        ->paginate(25);
+        ->paginate(10);
 
     return response()->json($employees);
 }
