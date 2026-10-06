@@ -1,102 +1,530 @@
+
 @extends('layouts.app')
 
 @section('content')
-<div class="p-4">
-    <div class="d-flex justify-content-between align-items-center  border-bottom pb-2">
+
+<div class="container-fluid py-3">
+    <div class="d-flex justify-content-between align-items-start border-bottom pb-3 mb-3">
         <div>
-            <div class="d-flex align-items-center gap-2 ">
-                <h1 class="fs-3 fw-semibold text-dark mb-0 p-0 m-0">Dashboard Overview</h1>
-                <span id="studentRecordsHeading" class="text-secondary"></span>
+            <div class="d-flex align-items-center gap-2">
+                <h2 class="fw-bold mb-0">Dashboard Overview</h2>
             </div>
-            <p class="small text-secondary">Monitor employee and student records, QR issuance, and ID printing.</p>
-        </div>
-    </div>
-    <div id="notification" class="alert d-flex align-items-center  w-100 d-none fs-6" role="alert"></div>
-    <!-- Filters -->
-    <div class="filter-container">
-        <div class="filter-group">
-            <div class="filter-item">
-                <select id="station" class="filter-select">
-                    <option value="">All Station</option>
-                </select>
-            </div>
+
+            <p class="text-secondary mb-0 mt-1">
+                Monitor employee and student records, QR issuance, and ID printing.
+            </p>
         </div>
 
+        <button class="btn btn-primary">
+            <i class="bi bi-upload me-2"></i>
+            Import Excel File
+        </button>
 
     </div>
-    <div class="card-main-container">
-        <div class="card-container">
-            <div class="header-container">
-                <h4 class="header-text">Employees</h4>
-                <i class="bi bi-people"></i>
-            </div>
-            <h3 class="totalEmp">1,280</h3>
-            <p class="card-footer">1,180 Employees</p>
-        </div>
-         <div class="card-container">
-            <div class="header-container">
-                <div>
-                    <h4>Employees</h4>
-                    <i class="bi bi-people"></i>
-                </div>
-            </div>
-            <h3 class="totalEmp">1,280</h3>
-            <p class="card-footer">1,180 Employees</p>
-        </div>
-         <div class="card-container">
-            <div class="header-container">
-                <div>
-                    <h4>Employees</h4>
-                    <i class="bi bi-people"></i>
-                </div>
-            </div>
-            <h3 class="totalEmp">1,280</h3>
-            <p class="card-footer">1,180 Employees</p>
-        </div>
-         <div class="card-container">
-            <div class="header-container">
-                <div>
-                    <h4>Employees</h4>
-                    <i class="bi bi-people"></i>
-                </div>
-            </div>
-            <h3 class="totalEmp">1,280</h3>
-            <p class="card-footer">1,180 Employees</p>
-        </div>
-    </div>
 
 
-    <!-- Student Records -->
-    <div class="border p-4 rounded mt-4" id="studentTableContainer">
-        <div class="d-flex border-bottom justify-content-between align-items-center pb-3">
-            <div class="d-flex align-items-center gap-2 ">
-                <h2  class="fs-6 fw-semibold mb-0">Student List</h2>
-                <span id="recordCount" class="badge rounded-pill text-primary bg-primary-subtle"></span>
-            </div>
+    <!-- =========================
+         FILTER BAR
+    ========================== -->
+    <div class="dashboard-filter-bar border rounded bg-white p-2 mb-3">
+
+        <div class="d-flex justify-content-between align-items-center">
+
             <div class="d-flex gap-2">
-                <button type="button" id="generateQrButton" class="btn btn-primary">Generate QR <span id="generateCount"></span></button>
+
+                <button class="btn btn-light border dropdown-toggle">
+                    All stations
+                </button>
+
+                <button class="btn btn-light border dropdown-toggle">
+                    Employees &amp; Students
+                </button>
+
             </div>
+
+            <span class="small text-secondary"> 03 Oct 2026
+            </span>
+
         </div>
-        <!-- Student Table -->
-        <div class="table-responsive rounded ">
-            <table class="table-hover mb-0 table table-striped text-secondary">
-                <thead class="table-light">
+
+    </div>
+
+
+
+    <!-- =========================
+         SUMMARY CARDS
+    ========================== -->
+    <div class="row g-3 mb-3">
+
+        <!-- Employees -->
+        <div class="col-12 col-md-6 col-xl-3">
+
+            <div class="dashboard-card h-100">
+
+                <div class="d-flex justify-content-between align-items-start">
+
+                    <span class="fw-semibold">
+                        Employees
+                    </span>
+
+                    <i class="bi bi-people text-primary fs-5"></i>
+
+                </div>
+
+                <div class="dashboard-number">
+                    1,280
+                </div>
+
+                <div class="text-secondary small">
+                    1,180 QR codes generated
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- Students -->
+        <div class="col-12 col-md-6 col-xl-3">
+
+            <div class="dashboard-card h-100">
+
+                <div class="d-flex justify-content-between align-items-start">
+
+                    <span class="fw-semibold">
+                        Students
+                    </span>
+
+                    <i class="bi bi-mortarboard text-primary fs-5"></i>
+
+                </div>
+
+                <div class="dashboard-number">
+                    1,420
+                </div>
+
+                <div class="text-secondary small">
+                    16,940 QR codes generated
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- Not Printed -->
+        <div class="col-12 col-md-6 col-xl-3">
+
+            <div class="dashboard-card h-100">
+
+                <div class="d-flex justify-content-between align-items-start">
+
+                    <span class="fw-semibold">
+                        Not Printed
+                    </span>
+
+                    <i class="bi bi-qr-code text-primary fs-5"></i>
+
+                </div>
+
+                <div class="dashboard-number">
+                    18,120
+                </div>
+
+                <div class="text-secondary small">
+                    1,580 QR not printed
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- IDs Printed -->
+        <div class="col-12 col-md-6 col-xl-3">
+
+            <div class="dashboard-card h-100">
+
+                <div class="d-flex justify-content-between align-items-start">
+
+                    <span class="fw-semibold">
+                        IDs printed
+                    </span>
+
+                    <i class="bi bi-printer text-primary fs-5"></i>
+
+                </div>
+
+                <div class="dashboard-number">
+                    16,460
+                </div>
+
+                <div class="text-secondary small">
+                    1,660 QR ready to print
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================
+         EMPLOYEE / STUDENT SUMMARY
+    ========================== -->
+    <div class="row g-3 mb-3">
+
+        <!-- Employee Summary -->
+        <div class="col-12 col-lg-6">
+
+            <div class="dashboard-panel h-100">
+
+                <!-- Header -->
+                <div class="dashboard-panel-header">
+
+                    <div class="d-flex align-items-center gap-2 fw-semibold">
+                        <i class="bi bi-people"></i>
+                        <span>Employees summary</span>
+                    </div>
+
+                    {{-- <a href="#" class="text-primary text-decoration-none small">
+                        View records
+                        <i class="bi bi-arrow-right"></i>
+                    </a> --}}
+
+                </div>
+
+
+                <!-- Body -->
+                <div class="p-3">
+
+                    <div class="d-flex justify-content-between mb-3">
+
+                        <span>
+                            1,280 total records
+                        </span>
+
+                        <span class="small text-secondary">
+                            Sample data
+                        </span>
+
+                    </div>
+
+
+                    <div class="d-flex justify-content-between mb-1">
+
+                        <span class="small text-secondary">
+                            IDs printed
+                        </span>
+
+                        <strong class="small">
+                            1,060 / 1,280 (82.8%)
+                        </strong>
+
+                    </div>
+
+
+                    <div class="progress dashboard-progress">
+
+                        <div
+                            class="progress-bar dashboard-progress-bar"
+                            role="progressbar"
+                            style="width: 82.8%;"
+                            aria-valuenow="82.8"
+                            aria-valuemin="0"
+                            aria-valuemax="100">
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- Student Summary -->
+        <div class="col-12 col-lg-6">
+
+            <div class="dashboard-panel h-100">
+
+                <!-- Header -->
+                <div class="dashboard-panel-header">
+
+                    <div class="d-flex align-items-center gap-2 fw-semibold">
+                        <i class="bi bi-mortarboard"></i>
+                        <span>Students summary</span>
+                    </div>
+
+                    {{-- <a href="#" class="text-primary text-decoration-none small">
+                        View records
+                        <i class="bi bi-arrow-right"></i>
+                    </a> --}}
+
+                </div>
+
+
+                <!-- Body -->
+                <div class="p-3">
+
+                    <div class="d-flex justify-content-between mb-3">
+
+                        <span>
+                            18,420 total records
+                        </span>
+
+                        <span class="small text-secondary">
+                            Sample data
+                        </span>
+
+                    </div>
+
+
+                    <div class="d-flex justify-content-between mb-1">
+
+                        <span class="small text-secondary">
+                            IDs printed
+                        </span>
+
+                        <strong class="small">
+                            15,400 / 18,420 (83.6%)
+                        </strong>
+
+                    </div>
+
+
+                    <div class="progress dashboard-progress">
+
+                        <div
+                            class="progress-bar dashboard-progress-bar"
+                            role="progressbar"
+                            style="width: 83.6%;"
+                            aria-valuenow="83.6"
+                            aria-valuemin="0"
+                            aria-valuemax="100">
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================
+         RECENT RECORD ACTIVITY
+    ========================== -->
+    <div class="dashboard-panel">
+
+        <!-- Header -->
+        <div class="dashboard-panel-header">
+
+            <span class="fw-semibold">
+                Recent record activity
+            </span>
+
+            <span class="small text-secondary">
+                Sample activity • Today
+            </span>
+
+        </div>
+
+
+        <!-- Table -->
+        <div class="table-responsive">
+
+            <table class="table dashboard-table mb-0">
+
+                <thead>
                     <tr>
-                        <th>All<br><input class="checkbox-all" id="checkAll" type="checkbox" name="" value=""> </input></th>
-                        <th class="">Learner Ref Number<br>(LRN)</th>
-                        <th class="">Student Name</th>
-                        <th class="">Grade & Sec</th>
-                        <th class="">Gender</th>
-                        <th class="">Status</th>
+                        <th>Record / batch</th>
+                        <th>Population</th>
+                        <th>Activity</th>
+                        <th>Status</th>
+                        <th>Time</th>
                     </tr>
                 </thead>
-                <tbody id="studentTable">
-                    <!-- AJAX inserts students na dito -->
+
+                <tbody>
+
+                    <!-- Activity 1 -->
+                    <tr>
+
+                        <td>
+                            <div>Employee batch import</div>
+
+                            <small class="text-secondary">
+                                SDO • 12 records
+                            </small>
+                        </td>
+
+                        <td>
+                            Employees
+                        </td>
+
+                        <td>
+                            Excel imported
+                        </td>
+
+                        <td>
+                            <span class="status-badge status-awaiting">
+                                Awaiting QR
+                            </span>
+                        </td>
+
+                        <td>
+                            10:42 AM
+                        </td>
+
+                    </tr>
+
+
+                    <!-- Activity 2 -->
+                    <tr>
+
+                        <td>
+                            <div>Student QR batch</div>
+
+                            <small class="text-secondary">
+                                Marikina High School • 48 records
+                            </small>
+                        </td>
+
+                        <td>
+                            Students
+                        </td>
+
+                        <td>
+                            QR generated
+                        </td>
+
+                        <td>
+                            <span class="status-badge status-ready">
+                                Ready to print
+                            </span>
+                        </td>
+
+                        <td>
+                            10:30 AM
+                        </td>
+
+                    </tr>
+
+
+                    <!-- Activity 3 -->
+                    <tr>
+
+                        <td>
+                            <div>Employee ID batch</div>
+
+                            <small class="text-secondary">
+                                SDO • 8 records
+                            </small>
+                        </td>
+
+                        <td>
+                            Employees
+                        </td>
+
+                        <td>
+                            IDs printed
+                        </td>
+
+                        <td>
+                            <span class="status-badge status-printed">
+                                Printed
+                            </span>
+                        </td>
+
+                        <td>
+                            10:18 AM
+                        </td>
+
+                    </tr>
+
+
+                    <!-- Activity 4 -->
+                    <tr>
+
+                        <td>
+                            <div>Student record update</div>
+
+                            <small class="text-secondary">
+                                Marikina Elementary School • 1 record
+                            </small>
+                        </td>
+
+                        <td>
+                            Students
+                        </td>
+
+                        <td>
+                            Record updated
+                        </td>
+
+                        <td>
+                            <span class="status-badge status-not-printed">
+                                Not printed
+                            </span>
+                        </td>
+
+                        <td>
+                            09:56 AM
+                        </td>
+
+                    </tr>
+
+
+                    <!-- Activity 5 -->
+                    <tr>
+
+                        <td>
+                            <div>Student ID batch</div>
+
+                            <small class="text-secondary">
+                                Marikina High School • 32 records
+                            </small>
+                        </td>
+
+                        <td>
+                            Students
+                        </td>
+
+                        <td>
+                            IDs printed
+                        </td>
+
+                        <td>
+                            <span class="status-badge status-printed">
+                                Printed
+                            </span>
+                        </td>
+
+                        <td>
+                            09:40 AM
+                        </td>
+
+                    </tr>
+
                 </tbody>
+
             </table>
+
         </div>
-        <div id="pagination" class="d-flex gap-1 justify-content-end mt-3"></div>
+
+
+        <!-- Footer -->
+        <div class="dashboard-table-footer">
+            Showing 5 sample activities. No live records are displayed.
+        </div>
+
     </div>
-    <div id="noStudentsMessage" class="text-center text-secondary py-4 d-none"></div>
+
 </div>
 @endsection

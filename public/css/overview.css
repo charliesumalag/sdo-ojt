@@ -1,33 +1,149 @@
-.card-main-container{
-    display: flex;
-    width: 100%;
-    justify-content: space-between;
-    gap: 2px;
-    border: 1px solid green;
-}
-.card-container{
-    width: 25%;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
+/* =========================================
+   DASHBOARD
+========================================= */
+
+.dashboard-card {
+    border: 1px solid #DEE2E6;
+    border-radius: 6px;
+    background-color: #FFFFFF;
     padding: 16px;
-    border: 1px solid violet;
 }
 
-.header-container{
-    width: 100%;
+.dashboard-number {
+    font-size: 30px;
+    font-weight: 700;
+    line-height: 1.2;
+    margin-top: 10px;
+    margin-bottom: 8px;
+    color: #252A2E;
+}
+
+
+/* =========================================
+   FILTER
+========================================= */
+
+.dashboard-filter-bar {
+    min-height: 56px;
+}
+
+
+/* =========================================
+   PANELS
+========================================= */
+
+.dashboard-panel {
+    border: 1px solid #DEE2E6;
+    border-radius: 6px;
+    background-color: #FFFFFF;
+    overflow: hidden;
+}
+
+.dashboard-panel-header {
+    min-height: 47px;
+    padding: 0 16px;
+
     display: flex;
+    align-items: center;
     justify-content: space-between;
-    border: 1px solid red;
+
+    border-bottom: 1px solid #DEE2E6;
 }
 
-.header-text{
-    font-size: 13px;
-    font-weight: bold;
-    color: #252A2E;
+
+/* =========================================
+   PROGRESS BAR
+========================================= */
+
+.dashboard-progress {
+    height: 6px;
+    background-color: #E9ECEF;
+    border-radius: 10px;
 }
-.totalEmp{
-    font: 28px;
-    font-weight: bold;
+
+.dashboard-progress-bar {
+    background-color: #337FB9;
+    border-radius: 10px;
+}
+
+
+/* =========================================
+   ACTIVITY TABLE
+========================================= */
+
+.dashboard-table {
+    font-size: 13px;
+}
+
+.dashboard-table thead th {
+    background-color: #F8F9FA;
     color: #252A2E;
+    font-weight: 600;
+
+    padding: 9px 15px;
+    border-bottom: 1px solid #DEE2E6;
+}
+
+.dashboard-table tbody td {
+    padding: 9px 15px;
+    vertical-align: middle;
+    border-bottom: 1px solid #DEE2E6;
+}
+
+.dashboard-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.dashboard-table small {
+    font-size: 11px;
+}
+
+
+/* =========================================
+   STATUS BADGES
+========================================= */
+
+.status-badge {
+    display: inline-flex;
+    align-items: center;
+
+    padding: 3px 8px;
+    border-radius: 20px;
+
+    font-size: 11px;
+    font-weight: 600;
+}
+
+.status-awaiting {
+    background-color: #E9ECEF;
+    color: #6C757D;
+}
+
+.status-ready {
+    background-color: #E8F3FA;
+    color: #337FB9;
+}
+
+.status-printed {
+    background-color: #E8F5EE;
+    color: #278653;
+}
+
+.status-not-printed {
+    background-color: #E9ECEF;
+    color: #6C757D;
+}
+
+
+/* =========================================
+   TABLE FOOTER
+========================================= */
+
+.dashboard-table-footer {
+    padding: 9px 15px;
+
+    font-size: 11px;
+    color: #6C757D;
+
+    border-top: 1px solid #DEE2E6;
 }
