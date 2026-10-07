@@ -13,6 +13,7 @@ $(document).ready(function () {
         const station = $(this).val();
         resetEmploymentTypeFilter();
         resetStatusFilter();
+        selectedEmployeeIds.clear()
         updateEmployeeRecordsHeading();
 
         if (!station) {
