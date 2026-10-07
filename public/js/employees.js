@@ -37,6 +37,7 @@ $(document).ready(function () {
 
         // Employment type changed, so reset the old status
         resetStatusFilter();
+        selectedEmployeeIds.clear()
 
         if (!station || !employmentType) {
             showEmptyStudentState();
